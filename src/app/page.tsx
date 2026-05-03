@@ -18,41 +18,41 @@ export default function DashboardPage() {
         <div className="layout-sidebar-right">
           {/* Left Column */}
           <div className="flex-col flex gap-6">
-            
+
             {/* Metric Cards */}
             <div className="grid grid-cols-4 gap-4">
-              <MetricCard 
-                title="Active Projects" 
-                value={12} 
-                icon="fa-solid fa-chart-line" 
-                badgeText="+2 this week" 
-                badgeType="success" 
-                iconBgColor="rgba(99, 102, 241, 0.1)" 
+              <MetricCard
+                title="Active Projects"
+                value={12}
+                icon="fa-solid fa-chart-line"
+                badgeText="+2 this week"
+                badgeType="success"
+                iconBgColor="rgba(99, 102, 241, 0.1)"
               />
-              <MetricCard 
-                title="Pending Invoices" 
-                value={8} 
-                icon="fa-solid fa-file-invoice" 
-                badgeText="Attention" 
-                badgeType="warning" 
+              <MetricCard
+                title="Pending Invoices"
+                value={8}
+                icon="fa-solid fa-file-invoice"
+                badgeText="Attention"
+                badgeType="warning"
                 iconBgColor="rgba(245, 158, 11, 0.1)"
                 iconColor="var(--status-warning)"
               />
-              <MetricCard 
-                title="Required Approvals" 
-                value={5} 
-                icon="fa-solid fa-clipboard-check" 
-                badgeText="5 Action Items" 
-                badgeType="info" 
+              <MetricCard
+                title="Required Approvals"
+                value={5}
+                icon="fa-solid fa-clipboard-check"
+                badgeText="5 Action Items"
+                badgeType="info"
                 iconBgColor="rgba(59, 130, 246, 0.1)"
                 iconColor="var(--status-info)"
               />
-              <MetricCard 
-                title="High Risks" 
-                value={3} 
-                icon="fa-solid fa-triangle-exclamation" 
-                badgeText="Critical" 
-                badgeType="danger" 
+              <MetricCard
+                title="High Risks"
+                value={3}
+                icon="fa-solid fa-triangle-exclamation"
+                badgeText="Critical"
+                badgeType="danger"
                 iconBgColor="rgba(239, 68, 68, 0.1)"
                 iconColor="var(--status-danger)"
               />
@@ -62,7 +62,7 @@ export default function DashboardPage() {
             <Card>
               <div className="card-header">
                 <h2 className="card-title">
-                  <i className="fa-regular fa-calendar-check text-accent mr-2"></i> 
+                  <i className="fa-regular fa-calendar-check text-accent mr-2"></i>
                   Today's Priorities
                 </h2>
                 <Link href="/projects" className="text-sm font-medium">View All Task Queue</Link>
@@ -134,7 +134,7 @@ export default function DashboardPage() {
 
           {/* Right Column */}
           <div className="flex-col flex gap-6">
-            
+
             {/* Smart Alerts */}
             <Card style={{ background: 'linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%)' }}>
               <div className="card-header">
