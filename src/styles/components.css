@@ -181,8 +181,13 @@
   font-weight: 600;
 }
 
-.stat-trend.positive { color: var(--status-success); }
-.stat-trend.negative { color: var(--status-danger); }
+.stat-trend.positive {
+  color: var(--status-success);
+}
+
+.stat-trend.negative {
+  color: var(--status-danger);
+}
 
 /* List Items (Activity / Tasks) */
 .list-group {

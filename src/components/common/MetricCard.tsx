@@ -15,8 +15,8 @@ export default function MetricCard({ title, value, icon, badgeText, badgeType, i
   return (
     <Card className="stat-card">
       <div className="card-header">
-        <div 
-          className="list-item-icon" 
+        <div
+          className="list-item-icon"
           style={{ background: iconBgColor, color: iconColor }}
         >
           <i className={icon}></i>

@@ -2,11 +2,14 @@
 
 :root {
   /* Color Palette - Premium Light SaaS */
-  --bg-main: #F9F9FB; /* Warm off-white background */
+  --bg-main: #F9F9FB;
+  /* Warm off-white background */
   --bg-surface: rgba(15, 23, 42, 0.03);
   --bg-surface-elevated: rgba(15, 23, 42, 0.06);
-  --bg-surface-glass: rgba(255, 255, 255, 0.95); /* Clean white cards */
-  --bg-sidebar: #0F172A; /* Dark sidebar */
+  --bg-surface-glass: rgba(255, 255, 255, 0.95);
+  /* Clean white cards */
+  --bg-sidebar: #0F172A;
+  /* Dark sidebar */
   --bg-sidebar-hover: rgba(255, 255, 255, 0.05);
 
   --border-subtle: rgba(15, 23, 42, 0.06);
@@ -16,20 +19,25 @@
   --glass-border: 1px solid var(--border-subtle);
   --glass-border-light: 1px solid rgba(255, 255, 255, 0.6);
 
-  --text-primary: #1E293B; /* Professional dark text */
+  --text-primary: #1E293B;
+  /* Professional dark text */
   --text-secondary: #475569;
   --text-muted: #64748B;
-  
+
   --text-sidebar-primary: #F8FAFC;
   --text-sidebar-secondary: #94A3B8;
 
-  --accent-primary: #4F46E5; /* Calm accent blue/indigo */
+  --accent-primary: #4F46E5;
+  /* Calm accent blue/indigo */
   --accent-primary-hover: #4338CA;
   --accent-primary-glow: rgba(79, 70, 229, 0.3);
 
-  --status-success: #059669; /* Green for success */
-  --status-warning: #D97706; /* Amber for pending */
-  --status-danger: #DC2626;  /* Red for high risk */
+  --status-success: #059669;
+  /* Green for success */
+  --status-warning: #D97706;
+  /* Amber for pending */
+  --status-danger: #DC2626;
+  /* Red for high risk */
   --status-info: #2563EB;
 
 
