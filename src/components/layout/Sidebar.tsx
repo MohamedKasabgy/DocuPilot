@@ -32,7 +32,7 @@ export default function Sidebar() {
           </div>
           <div className="brand-text">
             DocuPilot
-            <span className="brand-subtitle">Operational Hub</span>
+            <span className="brand-subtitle">AI-Powered Software Ops</span>
           </div>
         </div>
       </div>

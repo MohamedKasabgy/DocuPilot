@@ -23,10 +23,10 @@ export default function Header({ children }: HeaderProps) {
         </button>
 
         <div className="user-profile">
-          <div className="avatar">NX</div>
+          <div className="avatar">DP</div>
           <div className="user-info">
-            <span className="user-name">NexaSoft Admin</span>
-            <span className="user-role">Project Manager</span>
+            <span className="user-name">DocuPilot Admin</span>
+            <span className="user-role">Operations Manager</span>
           </div>
         </div>
       </div>

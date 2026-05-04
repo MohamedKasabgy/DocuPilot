@@ -53,11 +53,11 @@ export default function DashboardPage() {
         <div className="page-header">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-xs)' }}>
-              <p className="page-label" style={{ margin: 0 }}>May 3, 2026</p>
-              <span className="demo-badge"><i className="fa-solid fa-flask"></i> Demo Mode</span>
+              <p className="page-label" style={{ margin: 0 }}>{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <span className="demo-badge" style={{ background: 'rgba(124, 58, 237, 0.1)', color: '#7C3AED', border: '1px solid rgba(124, 58, 237, 0.2)' }}><i className="fa-solid fa-sparkles"></i> AI-Powered</span>
             </div>
             <h1 className="page-title">Operational Overview</h1>
-            <p className="page-subtitle">Welcome back, NexaSoft Admin. Here&apos;s what needs your attention.</p>
+            <p className="page-subtitle">Welcome back. Here&apos;s what needs your attention.</p>
           </div>
           <div className="page-header-actions">
             <div className="seg-control">
@@ -225,30 +225,30 @@ export default function DashboardPage() {
 
               <div className="list-group" style={{ marginTop: 'var(--spacing-sm)' }}>
                 <div className="list-item">
-                  <div className="list-item-icon" style={{ background: 'rgba(220, 38, 38, 0.08)', color: '#DC2626' }}>
-                    <i className="fa-solid fa-file-pdf"></i>
+                  <div className="list-item-icon" style={{ background: 'rgba(124, 58, 237, 0.08)', color: '#7C3AED' }}>
+                    <i className="fa-solid fa-wand-magic-sparkles"></i>
                   </div>
                   <div className="list-item-content">
-                    <div className="list-item-title"><strong>Sarah M.</strong> <span className="font-normal text-secondary">uploaded SRS Final</span></div>
-                    <div className="list-item-meta">Project: Quantum Leap &middot; 45 min ago</div>
+                    <div className="list-item-title"><strong>AI</strong> <span className="font-normal text-secondary">generated SRS from Arabic client request</span></div>
+                    <div className="list-item-meta">Project: Clinic Booking Platform &middot; Confidence: 78% &middot; 35 min ago</div>
+                  </div>
+                </div>
+                <div className="list-item">
+                  <div className="list-item-icon" style={{ background: 'var(--status-warning-bg)', color: 'var(--status-warning)' }}>
+                    <i className="fa-solid fa-shield-halved"></i>
+                  </div>
+                  <div className="list-item-content">
+                    <div className="list-item-title"><strong>Scope Guard</strong> <span className="font-normal text-secondary">flagged out-of-scope request</span></div>
+                    <div className="list-item-meta">Mobile app request &middot; Auto-generated CR-2026-014 &middot; 2 hours ago</div>
                   </div>
                 </div>
                 <div className="list-item">
                   <div className="list-item-icon" style={{ background: 'var(--status-success-bg)', color: 'var(--status-success)' }}>
-                    <i className="fa-solid fa-check"></i>
+                    <i className="fa-solid fa-file-signature"></i>
                   </div>
                   <div className="list-item-content">
-                    <div className="list-item-title">Contract <a href="#">#4492</a> <span className="font-normal text-secondary">approved</span></div>
-                    <div className="list-item-meta">Auto-filed to secure cloud vault &middot; 2 hours ago</div>
-                  </div>
-                </div>
-                <div className="list-item">
-                  <div className="list-item-icon" style={{ background: 'var(--status-info-bg)', color: 'var(--status-info)' }}>
-                    <i className="fa-solid fa-user-plus"></i>
-                  </div>
-                  <div className="list-item-content">
-                    <div className="list-item-title"><strong>James Wilson</strong> <span className="font-normal text-secondary">joined the hub</span></div>
-                    <div className="list-item-meta">Access level: Project Manager &middot; 5 hours ago</div>
+                    <div className="list-item-title"><strong>Contract #4492</strong> <span className="font-normal text-secondary">AI extraction completed</span></div>
+                    <div className="list-item-meta">3 risks flagged &middot; Payment schedule mapped &middot; 4 hours ago</div>
                   </div>
                 </div>
               </div>
@@ -276,27 +276,27 @@ export default function DashboardPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
                 <div className="alert-card" style={{ borderLeft: '3px solid var(--accent-primary)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'center' }}>
-                    <span className="alert-label" style={{ color: 'var(--accent-primary)' }}>Contract Drift</span>
+                    <span className="alert-label" style={{ color: 'var(--accent-primary)' }}>Scope Deviation Detected</span>
                     <span className="alert-time">2m ago</span>
                   </div>
                   <p className="text-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    Clause 4.2 in <strong>SRS_v2.pdf</strong> contradicts the Master Service Agreement on liability caps.
+                    Client request for <strong>mobile app (iOS &amp; Android)</strong> is out of scope. Change Request CR-2026-014 auto-generated.
                   </p>
-                  <Link href="/contracts" className="text-xs font-medium text-accent" style={{ display: 'inline-block', marginTop: '8px' }}>
-                    Review Contract <i className="fa-solid fa-arrow-right text-xs"></i>
+                  <Link href="/scope-guard" className="text-xs font-medium text-accent" style={{ display: 'inline-block', marginTop: '8px' }}>
+                    Review in Scope Guard <i className="fa-solid fa-arrow-right text-xs"></i>
                   </Link>
                 </div>
 
                 <div className="alert-card" style={{ borderLeft: '3px solid var(--status-success)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'center' }}>
-                    <span className="alert-label" style={{ color: 'var(--status-success)' }}>Efficiency Tip</span>
-                    <span className="alert-time">1h ago</span>
+                    <span className="alert-label" style={{ color: 'var(--status-success)' }}>SRS Generated</span>
+                    <span className="alert-time">35m ago</span>
                   </div>
                   <p className="text-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    AI suggests bundling Invoice <strong>#884</strong> and <strong>#885</strong> for Global Logistics to reduce processing fees.
+                    AI generated SRS for <strong>Clinic Booking Platform</strong> from Arabic client request. Confidence: <strong>78%</strong> — 4 clarification questions flagged.
                   </p>
-                  <Link href="/invoices" className="text-xs font-medium text-accent" style={{ display: 'inline-block', marginTop: '8px' }}>
-                    View Invoices <i className="fa-solid fa-arrow-right text-xs"></i>
+                  <Link href="/srs-generator" className="text-xs font-medium text-accent" style={{ display: 'inline-block', marginTop: '8px' }}>
+                    View SRS <i className="fa-solid fa-arrow-right text-xs"></i>
                   </Link>
                 </div>
               </div>
