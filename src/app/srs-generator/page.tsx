@@ -127,7 +127,11 @@ export default function SRSGeneratorPage() {
       if (!res.ok || !result.success) throw new Error(result.error || 'Generation failed');
       setAiResult(result.data);
       setIsGenerated(true);
-      showToast('SRS generated successfully', 'success');
+      if (result.usedFallback) {
+        showToast('Gemini was temporarily unavailable — demo SRS loaded', 'warning');
+      } else {
+        showToast('SRS generated successfully', 'success');
+      }
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Failed to generate SRS', 'error');
     } finally {

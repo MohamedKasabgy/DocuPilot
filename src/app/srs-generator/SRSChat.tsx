@@ -30,6 +30,7 @@ export default function SRSChat() {
   const [refinementInput, setRefinementInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [usedFallback, setUsedFallback] = useState(false);
 
   async function generateSrs() {
     if (clientRequest.trim().length < 10) {
@@ -55,8 +56,10 @@ export default function SRSChat() {
       }
 
       setSrsResult(result.data);
+      setUsedFallback(result.usedFallback === true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate SRS. Please try again.');
+      setUsedFallback(false);
     } finally {
       setIsLoading(false);
     }
@@ -180,6 +183,21 @@ export default function SRSChat() {
         }}>
           <i className="fa-solid fa-circle-exclamation text-danger"></i>
           <span className="text-sm">{error}</span>
+        </div>
+      )}
+
+      {/* Fallback notice */}
+      {usedFallback && srsResult && (
+        <div className="card" style={{
+          marginBottom: 'var(--spacing-lg)',
+          background: 'rgba(217, 119, 6, 0.05)',
+          border: '1px solid rgba(217, 119, 6, 0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 'var(--spacing-md)',
+        }}>
+          <i className="fa-solid fa-triangle-exclamation" style={{ color: 'var(--status-warning)', flexShrink: 0 }}></i>
+          <span className="text-sm">Gemini was temporarily unavailable. A demo SRS has been loaded — results may not reflect your exact input.</span>
         </div>
       )}
 
