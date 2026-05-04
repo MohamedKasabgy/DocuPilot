@@ -58,23 +58,35 @@ export async function POST(req: Request) {
 
     if (chunksError) throw chunksError;
 
-    // Get latest SRS
-    const { data: latestSrs } = await supabaseAdmin
-      .from("srs_documents")
-      .select("output_json")
-      .eq("project_id", projectId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    // Get latest SRS (gracefully handle if table doesn't exist)
+    let latestSrs = null;
+    try {
+      const { data } = await supabaseAdmin
+        .from("srs_documents")
+        .select("output_json")
+        .eq("project_id", projectId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      latestSrs = data;
+    } catch {
+      // srs_documents table may not exist yet
+    }
 
-    // Get latest Contract
-    const { data: latestContract } = await supabaseAdmin
-      .from("contract_analyses")
-      .select("output_json")
-      .eq("project_id", projectId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    // Get latest Contract (gracefully handle if table doesn't exist)
+    let latestContract = null;
+    try {
+      const { data } = await supabaseAdmin
+        .from("contract_analyses")
+        .select("output_json")
+        .eq("project_id", projectId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      latestContract = data;
+    } catch {
+      // contract_analyses table may not exist yet
+    }
 
     // Build context
     const context = `
@@ -124,7 +136,7 @@ ${question}
     });
   } catch (error) {
     // Log errors server-side only without exposing stack traces to client
-    console.error("Ask DocuPilot failed:", error instanceof Error ? error.message : "Unknown error");
+    console.error("Ask DocuPilot failed:", JSON.stringify(error, null, 2));
 
     return NextResponse.json(
       {

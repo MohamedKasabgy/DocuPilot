@@ -9,7 +9,7 @@ if (!apiKey) {
 export const gemini = new GoogleGenAI({ apiKey });
 
 // Fast model for chat / Q&A responses
-export const GEMINI_FAST_MODEL = "gemini-2.0-flash";
+export const GEMINI_FAST_MODEL = "gemini-2.5-flash";
 
 // Embedding model for vector search
-export const GEMINI_EMBEDDING_MODEL = "gemini-embedding-exp-03-07";
+export const GEMINI_EMBEDDING_MODEL = "gemini-embedding-001";
