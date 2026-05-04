@@ -1,274 +1,266 @@
-# AI Business Document Manager
+# DocuPilot
 
-AI Business Document Manager is a SaaS-style web application that helps small businesses manage invoices and contracts using AI.
+**From Documents to Decisions.**
 
-Users can upload or paste business documents, and the system automatically extracts important information such as amounts, due dates, contract parties, expiry dates, and document summaries. The extracted data is displayed in a smart dashboard with alerts, status tracking, and an AI chat assistant.
-
----
-
-## Problem
-
-Small businesses often manage invoices and contracts manually using emails, spreadsheets, and scattered files. This causes problems such as:
-
-- Missed invoice due dates
-- Forgotten contract renewals
-- Slow document review
-- Difficulty tracking business obligations
-- Lack of clear financial and operational visibility
+DocuPilot is an AI-powered business document operations platform for software companies and service businesses. It converts contracts, invoices, client requests, SRS documents, and scope changes into structured workflows, risks, approvals, and actionable decisions — all from one operational hub.
 
 ---
 
-## Solution
+## Current Project Status
 
-This platform uses AI to convert unstructured business documents into organized, trackable data.
+> **Frontend/UI: ~80% complete.**
+> The project is now transitioning from frontend implementation into backend, database, and AI integration.
 
-The system allows users to:
+All pages, navigation, and UI components are built as a high-fidelity interactive prototype. Data is currently static/mock. The next phase connects real data through API routes, a database, and Gemini AI.
 
-- Upload or paste invoices and contracts
-- Extract key business information using AI
-- Track unpaid invoices and expiring contracts
-- View alerts and summaries in one dashboard
-- Ask questions through an AI chat assistant
+> For AI coding assistants and team handoff context, read [`AI_CONTEXT.md`](./AI_CONTEXT.md) before making changes.
 
 ---
 
-## Key Features
+## What Has Been Built
 
-### 1. Document Upload
+### Pages & Routes
 
-Users can upload or paste text from:
+| Route | Page | Description |
+|---|---|---|
+| `/` | Dashboard | Operational overview — metrics, priorities, project health, alerts, AI-suggested next actions |
+| `/projects` | Project Workspace | Per-project view with roadmap, task stream, document vault, and AI insights |
+| `/srs-generator` | Smart SRS Generator | Converts client requests into structured SRS documents with bilingual (EN/AR) support |
+| `/contracts` | Contract-to-Actions | Contract extraction, risk scoring, deadline tracking, and suggested actions |
+| `/invoices` | Invoice Review | Invoice parsing, duplicate detection, extracted data, finance controls |
+| `/approvals` | Invoice Approvals | Multi-step approval chain workflow (PM → Finance → Director → CFO) |
+| `/scope-guard` | Scope Guard | Detects out-of-scope requests, generates change request documents (CR-XXXX) |
+| `/risks` | Risk Radar | Risk management with severity filtering, owner assignment, and mitigation tasks |
+| `/ask-docupilot` | AI Assistant | Chat interface with suggested queries, morning briefing, and data source visibility |
 
-- Invoices
-- Contracts
-- Business documents
+### Components
 
----
+- **Sidebar** — Full navigation with 8 routes, New Project shortcut, and AI assistant section
+- **Header** — Top bar with search, notifications, and user profile (NexaSoft Admin)
+- **Card** — Reusable wrapper card component
+- **MetricCard** — Stat card with value, icon, badge, and trend indicator
 
-### 2. AI Data Extraction
+### Design System
 
-The AI analyzes the document and extracts structured data.
+- Custom CSS design tokens (`src/styles/index.css`) — colors, spacing, typography, shadows, animations
+- Layout system (`src/styles/layout.css`) — sidebar, topbar, grid
+- Component styles (`src/styles/components.css`) — cards, buttons, forms, badges
 
-For invoices, it can extract:
+### API Route Stubs
 
-- Vendor name
-- Invoice number
-- Amount
-- Issue date
-- Due date
-- Payment status
-- Summary
+Four POST endpoints exist as integration placeholders (currently return mock responses):
 
-For contracts, it can extract:
-
-- Client or party name
-- Contract start date
-- Contract end date
-- Contract value
-- Important terms
-- Risk summary
-
----
-
-### 3. Smart Dashboard
-
-The dashboard displays:
-
-- Total unpaid invoices
-- Total outstanding amount
-- Overdue invoices
-- Contracts expiring soon
-- Recent uploaded documents
-- AI-generated business summary
+- `POST /api/ai/srs`
+- `POST /api/ai/contract`
+- `POST /api/ai/invoice`
+- `POST /api/ai/scope`
 
 ---
 
-### 4. Alerts System
+## Current Phase
 
-The platform provides simple business alerts such as:
+**Phase 2 — Backend & Database Setup**
 
-- Invoice overdue
-- Payment due soon
-- Contract expiring soon
-- Missing important document information
+The frontend prototype is mostly complete. Backend priorities for the next phase:
 
----
-
-### 5. AI Chat Assistant
-
-Users can ask business questions such as:
-
-- "How many unpaid invoices do I have?"
-- "Which contracts expire this month?"
-- "What payments are due this week?"
-- "Summarize my current business obligations."
-
-The assistant answers based on the saved business data.
+1. Database setup (Firestore or Supabase/PostgreSQL — TBD)
+2. Core data models and schema design
+3. Demo seed data for the NexaSoft / Al Waha Clinics scenario
+4. Next.js API routes or server actions
+5. Gemini Flash/Pro integration (replacing mock API stubs)
+6. Zod validation for structured AI JSON outputs
+7. Persisting AI outputs to the database
+8. Connecting dashboard cards and metrics to real stored data
 
 ---
 
 ## Tech Stack
 
-- Frontend: React
-- Styling: Tailwind CSS
-- Backend: Node.js / Express
-- Database: PostgreSQL
-- AI: OpenAI API or Gemini API
-- Hosting/Development: Replit
+| Layer | Technology |
+|---|---|
+| Framework | Next.js (App Router) |
+| UI Library | React 19 |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS 4 |
+| Icons | lucide-react, Font Awesome 6 |
+| AI (planned) | Gemini Flash / Pro |
+| Database (planned) | Firebase Firestore or Supabase/PostgreSQL |
+| Validation (planned) | Zod |
 
 ---
 
-## Project Scope
+## Planned Backend Architecture
 
-This project is designed as a 4-day MVP for an AI bootcamp competition.
-
-The goal is not to build a full business management system, but to demonstrate a focused AI-powered solution for managing invoices and contracts.
-
----
-
-## Future Improvements
-
-Planned features for future versions:
-
-- HR management
-- Payroll tracking
-- Real accounting integrations
-- Email reminders
-- Advanced workflow automation
-- Legal compliance checking
-- Full AI business manager dashboard
-- Integration with QuickBooks, Salesforce, and Gmail
+- **API layer:** Next.js API routes or server actions
+- **Database:** Firebase Firestore or Supabase/PostgreSQL (decision pending)
+- **AI engine:** Gemini Flash for fast extraction, Gemini Pro for complex analysis
+- **Validation:** Zod schemas to enforce structured JSON output from AI
+- **Storage:** Structured records per document type linked to projects and companies
 
 ---
 
-## Installation
+## Data Models
 
-Clone the repository:
+Planned collections / tables:
+
+| Model | Description |
+|---|---|
+| `companies` | Tenant companies using DocuPilot (e.g., NexaSoft) |
+| `projects` | Client projects under each company (e.g., Al Waha Clinics) |
+| `srs_outputs` | AI-generated SRS documents from client requests |
+| `contracts` | Uploaded contracts with extracted obligations, risks, and deadlines |
+| `invoices` | Invoices with extracted amounts, vendors, due dates, and duplicate flags |
+| `approvals` | Approval chains and status per invoice |
+| `risks` | Project risks with severity, owner, and mitigation tasks |
+| `client_requests` | Raw client messages or change requests submitted for analysis |
+| `ai_outputs` | Raw and structured AI responses linked to any document |
+
+---
+
+## MVP AI Features
+
+1. **Smart SRS Generator** — Takes a client request (text or voice) and generates a structured Software Requirements Specification with functional requirements, acceptance criteria, and effort estimates
+2. **Contract-to-Actions** — Analyzes a contract and extracts obligations, payment schedules, risk scores, and deadline alerts
+3. **Invoice-to-Approval** — Parses invoices, detects duplicates, extracts key data, and routes through an approval chain
+4. **Scope Guard** — Identifies out-of-scope requests from client messages and auto-generates a formal change request document
+5. **Risk Radar** — Aggregates risks across a project with severity levels, owners, and suggested mitigations
+6. **Dashboard Insights** — Surfaces key metrics, upcoming deadlines, and AI-recommended next actions across all active projects
+7. **Ask DocuPilot** *(optional/future)* — Conversational AI assistant that answers questions grounded in stored project data
+
+---
+
+## Development Roadmap
+
+| Phase | Description | Status |
+|---|---|---|
+| Phase 1 | Frontend / UI foundation | Mostly complete (~80%) |
+| Phase 2 | Backend setup, database, seed data | **Current step** |
+| Phase 3 | SRS Generator AI integration | Planned |
+| Phase 4 | Contract, invoice, and scope AI analysis | Planned |
+| Phase 5 | Dashboard data connection | Planned |
+| Phase 6 | Testing, fallback demo data, and pitch polish | Planned |
+
+---
+
+## Setup Instructions
+
+**Prerequisites:** Node.js 18+
 
 ```bash
-git clone https://github.com/your-username/ai-business-document-manager.git
-cd ai-business-document-manager
-```
+# Clone the repository
+git clone <your-fork-or-repository-url>
+cd DocuPilot
 
-Install dependencies:
-
-```bash
+# Install dependencies
 npm install
-```
 
-Create a `.env` file:
-
-```env
-DATABASE_URL=your_database_url
-OPENAI_API_KEY=your_openai_api_key
-```
-
-Start the development server:
-
-```bash
+# Start the development server
 npm run dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Database Tables
+```bash
+# Build for production
+npm run build
 
-Suggested basic tables:
+# Start production server
+npm start
 
-### users
-
-Stores user account information.
-
-### documents
-
-Stores uploaded document records.
-
-### invoices
-
-Stores extracted invoice data.
-
-### contracts
-
-Stores extracted contract data.
-
-### alerts
-
-Stores system-generated alerts.
+# Run linter
+npm run lint
+```
 
 ---
 
-## Example AI Extraction Output
+## Environment Variables
 
-```json
-{
-  "type": "invoice",
-  "vendor": "ABC Supplies",
-  "invoiceNumber": "INV-204",
-  "amount": 12500,
-  "issueDate": "2026-05-01",
-  "dueDate": "2026-05-15",
-  "status": "unpaid",
-  "summary": "Invoice for office equipment. Payment is due in 14 days."
-}
+Create a `.env.local` file in the project root. The following variables are planned for backend/AI integration and are not yet active:
+
+```env
+# AI (Gemini)
+GEMINI_API_KEY=
+
+# Database — choose one depending on final decision
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+DATABASE_URL=
+```
+
+No environment variables are required to run the current frontend prototype.
+
+---
+
+## Folder Structure
+
+```
+DocuPilot/
+├── public/                        # Static assets
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── ai/
+│   │   │       ├── contract/route.ts   # POST stub — Gemini integration pending
+│   │   │       ├── invoice/route.ts
+│   │   │       ├── scope/route.ts
+│   │   │       └── srs/route.ts
+│   │   ├── approvals/page.tsx
+│   │   ├── ask-docupilot/page.tsx
+│   │   ├── contracts/page.tsx
+│   │   ├── invoices/page.tsx
+│   │   ├── projects/page.tsx
+│   │   ├── risks/page.tsx
+│   │   ├── scope-guard/page.tsx
+│   │   ├── srs-generator/page.tsx
+│   │   ├── globals.css
+│   │   ├── layout.tsx              # Root layout — Sidebar, Header, metadata
+│   │   └── page.tsx                # Dashboard
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Card.tsx
+│   │   │   └── MetricCard.tsx
+│   │   └── layout/
+│   │       ├── Header.tsx
+│   │       └── Sidebar.tsx
+│   └── styles/
+│       ├── index.css               # Design tokens
+│       ├── layout.css              # Sidebar, topbar, grid
+│       └── components.css          # Cards, buttons, forms, badges
+├── AGENTS.md
+├── CLAUDE.md
+├── next.config.ts
+├── package.json
+├── postcss.config.mjs
+└── tsconfig.json
 ```
 
 ---
 
 ## Demo Scenario
 
-1. User logs into the platform.
-2. User uploads an invoice or contract.
-3. AI extracts the important information.
-4. The document appears in the dashboard.
-5. The system creates alerts for due dates or risks.
-6. User asks the AI assistant about invoices, contracts, or obligations.
+**NexaSoft** is building a **Clinic Booking Platform** for **Al Waha Clinics** (Project NEX-2024-082).
+
+DocuPilot is used to:
+
+1. Generate a full SRS from the client's initial Arabic-language request
+2. Analyze the project contract — extract payment obligations, risk scores, and deadline alerts
+3. Review and route an invoice from DesignPro Studio through a 4-step approval chain, catching a duplicate
+4. Flag an out-of-scope client request asking to add iOS/Android apps, and generate Change Request CR-2026-014
+5. Surface 4 active risks in the Risk Radar with severity levels and mitigation tasks
+6. Display all of this in the Dashboard as upcoming deadlines, health scores, and AI-recommended actions
 
 ---
 
-## Project Vision
+## Important Notes
 
-AI Business Document Manager is the first module of a larger AI-powered business operations platform.
-
-The long-term vision is to build an AI Business Manager that helps companies manage documents, employees, workflows, decisions, and operations from one intelligent dashboard.
-
----
-
-## Team
-
-Built for an AI Bootcamp Competition.
+- All data in the current prototype is static/mock — hardcoded directly in page components.
+- No authentication, database, or AI calls are active yet.
+- The API routes under `/api/ai/` are stubs that return placeholder responses.
+- **Ask DocuPilot** (RAG-style AI chat) should be treated as an optional feature, to be built only after the core MVP AI workflows are functional.
+- Backend and AI integration are the next major step.
 
 ---
 
 ## License
 
-This project is for educational and competition purposes.
-
-# DocuPilot Operational Hub UI
-
-A high-fidelity static prototype for the DocuPilot B2B SaaS platform, served using a Node.js Express server.
-
-## Features
-- Complete Neo-Dark SaaS Theme
-- 5 Core Views (Dashboard, Projects, Contracts, Approvals, Ask DocuPilot)
-- Vanilla HTML/CSS/JS (Zero frontend framework dependencies)
-
-## Setup Instructions
-
-1. **Prerequisites**: Ensure you have [Node.js](https://nodejs.org/) installed on your machine.
-2. **Install Dependencies**: Open your terminal in the root directory and run:
-   ```bash
-   npm install
-   ```
-3. **Start the Server**: Run the following command to boot up the Express server:
-   ```bash
-   npm start
-   ```
-4. **View the Application**: Open your web browser and navigate to [http://localhost:3000](http://localhost:3000).
-
-## Project Structure
-- `/` - Root directory containing all HTML views (e.g., `index.html`, `projects.html`) and the Node.js server (`server.js`).
-- `/css` - Contains the design system stylesheets (`index.css`, `layout.css`, `components.css`).
-- `/js` - Contains the client-side interaction script (`main.js`).
-
-## Troubleshooting
-- If you encounter an `EADDRINUSE` error, it means port 3000 is already being used. You can change the port by setting an environment variable (e.g., `set PORT=3001 && npm start` on Windows).
-- Make sure to run the server from the root directory (`a:\college\outside project\MM`). Do not execute `node js/main.js` as it is client-side code meant for the browser, not Node.js.
+Private project. All rights reserved.

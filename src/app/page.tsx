@@ -1,215 +1,404 @@
+'use client';
+import { useState, useCallback } from 'react';
 import Header from '@/components/layout/Header';
 import MetricCard from '@/components/common/MetricCard';
-import Card from '@/components/common/Card';
 import Link from 'next/link';
 
+type Period = 'today' | 'week' | 'month';
+type ToastType = 'success' | 'info' | 'warning' | 'error';
+
+const METRICS: Record<Period, { projects: number; invoices: number; approvals: number; risks: number }> = {
+  today: { projects: 12, invoices: 8,  approvals: 5,  risks: 3 },
+  week:  { projects: 12, invoices: 24, approvals: 17, risks: 6 },
+  month: { projects: 12, invoices: 61, approvals: 43, risks: 9 },
+};
+
+const PERIOD_LABELS: Record<Period, string> = {
+  today: 'Today',
+  week:  'This Week',
+  month: 'This Month',
+};
+
+const TOAST_ICONS: Record<ToastType, string> = {
+  success: 'fa-solid fa-circle-check',
+  info:    'fa-solid fa-circle-info',
+  warning: 'fa-solid fa-triangle-exclamation',
+  error:   'fa-solid fa-circle-xmark',
+};
+
+const UPCOMING_DEADLINES = [
+  { label: 'Invoice INV-2026-042 approval',   type: 'invoice',  daysLeft: 4,  icon: 'fa-solid fa-file-invoice',        color: 'var(--status-warning)',  bg: 'var(--status-warning-bg)',  href: '/invoices' },
+  { label: 'Clinic Booking Platform delivery', type: 'contract', daysLeft: 7,  icon: 'fa-solid fa-file-signature',      color: 'var(--status-danger)',   bg: 'var(--status-danger-bg)',   href: '/contracts' },
+  { label: 'Mobile app CR signature',          type: 'scope',   daysLeft: 12, icon: 'fa-solid fa-shield-halved',        color: 'var(--accent-primary)',  bg: 'rgba(37,99,235,0.08)',      href: '/scope-guard' },
+  { label: 'DesignPro risk escalation',        type: 'risk',    daysLeft: 18, icon: 'fa-solid fa-triangle-exclamation', color: 'var(--status-info)',     bg: 'var(--status-info-bg)',     href: '/risks' },
+];
+
 export default function DashboardPage() {
+  const [period, setPeriod] = useState<Period>('today');
+  const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
+
+  const showToast = useCallback((msg: string, type: ToastType = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 2800);
+  }, []);
+
+  const m = METRICS[period];
+
   return (
     <>
       <Header />
       <div className="page-container animate-fade-in">
+
+        {/* Page Header */}
         <div className="page-header">
           <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-xs)' }}>
+              <p className="page-label" style={{ margin: 0 }}>May 3, 2026</p>
+              <span className="demo-badge"><i className="fa-solid fa-flask"></i> Demo Mode</span>
+            </div>
             <h1 className="page-title">Operational Overview</h1>
-            <p className="page-subtitle">Welcome back, NexaSoft Admin. Here's what needs your attention today.</p>
+            <p className="page-subtitle">Welcome back, NexaSoft Admin. Here&apos;s what needs your attention.</p>
           </div>
+          <div className="page-header-actions">
+            <div className="seg-control">
+              {(['today', 'week', 'month'] as Period[]).map(p => (
+                <button key={p} className={`seg-btn${period === p ? ' active' : ''}`} onClick={() => setPeriod(p)}>
+                  {PERIOD_LABELS[p]}
+                </button>
+              ))}
+            </div>
+            <button className="btn btn-secondary" onClick={() => showToast('Generating report...', 'info')}>
+              <i className="fa-solid fa-download"></i> Export
+            </button>
+            <button className="btn btn-primary" onClick={() => showToast('Project created', 'success')}>
+              <i className="fa-solid fa-plus"></i> New Project
+            </button>
+          </div>
+        </div>
+
+        {/* Metric Cards */}
+        <div className="grid grid-cols-4" style={{ marginBottom: 'var(--spacing-xl)' }}>
+          <MetricCard
+            title="Active Projects"
+            value={m.projects}
+            icon="fa-solid fa-chart-line"
+            badgeText="+2 this week"
+            badgeType="success"
+            iconBgColor="rgba(37, 99, 235, 0.1)"
+            iconColor="var(--accent-primary)"
+            trend="2 new this week"
+            trendDir="up"
+          />
+          <MetricCard
+            title="Pending Invoices"
+            value={m.invoices}
+            icon="fa-solid fa-file-invoice"
+            badgeText="Needs Attention"
+            badgeType="warning"
+            iconBgColor="rgba(217, 119, 6, 0.1)"
+            iconColor="var(--status-warning)"
+            trend="3 overdue"
+            trendDir="down"
+          />
+          <MetricCard
+            title="Required Approvals"
+            value={m.approvals}
+            icon="fa-solid fa-clipboard-check"
+            badgeText={`${m.approvals} Pending`}
+            badgeType="info"
+            iconBgColor="rgba(2, 132, 199, 0.1)"
+            iconColor="var(--status-info)"
+            trend="Due today"
+            trendDir="neutral"
+          />
+          <MetricCard
+            title="High Risks"
+            value={m.risks}
+            icon="fa-solid fa-triangle-exclamation"
+            badgeText="Critical"
+            badgeType="danger"
+            iconBgColor="rgba(220, 38, 38, 0.1)"
+            iconColor="var(--status-danger)"
+            trend="2 unresolved"
+            trendDir="down"
+          />
         </div>
 
         <div className="layout-sidebar-right">
           {/* Left Column */}
-          <div className="flex-col flex gap-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
 
-            {/* Metric Cards */}
-            <div className="grid grid-cols-4 gap-4">
-              <MetricCard
-                title="Active Projects"
-                value={12}
-                icon="fa-solid fa-chart-line"
-                badgeText="+2 this week"
-                badgeType="success"
-                iconBgColor="rgba(99, 102, 241, 0.1)"
-              />
-              <MetricCard
-                title="Pending Invoices"
-                value={8}
-                icon="fa-solid fa-file-invoice"
-                badgeText="Attention"
-                badgeType="warning"
-                iconBgColor="rgba(245, 158, 11, 0.1)"
-                iconColor="var(--status-warning)"
-              />
-              <MetricCard
-                title="Required Approvals"
-                value={5}
-                icon="fa-solid fa-clipboard-check"
-                badgeText="5 Action Items"
-                badgeType="info"
-                iconBgColor="rgba(59, 130, 246, 0.1)"
-                iconColor="var(--status-info)"
-              />
-              <MetricCard
-                title="High Risks"
-                value={3}
-                icon="fa-solid fa-triangle-exclamation"
-                badgeText="Critical"
-                badgeType="danger"
-                iconBgColor="rgba(239, 68, 68, 0.1)"
-                iconColor="var(--status-danger)"
-              />
-            </div>
-
-            {/* Priorities */}
-            <Card>
+            {/* Today's Priorities */}
+            <div className="card">
               <div className="card-header">
                 <h2 className="card-title">
-                  <i className="fa-regular fa-calendar-check text-accent mr-2"></i>
-                  Today's Priorities
+                  <i className="fa-regular fa-calendar-check text-accent"></i>
+                  Today&apos;s Priorities
                 </h2>
-                <Link href="/projects" className="text-sm font-medium">View All Task Queue</Link>
+                <Link href="/projects" className="card-link">View All <i className="fa-solid fa-arrow-right text-xs"></i></Link>
               </div>
 
-              <div className="list-group mt-4">
-                <div className="list-item items-center">
-                  <div className="notification-dot" style={{ position: 'static', border: 'none', backgroundColor: 'var(--status-warning)' }}></div>
-                  <div className="list-item-content">
-                    <div className="list-item-title">Invoice from DesignPro Studio needs approval.</div>
-                    <div className="list-item-meta">Due in 4 hours • Amount: $12,450.00</div>
+              <div className="list-group" style={{ marginTop: 'var(--spacing-sm)' }}>
+                <div className="list-item" style={{ alignItems: 'center' }}>
+                  <div className="priority-dot" style={{ background: 'var(--status-warning)' }}></div>
+                  <div className="list-item-icon" style={{ background: 'var(--status-warning-bg)', color: 'var(--status-warning)' }}>
+                    <i className="fa-solid fa-file-invoice-dollar"></i>
                   </div>
-                  <Link href="/approvals" className="btn btn-secondary btn-sm">Review</Link>
+                  <div className="list-item-content">
+                    <div className="list-item-title">Invoice from DesignPro Studio needs approval</div>
+                    <div className="list-item-meta">Due in 4 hours &middot; Amount: <strong>$12,450.00</strong></div>
+                  </div>
+                  <Link href="/approvals" className="btn btn-secondary btn-sm" style={{ flexShrink: 0 }}>Review</Link>
                 </div>
 
-                <div className="list-item items-center">
-                  <div className="notification-dot" style={{ position: 'static', border: 'none', backgroundColor: 'var(--status-danger)' }}></div>
-                  <div className="list-item-content">
-                    <div className="list-item-title">Clinic Booking Platform has a high delay risk.</div>
-                    <div className="list-item-meta">Dependency: External API integration pending client credentials.</div>
+                <div className="list-item" style={{ alignItems: 'center' }}>
+                  <div className="priority-dot" style={{ background: 'var(--status-danger)' }}></div>
+                  <div className="list-item-icon" style={{ background: 'var(--status-danger-bg)', color: 'var(--status-danger)' }}>
+                    <i className="fa-solid fa-circle-exclamation"></i>
                   </div>
-                  <button className="btn btn-secondary btn-sm">Mitigate</button>
+                  <div className="list-item-content">
+                    <div className="list-item-title">Clinic Booking Platform has a high delay risk</div>
+                    <div className="list-item-meta">Dependency: External API integration pending client credentials</div>
+                  </div>
+                  <Link href="/risks" className="btn btn-secondary btn-sm" style={{ flexShrink: 0 }}>Mitigate</Link>
                 </div>
 
-                <div className="list-item items-center">
-                  <div className="notification-dot" style={{ position: 'static', border: 'none', backgroundColor: 'var(--accent-primary)' }}></div>
-                  <div className="list-item-content">
-                    <div className="list-item-title">Mobile app request is out of scope and needs change request.</div>
-                    <div className="list-item-meta">Detected via Scope Guard AI analysis of SRS vs Email threads.</div>
+                <div className="list-item" style={{ alignItems: 'center' }}>
+                  <div className="priority-dot" style={{ background: 'var(--accent-primary)' }}></div>
+                  <div className="list-item-icon" style={{ background: 'rgba(37, 99, 235, 0.1)', color: 'var(--accent-primary)' }}>
+                    <i className="fa-solid fa-shield-halved"></i>
                   </div>
-                  <button className="btn btn-secondary btn-sm">Generate CR</button>
+                  <div className="list-item-content">
+                    <div className="list-item-title">Mobile app request is out of scope &mdash; needs change request</div>
+                    <div className="list-item-meta">Detected via Scope Guard AI analysis of SRS vs Email threads</div>
+                  </div>
+                  <Link href="/scope-guard" className="btn btn-secondary btn-sm" style={{ flexShrink: 0 }}>Generate CR</Link>
                 </div>
               </div>
-            </Card>
+            </div>
 
-            {/* Project Health Bar Chart (CSS Mock) */}
-            <Card>
+            {/* Project Health Chart */}
+            <div className="card">
               <div className="card-header">
-                <h2 className="card-title">Project Health</h2>
-                <div className="flex gap-4">
-                  <span className="text-xs flex items-center">
-                    <span className="inline-block w-2 h-2 rounded-full bg-accent mr-1" style={{ background: 'var(--accent-primary)' }}></span> Progress
+                <h2 className="card-title">
+                  <i className="fa-solid fa-chart-bar text-accent"></i>
+                  {period === 'today' ? 'Hourly Activity' : period === 'week' ? 'Weekly Project Health' : 'Monthly Trend'}
+                </h2>
+                <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'var(--accent-primary)', display: 'inline-block' }}></span>
+                    Progress
                   </span>
-                  <span className="text-xs flex items-center">
-                    <span className="inline-block w-2 h-2 rounded-full mr-1" style={{ background: 'var(--bg-surface-elevated)' }}></span> Benchmark
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'var(--bg-surface-elevated)', display: 'inline-block', border: '1px solid var(--border-strong)' }}></span>
+                    Benchmark
                   </span>
                 </div>
               </div>
 
-              <div className="h-48 flex items-end justify-between pt-8 gap-2">
-                {/* Bars Mockup */}
-                {[
-                  { day: 'Mon', p: '80%', b: '60%' },
-                  { day: 'Tue', p: '75%', b: '65%' },
-                  { day: 'Wed', p: '90%', b: '85%' },
-                  { day: 'Thu', p: '80%', b: '75%' },
-                  { day: 'Fri', p: '95%', b: '95%' },
-                  { day: 'Sat', p: '50%', b: '40%' },
-                  { day: 'Sun', p: '55%', b: '45%' },
-                ].map((item) => (
-                  <div key={item.day} className="w-[12%] relative rounded-t" style={{ height: item.b, background: 'var(--bg-surface-elevated)' }}>
-                    <div className="absolute bottom-0 w-full rounded-t" style={{ height: item.p, background: 'var(--accent-primary)' }}></div>
-                    <div className="absolute -bottom-6 w-full text-center text-xs text-muted">{item.day}</div>
+              <div style={{ height: '160px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '8px', padding: '0 4px', marginTop: 'var(--spacing-md)' }}>
+                {(period === 'today'
+                  ? [{ day: '9am', p: 60, b: 45 }, { day: '11am', p: 75, b: 60 }, { day: '1pm', p: 55, b: 50 }, { day: '3pm', p: 90, b: 70 }, { day: '5pm', p: 85, b: 75 }, { day: '7pm', p: 40, b: 35 }]
+                  : period === 'week'
+                  ? [{ day: 'Mon', p: 80, b: 60 }, { day: 'Tue', p: 75, b: 65 }, { day: 'Wed', p: 90, b: 85 }, { day: 'Thu', p: 80, b: 75 }, { day: 'Fri', p: 95, b: 90 }, { day: 'Sat', p: 50, b: 40 }, { day: 'Sun', p: 55, b: 45 }]
+                  : [{ day: 'W1', p: 70, b: 60 }, { day: 'W2', p: 80, b: 72 }, { day: 'W3', p: 75, b: 68 }, { day: 'W4', p: 88, b: 80 }]
+                ).map(item => (
+                  <div key={item.day} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
+                    <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'flex-end', gap: '2px' }}>
+                      <div style={{ flex: 1, height: `${item.b}%`, background: 'var(--bg-surface-elevated)', borderRadius: '4px 4px 0 0', border: '1px solid var(--border-subtle)' }}></div>
+                      <div style={{ flex: 1, height: `${item.p}%`, background: 'var(--accent-primary)', borderRadius: '4px 4px 0 0', opacity: 0.9 }}></div>
+                    </div>
+                    <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '6px', fontWeight: 500 }}>{item.day}</div>
                   </div>
                 ))}
               </div>
-            </Card>
-          </div>
-
-          {/* Right Column */}
-          <div className="flex-col flex gap-6">
-
-            {/* Smart Alerts */}
-            <Card style={{ background: 'linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%)' }}>
-              <div className="card-header">
-                <h2 className="card-title"><i className="fa-solid fa-bolt text-accent mr-2"></i> Smart Alerts</h2>
-              </div>
-
-              <div className="list-group">
-                <Card style={{ padding: 'var(--spacing-md)', background: 'var(--bg-main)' }}>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-xs font-bold text-accent">CONTRACT DRIFT</span>
-                    <span className="text-xs text-muted">2m ago</span>
-                  </div>
-                  <p className="text-sm">Clause 4.2 in 'SRS_v2.pdf' contradicts the original Master Service Agreement regarding liability caps.</p>
-                </Card>
-
-                <Card style={{ padding: 'var(--spacing-md)', background: 'var(--bg-main)' }}>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-xs font-bold text-success" style={{ color: 'var(--status-success)' }}>EFFICIENCY TIP</span>
-                    <span className="text-xs text-muted">1h ago</span>
-                  </div>
-                  <p className="text-sm">AI suggests bundling Invoice #884 and #885 for 'Global Logistics' to reduce processing fees.</p>
-                </Card>
-              </div>
-
-              <Link href="/ask-docupilot" className="btn btn-secondary w-full mt-4 text-center block">
-                Launch AI Assistant
-              </Link>
-            </Card>
+            </div>
 
             {/* Recent Activity */}
-            <Card>
+            <div className="card">
               <div className="card-header">
-                <h2 className="card-title"><i className="fa-solid fa-clock-rotate-left text-muted mr-2"></i> Recent Activity</h2>
+                <h2 className="card-title">
+                  <i className="fa-solid fa-clock-rotate-left" style={{ color: 'var(--text-muted)' }}></i>
+                  Recent Activity
+                </h2>
               </div>
 
-              <div className="list-group mt-4">
-                <div className="list-item border-none pb-0">
-                  <div className="list-item-icon w-6 h-6 text-[10px]" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)' }}>
+              <div className="list-group" style={{ marginTop: 'var(--spacing-sm)' }}>
+                <div className="list-item">
+                  <div className="list-item-icon" style={{ background: 'rgba(220, 38, 38, 0.08)', color: '#DC2626' }}>
                     <i className="fa-solid fa-file-pdf"></i>
                   </div>
                   <div className="list-item-content">
-                    <div className="text-sm font-medium">Sarah M. <span className="text-secondary font-normal">uploaded SRS Final</span></div>
-                    <div className="text-xs text-muted">Project: Quantum Leap • 45m ago</div>
+                    <div className="list-item-title"><strong>Sarah M.</strong> <span className="font-normal text-secondary">uploaded SRS Final</span></div>
+                    <div className="list-item-meta">Project: Quantum Leap &middot; 45 min ago</div>
                   </div>
                 </div>
-
-                <div className="list-item border-none pb-0">
-                  <div className="list-item-icon w-6 h-6 text-[10px]" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--status-success)' }}>
+                <div className="list-item">
+                  <div className="list-item-icon" style={{ background: 'var(--status-success-bg)', color: 'var(--status-success)' }}>
                     <i className="fa-solid fa-check"></i>
                   </div>
                   <div className="list-item-content">
-                    <div className="text-sm font-medium">Contract <a href="#">#4492</a> <span className="text-secondary font-normal">approved</span></div>
-                    <div className="text-xs text-muted">Auto-filed to secure cloud vault • 2h ago</div>
+                    <div className="list-item-title">Contract <a href="#">#4492</a> <span className="font-normal text-secondary">approved</span></div>
+                    <div className="list-item-meta">Auto-filed to secure cloud vault &middot; 2 hours ago</div>
                   </div>
                 </div>
-
-                <div className="list-item border-none pb-0">
-                  <div className="list-item-icon w-6 h-6 text-[10px]" style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--status-info)' }}>
+                <div className="list-item">
+                  <div className="list-item-icon" style={{ background: 'var(--status-info-bg)', color: 'var(--status-info)' }}>
                     <i className="fa-solid fa-user-plus"></i>
                   </div>
                   <div className="list-item-content">
-                    <div className="text-sm font-medium">James Wilson <span className="text-secondary font-normal">joined the hub</span></div>
-                    <div className="text-xs text-muted">Access level: Project Manager • 5h ago</div>
+                    <div className="list-item-title"><strong>James Wilson</strong> <span className="font-normal text-secondary">joined the hub</span></div>
+                    <div className="list-item-meta">Access level: Project Manager &middot; 5 hours ago</div>
                   </div>
                 </div>
               </div>
 
-              <button className="btn btn-ghost w-full mt-6">
-                View Full Audit Log
+              <button className="btn btn-ghost" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Audit log exported', 'info')}>
+                View Full Audit Log <i className="fa-solid fa-arrow-right text-xs"></i>
               </button>
-            </Card>
+            </div>
+
+          </div>
+
+          {/* Right Column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+
+            {/* Smart Alerts */}
+            <div className="card card-ai">
+              <div className="card-header">
+                <h2 className="card-title">
+                  <i className="fa-solid fa-bolt text-accent"></i>
+                  Smart Alerts
+                </h2>
+                <span className="badge badge-accent">Live</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                <div className="alert-card" style={{ borderLeft: '3px solid var(--accent-primary)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'center' }}>
+                    <span className="alert-label" style={{ color: 'var(--accent-primary)' }}>Contract Drift</span>
+                    <span className="alert-time">2m ago</span>
+                  </div>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    Clause 4.2 in <strong>SRS_v2.pdf</strong> contradicts the Master Service Agreement on liability caps.
+                  </p>
+                  <Link href="/contracts" className="text-xs font-medium text-accent" style={{ display: 'inline-block', marginTop: '8px' }}>
+                    Review Contract <i className="fa-solid fa-arrow-right text-xs"></i>
+                  </Link>
+                </div>
+
+                <div className="alert-card" style={{ borderLeft: '3px solid var(--status-success)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'center' }}>
+                    <span className="alert-label" style={{ color: 'var(--status-success)' }}>Efficiency Tip</span>
+                    <span className="alert-time">1h ago</span>
+                  </div>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    AI suggests bundling Invoice <strong>#884</strong> and <strong>#885</strong> for Global Logistics to reduce processing fees.
+                  </p>
+                  <Link href="/invoices" className="text-xs font-medium text-accent" style={{ display: 'inline-block', marginTop: '8px' }}>
+                    View Invoices <i className="fa-solid fa-arrow-right text-xs"></i>
+                  </Link>
+                </div>
+              </div>
+
+              <Link href="/ask-docupilot" className="btn btn-primary" style={{ width: '100%', marginTop: 'var(--spacing-lg)', justifyContent: 'center' }}>
+                <i className="fa-solid fa-robot"></i>
+                Launch AI Assistant
+              </Link>
+            </div>
+
+            {/* Upcoming Deadlines */}
+            <div className="card">
+              <div className="card-header">
+                <h2 className="card-title">
+                  <i className="fa-regular fa-calendar-exclamation" style={{ color: 'var(--status-warning)' }}></i>
+                  Upcoming Deadlines
+                </h2>
+                <span className="badge badge-warning">4 This Week</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {UPCOMING_DEADLINES.map(dl => (
+                  <Link key={dl.label} href={dl.href} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', padding: '8px var(--spacing-sm)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', background: 'var(--bg-main)', textDecoration: 'none', transition: 'box-shadow var(--transition-fast)' }}>
+                    <div className="list-item-icon" style={{ background: dl.bg, color: dl.color, width: '32px', height: '32px', flexShrink: 0, fontSize: '0.875rem' }}>
+                      <i className={dl.icon}></i>
+                    </div>
+                    <span className="text-sm font-medium" style={{ flex: 1, color: 'var(--text-primary)', lineHeight: 1.3 }}>{dl.label}</span>
+                    <span className={`deadline-badge ${dl.daysLeft <= 5 ? 'deadline-badge-urgent' : 'deadline-badge-upcoming'}`}>
+                      <i className="fa-regular fa-clock"></i> {dl.daysLeft}d
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Next Best Actions */}
+            <div className="card">
+              <div className="card-header">
+                <h2 className="card-title">
+                  <i className="fa-solid fa-ranking-star text-accent"></i>
+                  Next Best Actions
+                </h2>
+                <span className="badge badge-success">AI Ranked</span>
+              </div>
+              <div>
+                {[
+                  { title: 'Approve Invoice #INV-2024-0047 before deadline', meta: 'Saves $1,245 in late fees · Due in 4h', badge: 'Urgent', badgeColor: 'var(--status-danger)' },
+                  { title: 'Assign a risk owner for the API delay on Clinic Booking', meta: 'Reduces probability from 68% → 30%', badge: 'High Impact', badgeColor: 'var(--status-warning)' },
+                  { title: 'Generate change request for out-of-scope mobile app', meta: 'Protects $18,000 in potential extra work', badge: 'Revenue', badgeColor: 'var(--status-success)' },
+                  { title: 'Run SRS generator on pending OMNIMOBILE request', meta: '3-day kickstart advantage · Client waiting', badge: 'Quick Win', badgeColor: 'var(--accent-primary)' },
+                ].map((action, i) => (
+                  <div key={i} className="next-action-item">
+                    <div className="next-action-num">{i + 1}</div>
+                    <div style={{ flex: 1 }}>
+                      <div className="next-action-title">{action.title}</div>
+                      <div className="next-action-meta">{action.meta}</div>
+                    </div>
+                    <span style={{ background: action.badgeColor + '18', color: action.badgeColor, fontSize: '0.625rem', fontWeight: 700, padding: '2px 7px', borderRadius: 'var(--radius-full)', border: `1px solid ${action.badgeColor}30`, whiteSpace: 'nowrap', flexShrink: 0 }}>{action.badge}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="card">
+              <div className="card-header">
+                <h2 className="card-title">
+                  <i className="fa-solid fa-bolt" style={{ color: 'var(--text-muted)' }}></i>
+                  Quick Actions
+                </h2>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {[
+                  { icon: 'fa-solid fa-wand-magic-sparkles', label: 'Generate SRS', sub: 'From client request', href: '/srs-generator', color: 'var(--accent-primary)', bg: 'rgba(37, 99, 235, 0.1)' },
+                  { icon: 'fa-solid fa-file-signature', label: 'Analyze Contract', sub: 'Extract obligations', href: '/contracts', color: 'var(--status-success)', bg: 'rgba(5, 150, 105, 0.1)' },
+                  { icon: 'fa-solid fa-shield-halved', label: 'Check Scope', sub: 'Detect scope creep', href: '/scope-guard', color: 'var(--status-info)', bg: 'rgba(2, 132, 199, 0.1)' },
+                  { icon: 'fa-solid fa-triangle-exclamation', label: 'Review Risks', sub: 'Open risk radar', href: '/risks', color: 'var(--status-warning)', bg: 'rgba(217, 119, 6, 0.1)' },
+                ].map(item => (
+                  <Link key={item.href} href={item.href} className="action-suggest">
+                    <div className="action-icon" style={{ background: item.bg, color: item.color }}>
+                      <i className={item.icon}></i>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div className="font-medium text-sm">{item.label}</div>
+                      <div className="text-xs text-muted">{item.sub}</div>
+                    </div>
+                    <i className="fa-solid fa-chevron-right text-muted" style={{ fontSize: '0.6875rem' }}></i>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
           </div>
         </div>
       </div>
+
+      {toast && (
+        <div className={`toast toast-${toast.type}`}>
+          <i className={TOAST_ICONS[toast.type]}></i>
+          {toast.msg}
+        </div>
+      )}
     </>
   );
 }
