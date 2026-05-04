@@ -71,7 +71,7 @@
     "superpowers@superpowers-dev": true
   },
   "hooks": {
-    "postToolUse": [
+    "PostToolUse": [
       {
         "matcher": "Write|Edit",
         "hooks": [

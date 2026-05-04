@@ -175,19 +175,29 @@ npm run lint
 
 ## Environment Variables
 
-Create a `.env.local` file in the project root. The following variables are planned for backend/AI integration and are not yet active:
+Copy `.env.example` to `.env.local` and fill in your own keys:
 
-```env
-# AI (Gemini)
-GEMINI_API_KEY=
-
-# Database — choose one depending on final decision
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-DATABASE_URL=
+```powershell
+# PowerShell
+Copy-Item .env.example .env.local
 ```
 
-No environment variables are required to run the current frontend prototype.
+```bash
+# macOS / Linux
+cp .env.example .env.local
+```
+
+Required variables for AI and database features:
+
+| Variable | Purpose |
+|---|---|
+| `GEMINI_API_KEY` | Gemini AI (contract analysis, SRS generation) |
+| `SUPABASE_URL` | Supabase project URL — server-side only |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase admin key — server-side only, never expose publicly |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase URL for future client-side use |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase public anon key for future client-side use |
+
+`.env.local` is listed in `.gitignore` — it will never be committed. Do not add real keys to `.env.example`.
 
 ---
 

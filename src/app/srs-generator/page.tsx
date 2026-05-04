@@ -40,16 +40,16 @@ const FR_DATA: Record<DetailLevel, { id: string; title: string; desc: string }[]
 };
 
 const SECTION_LABELS: Record<string, Record<Language, string>> = {
-  projectBrief:      { english: 'Project Brief', arabic: 'ملخص المشروع', bilingual: 'Project Brief / ملخص المشروع' },
-  userRoles:         { english: 'User Roles', arabic: 'أدوار المستخدمين', bilingual: 'User Roles / أدوار المستخدمين' },
-  mainFeatures:      { english: 'Main Features', arabic: 'الميزات الرئيسية', bilingual: 'Main Features / الميزات الرئيسية' },
-  functionalReqs:    { english: 'Functional Requirements', arabic: 'المتطلبات الوظيفية', bilingual: 'Functional Requirements / المتطلبات الوظيفية' },
+  projectBrief: { english: 'Project Brief', arabic: 'ملخص المشروع', bilingual: 'Project Brief / ملخص المشروع' },
+  userRoles: { english: 'User Roles', arabic: 'أدوار المستخدمين', bilingual: 'User Roles / أدوار المستخدمين' },
+  mainFeatures: { english: 'Main Features', arabic: 'الميزات الرئيسية', bilingual: 'Main Features / الميزات الرئيسية' },
+  functionalReqs: { english: 'Functional Requirements', arabic: 'المتطلبات الوظيفية', bilingual: 'Functional Requirements / المتطلبات الوظيفية' },
   nonFunctionalReqs: { english: 'Non-Functional Requirements', arabic: 'المتطلبات غير الوظيفية', bilingual: 'Non-Functional Requirements / المتطلبات غير الوظيفية' },
-  missingQuestions:  { english: 'AI Identified Gaps', arabic: 'ثغرات مكتشفة بالذكاء الاصطناعي', bilingual: 'AI Identified Gaps / الثغرات المكتشفة' },
-  mvpScope:          { english: 'MVP Scope Definition', arabic: 'تعريف نطاق MVP', bilingual: 'MVP Scope / تعريف نطاق MVP' },
-  assumptions:       { english: 'Assumptions & Constraints', arabic: 'الافتراضات والقيود', bilingual: 'Assumptions / الافتراضات' },
-  acceptanceCriteria:{ english: 'Acceptance Criteria', arabic: 'معايير القبول', bilingual: 'Acceptance Criteria / معايير القبول' },
-  userStories:       { english: 'User Stories', arabic: 'قصص المستخدم', bilingual: 'User Stories / قصص المستخدم' },
+  missingQuestions: { english: 'AI Identified Gaps', arabic: 'ثغرات مكتشفة بالذكاء الاصطناعي', bilingual: 'AI Identified Gaps / الثغرات المكتشفة' },
+  mvpScope: { english: 'MVP Scope Definition', arabic: 'تعريف نطاق MVP', bilingual: 'MVP Scope / تعريف نطاق MVP' },
+  assumptions: { english: 'Assumptions & Constraints', arabic: 'الافتراضات والقيود', bilingual: 'Assumptions / الافتراضات' },
+  acceptanceCriteria: { english: 'Acceptance Criteria', arabic: 'معايير القبول', bilingual: 'Acceptance Criteria / معايير القبول' },
+  userStories: { english: 'User Stories', arabic: 'قصص المستخدم', bilingual: 'User Stories / قصص المستخدم' },
 };
 
 function t(key: string, lang: Language): string {
@@ -58,17 +58,17 @@ function t(key: string, lang: Language): string {
 
 const TOAST_ICONS: Record<ToastType, string> = {
   success: 'fa-solid fa-circle-check',
-  info:    'fa-solid fa-circle-info',
+  info: 'fa-solid fa-circle-info',
   warning: 'fa-solid fa-triangle-exclamation',
-  error:   'fa-solid fa-circle-xmark',
+  error: 'fa-solid fa-circle-xmark',
 };
 
 const TECH_STACKS: Record<string, { frontend: string; backend: string; db: string; infra: string }> = {
-  'web-app':    { frontend: 'React / Next.js',    backend: 'Node.js / Express',      db: 'PostgreSQL',           infra: 'Vercel / Railway' },
-  'mobile':     { frontend: 'React Native',        backend: 'Node.js / Fastify',       db: 'SQLite + Cloud Sync',  infra: 'Expo + AWS Amplify' },
-  'saas':       { frontend: 'React / Next.js',    backend: 'Nest.js + Microservices', db: 'PostgreSQL + Redis',   infra: 'AWS ECS / RDS' },
-  'api':        { frontend: 'OpenAPI / Swagger',  backend: 'FastAPI (Python)',         db: 'PostgreSQL + MongoDB', infra: 'Docker + Kubernetes' },
-  'enterprise': { frontend: 'React / TypeScript', backend: 'Java Spring Boot',        db: 'Oracle / MSSQL',       infra: 'Azure AKS' },
+  'web-app': { frontend: 'React / Next.js', backend: 'Node.js / Express', db: 'PostgreSQL', infra: 'Vercel / Railway' },
+  'mobile': { frontend: 'React Native', backend: 'Node.js / Fastify', db: 'SQLite + Cloud Sync', infra: 'Expo + AWS Amplify' },
+  'saas': { frontend: 'React / Next.js', backend: 'Nest.js + Microservices', db: 'PostgreSQL + Redis', infra: 'AWS ECS / RDS' },
+  'api': { frontend: 'OpenAPI / Swagger', backend: 'FastAPI (Python)', db: 'PostgreSQL + MongoDB', infra: 'Docker + Kubernetes' },
+  'enterprise': { frontend: 'React / TypeScript', backend: 'Java Spring Boot', db: 'Oracle / MSSQL', infra: 'Azure AKS' },
 };
 
 function computeComplexity(dl: DetailLevel, pt: string) {
@@ -77,7 +77,7 @@ function computeComplexity(dl: DetailLevel, pt: string) {
   const score = Math.round(Math.min(base * (mult[pt] ?? 1), 95));
   const label = score < 40 ? 'Low' : score < 65 ? 'Moderate' : score < 80 ? 'High' : 'Very High';
   const weeks = score < 40 ? '4–8' : score < 65 ? '8–16' : score < 80 ? '16–28' : '28+';
-  const team  = score < 40 ? '2–3 devs' : score < 65 ? '3–5 devs' : score < 80 ? '5–8 devs' : '8+ devs';
+  const team = score < 40 ? '2–3 devs' : score < 65 ? '3–5 devs' : score < 80 ? '5–8 devs' : '8+ devs';
   return { score, label, weeks, team };
 }
 
@@ -127,7 +127,11 @@ export default function SRSGeneratorPage() {
       if (!res.ok || !result.success) throw new Error(result.error || 'Generation failed');
       setAiResult(result.data);
       setIsGenerated(true);
-      showToast('SRS generated successfully', 'success');
+      if (result.usedFallback) {
+        showToast('Gemini was temporarily unavailable — demo SRS loaded', 'warning');
+      } else {
+        showToast('SRS generated successfully', 'success');
+      }
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Failed to generate SRS', 'error');
     } finally {
@@ -579,10 +583,10 @@ export default function SRSGeneratorPage() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
                   {([
-                    { layer: 'Frontend',     value: techStack.frontend, icon: 'fa-solid fa-display',      color: 'var(--accent-primary)', bg: 'rgba(37,99,235,0.08)' },
-                    { layer: 'Backend',      value: techStack.backend,  icon: 'fa-solid fa-server',       color: 'var(--status-success)', bg: 'var(--status-success-bg)' },
-                    { layer: 'Database',     value: techStack.db,       icon: 'fa-solid fa-database',     color: 'var(--status-warning)', bg: 'var(--status-warning-bg)' },
-                    { layer: 'Infra/Deploy', value: techStack.infra,    icon: 'fa-solid fa-cloud-arrow-up', color: 'var(--status-info)',    bg: 'var(--status-info-bg)' },
+                    { layer: 'Frontend', value: techStack.frontend, icon: 'fa-solid fa-display', color: 'var(--accent-primary)', bg: 'rgba(37,99,235,0.08)' },
+                    { layer: 'Backend', value: techStack.backend, icon: 'fa-solid fa-server', color: 'var(--status-success)', bg: 'var(--status-success-bg)' },
+                    { layer: 'Database', value: techStack.db, icon: 'fa-solid fa-database', color: 'var(--status-warning)', bg: 'var(--status-warning-bg)' },
+                    { layer: 'Infra/Deploy', value: techStack.infra, icon: 'fa-solid fa-cloud-arrow-up', color: 'var(--status-info)', bg: 'var(--status-info-bg)' },
                   ] as { layer: string; value: string; icon: string; color: string; bg: string }[]).map(row => (
                     <div key={row.layer} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', padding: '8px var(--spacing-md)', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                       <div className="list-item-icon" style={{ background: row.bg, color: row.color, width: '32px', height: '32px', flexShrink: 0, fontSize: '0.875rem' }}>
