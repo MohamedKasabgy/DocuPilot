@@ -1,12 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error("Missing GEMINI_API_KEY in environment variables");
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+  throw new Error("Missing environment variable: GEMINI_API_KEY");
 }
 
-export const gemini = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+export const gemini = new GoogleGenAI({ apiKey });
 
-export const GEMINI_FAST_MODEL =
-  process.env.GEMINI_FAST_MODEL || "gemini-2.5-flash";
+// Fast model for chat / Q&A responses
+export const GEMINI_FAST_MODEL = "gemini-2.5-flash";
+
+// Embedding model for vector search
+export const GEMINI_EMBEDDING_MODEL = "gemini-embedding-001";
