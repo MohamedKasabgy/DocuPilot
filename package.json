@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "lucide-react": "^0.300.0",
+    "@google/genai": "^1.51.0",
+    "@supabase/supabase-js": "^2.105.1",
     "next": "15.0.0",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "zod": "^4.4.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
