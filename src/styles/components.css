@@ -443,6 +443,67 @@
 
 .data-table tr:hover td { background-color: rgba(15, 23, 42, 0.025); }
 
+/* ── Mobile Task Cards ── */
+.task-cards-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.task-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  margin-bottom: 2px;
+}
+
+.task-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 0;
+}
+
+.task-card-title.done {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.task-card-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-sm);
+}
+
+.task-card-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.task-card-due {
+  margin-left: auto;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Task card/table responsive visibility */
+@media (min-width: 769px) {
+  .task-cards-mobile { display: none; }
+}
+@media (max-width: 768px) {
+  .task-table-desktop { display: none; }
+}
+
 /* ── AI Insight Card ── */
 .ai-insight {
   background: linear-gradient(135deg, var(--accent-ai-bg), rgba(79, 70, 229, 0.03));
@@ -929,4 +990,73 @@
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
+}
+
+/* ── Responsive Components ── */
+
+@media (max-width: 768px) {
+  /* Segmented controls: allow scroll */
+  .seg-control {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .seg-control::-webkit-scrollbar { display: none; }
+
+  /* Prompt chips: scroll horizontally */
+  .prompt-chips {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: var(--spacing-xs);
+  }
+  .prompt-chips::-webkit-scrollbar { display: none; }
+
+  /* Approval chain: compact */
+  .approval-chain { gap: 0; }
+  .approval-step-dot { width: 24px; height: 24px; font-size: 0.625rem; }
+  .approval-step-label { font-size: 0.625rem; padding: 0 2px; }
+
+  /* Risk sub-bars: full-width track */
+  .risk-sub-bar { flex-wrap: wrap; gap: var(--spacing-xs); }
+  .risk-sub-bar-track { width: 100%; order: 3; }
+  .risk-sub-bar-label { flex: 1; }
+
+  /* Toggle rows */
+  .toggle-row { gap: var(--spacing-xs); }
+
+  /* Tables: horizontal scroll wrapper */
+  .data-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table th,
+  .data-table td { white-space: nowrap; padding-right: var(--spacing-md); }
+
+  /* Segmented controls: ensure they don't overflow their parent */
+  .seg-control { max-width: 100%; }
+
+  /* Extraction cards: full width */
+  .extraction-card { min-width: 0; }
+}
+
+@media (max-width: 480px) {
+  /* Badges: slightly bigger for touch */
+  .badge { padding: 0.25rem 0.625rem; font-size: 0.625rem; }
+
+  /* Buttons */
+  .btn { -webkit-tap-highlight-color: transparent; }
+
+  /* Cards */
+  .card-header { flex-wrap: wrap; }
+
+  /* Alert cards */
+  .alert-card { padding: var(--spacing-sm); }
+
+  /* AI insight */
+  .ai-insight { padding: var(--spacing-md); }
+
+  /* Segmented controls: smaller buttons on phones */
+  .seg-btn { padding: 0.25rem 0.625rem; font-size: 0.75rem; }
+
+  /* Card links: allow wrapping */
+  .card-link { white-space: normal; }
 }

@@ -97,7 +97,7 @@ export default function ScopeGuardPage() {
         </div>
 
         {/* Main Analysis Grid */}
-        <div className="grid grid-cols-2" style={{ marginBottom: 'var(--spacing-lg)' }}>
+        <div className="grid grid-cols-2 section-mb">
 
           {/* Incoming Request */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -281,7 +281,7 @@ export default function ScopeGuardPage() {
                 </div>
                 <div className="cr-document-row">
                   <span className="cr-document-key">Signature Line</span>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
+                  <div className="grid-2col">
                     {['Client Signature', 'PM Signature'].map(sig => (
                       <div key={sig} style={{ borderBottom: '1px dashed var(--border-strong)', paddingBottom: '4px' }}>
                         <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginTop: '24px' }}>{sig}</div>

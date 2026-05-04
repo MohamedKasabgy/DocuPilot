@@ -129,10 +129,10 @@ export default function RisksPage() {
             <p className="text-sm text-muted" style={{ marginTop: '6px' }}>Try adjusting severity, source, or status filters above.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2" style={{ marginBottom: 'var(--spacing-xl)' }}>
+          <div className="grid grid-cols-2 section-mb">
 
             {show(1) && (
-              <div className="card risk-card-high" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-high content-gap">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start', flex: 1 }}>
                     <div className="list-item-icon" style={{ background: 'var(--status-danger-bg)', color: 'var(--status-danger)', width: '44px', height: '44px', fontSize: '1.125rem', flexShrink: 0 }}>
@@ -154,7 +154,7 @@ export default function RisksPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--spacing-md)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-subtle)' }}>
+                <div className="grid-3col" style={{ paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-subtle)' }}>
                   <div className="info-pair">
                     <span className="info-pair-label">Source</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-primary)', marginTop: '2px' }}>
@@ -223,7 +223,7 @@ export default function RisksPage() {
             )}
 
             {show(2) && (
-              <div className="card risk-card-high" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-high content-gap">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
@@ -292,7 +292,7 @@ export default function RisksPage() {
             )}
 
             {show(3) && (
-              <div className="card risk-card-medium" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-medium content-gap">
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-md)' }}>
                   <div className="list-item-icon" style={{ background: 'var(--status-warning-bg)', color: 'var(--status-warning)', width: '44px', height: '44px', fontSize: '1.125rem', flexShrink: 0 }}>
                     <i className="fa-solid fa-file-invoice-dollar"></i>
@@ -308,7 +308,7 @@ export default function RisksPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
+                <div className="grid-2col">
                   <div className="info-pair">
                     <span className="info-pair-label">Related Project</span>
                     <span className="info-pair-value text-sm">DesignPro Studio Rebrand</span>
@@ -375,7 +375,7 @@ export default function RisksPage() {
             )}
 
             {show(4) && (
-              <div className="card risk-card-medium" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-medium content-gap">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
@@ -389,7 +389,7 @@ export default function RisksPage() {
                   <i className="fa-solid fa-clipboard-question" style={{ color: 'var(--status-warning)', fontSize: '1.5rem', flexShrink: 0 }}></i>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
+                <div className="grid-2col">
                   <div style={{ background: 'var(--status-success-bg)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', border: '1px solid var(--status-success-border)' }}>
                     <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>Suggested Action</div>
                     <div className="text-sm font-medium">Hold sprint kickoff until sign-off is secured.</div>

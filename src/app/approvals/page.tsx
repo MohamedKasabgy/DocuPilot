@@ -39,7 +39,7 @@ export default function ApprovalsPage() {
           </span>
         </div>
 
-        <div className="layout-sidebar-right" style={{ gridTemplateColumns: '1fr 360px' }}>
+        <div className="layout-sidebar-right-wide">
 
           {/* Document Preview Panel */}
           <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', padding: 'var(--spacing-xl)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-md)' }}>
@@ -104,7 +104,7 @@ export default function ApprovalsPage() {
           </div>
 
           {/* Right Panel */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+          <div className="section-gap">
 
             {/* Extracted Data */}
             <div className="card">
@@ -117,7 +117,7 @@ export default function ApprovalsPage() {
               </div>
 
               <div style={{ paddingTop: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
+                <div className="grid-2col">
                   <div className="info-pair">
                     <span className="info-pair-label">Vendor</span>
                     <span className="info-pair-value">DesignPro Studio</span>
@@ -169,7 +169,7 @@ export default function ApprovalsPage() {
                 <i className="fa-solid fa-circle-check"></i> Approve Invoice
               </button>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-sm)' }}>
+              <div className="grid-2col" style={{ gap: 'var(--spacing-sm)' }}>
                 <button className="btn btn-secondary" onClick={() => showToast('Sent for additional review', 'info')}>
                   <i className="fa-solid fa-clock-rotate-left"></i> Needs Review
                 </button>

@@ -77,7 +77,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Metric Cards */}
-        <div className="grid grid-cols-4" style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <div className="grid grid-cols-4 section-mb">
           <MetricCard
             title="Active Projects"
             value={m.projects}
@@ -126,7 +126,7 @@ export default function DashboardPage() {
 
         <div className="layout-sidebar-right">
           {/* Left Column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+          <div className="section-gap">
 
             {/* Today's Priorities */}
             <div className="card">
@@ -261,7 +261,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Right Column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+          <div className="section-gap">
 
             {/* Smart Alerts */}
             <div className="card card-ai">

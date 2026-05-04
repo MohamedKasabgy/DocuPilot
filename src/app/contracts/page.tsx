@@ -189,7 +189,7 @@ export default function ContractsPage() {
               ))}
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 'var(--spacing-lg)', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
             <span className="opts-label" style={{ marginBottom: 0, alignSelf: 'center' }}>Extract:</span>
             {(Object.keys(extracts) as (keyof typeof extracts)[]).map(key => (
               <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -207,7 +207,7 @@ export default function ContractsPage() {
 
         {/* Arabic language note */}
         {lang === 'arabic' && (
-          <div style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-sm) var(--spacing-lg)', background: 'var(--status-info-bg)', border: '1px solid var(--status-info-border)', borderRadius: 'var(--radius-md)', color: 'var(--status-info)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem' }}>
+          <div style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-sm) var(--spacing-md)', background: 'var(--status-info-bg)', border: '1px solid var(--status-info-border)', borderRadius: 'var(--radius-md)', color: 'var(--status-info)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem' }}>
             <i className="fa-solid fa-circle-info"></i>
             Arabic contract text is supported. Results are displayed in English in this MVP.
           </div>
@@ -215,7 +215,7 @@ export default function ContractsPage() {
 
         {/* Error banner */}
         {error && (
-          <div style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-md) var(--spacing-lg)', background: 'var(--status-danger-bg)', border: '1px solid var(--status-danger-border)', borderRadius: 'var(--radius-md)', color: 'var(--status-danger)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9375rem' }}>
+          <div style={{ marginBottom: 'var(--spacing-lg)', padding: 'var(--spacing-md)', background: 'var(--status-danger-bg)', border: '1px solid var(--status-danger-border)', borderRadius: 'var(--radius-md)', color: 'var(--status-danger)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9375rem' }}>
             <i className="fa-solid fa-circle-xmark"></i>
             {error}
           </div>
@@ -224,7 +224,7 @@ export default function ContractsPage() {
         <div className="layout-sidebar-right">
 
           {/* ── Left Column ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+          <div className="section-gap">
 
             {/* Analysis Result Summary — visible only after a successful call */}
             {analysisResult && (
@@ -281,7 +281,7 @@ export default function ContractsPage() {
                 )}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-lg)' }}>
+              <div className="grid-2col" style={{ gap: 'var(--spacing-lg)' }}>
                 <div className="upload-zone" onClick={() => showToast('PDF upload is not connected yet — paste contract text below to analyze.', 'info')}>
                   <i className="fa-solid fa-cloud-arrow-up upload-icon"></i>
                   <div className="font-semibold" style={{ marginBottom: '4px' }}>Upload Contract PDF</div>
@@ -522,7 +522,7 @@ export default function ContractsPage() {
           </div>
 
           {/* ── Right Column ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+          <div className="section-gap">
 
             {/* Contract Risk Score / AI Confidence */}
             <div className="card">
@@ -537,8 +537,8 @@ export default function ContractsPage() {
                     : (riskScore.overall >= 75 ? 'High Risk' : riskScore.overall >= 50 ? 'Medium Risk' : 'Low Risk')}
                 </span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-lg)', padding: 'var(--spacing-md) 0' }}>
-                <div style={{ textAlign: 'center', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', padding: 'var(--spacing-md) 0' }}>
+                <div style={{ textAlign: 'center', flexShrink: 0, minWidth: 0 }}>
                   <div style={{ fontSize: '2.5rem', fontWeight: 800, fontFamily: 'var(--font-display)', lineHeight: 1, color: analysisResult ? 'var(--accent-primary)' : (riskScore.overall >= 75 ? 'var(--status-danger)' : riskScore.overall >= 50 ? 'var(--status-warning)' : 'var(--status-success)') }}>
                     {displayScore}
                   </div>
