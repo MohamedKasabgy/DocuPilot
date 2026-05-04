@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { Type } from "@google/genai";
 
-import { gemini, GEMINI_PRO_MODEL } from "@/lib/ai/gemini";
-import { supabaseAdmin } from "@/lib/db/supabaseAdmin";
+import { generateWithGeminiReliability } from "@/lib/ai/geminiReliability";
+import { supabaseAdmin, isSupabaseConfigured } from "@/lib/db/supabaseAdmin";
+import { extractJsonObject } from "@/lib/ai/jsonUtils";
 import { ContractAnalysisSchema } from "@/lib/ai/schemas/contract";
 import { buildContractPrompt } from "@/lib/ai/prompts/contract";
 import type { ContractAnalysisOutput } from "@/lib/ai/schemas/contract";
@@ -319,87 +320,136 @@ export async function POST(req: Request) {
     }
 
     let validated: ContractAnalysisOutput;
-    try {
-      const response = await gemini.models.generateContent({
-        model: GEMINI_PRO_MODEL,
-        contents: buildContractPrompt(contractText, depth as 'quick' | 'standard' | 'deep'),
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: CONTRACT_RESPONSE_SCHEMA,
-        },
-      });
+    let modelUsed: string | null = null;
+    let attempts = 0;
+    let retried = false;
+    let usedFallback = false;
+    let fallbackReason: string | null = null;
+    let errorCode: number | null = null;
+    let providerUsed: "gemini" | "qwen" | "local_fallback" = "local_fallback";
 
-      const raw = response.text;
-      if (!raw) throw new Error("Empty Gemini response");
-
-      let parsed = JSON.parse(raw);
-
-      // Unwrap top-level array if model wraps the object
-      if (Array.isArray(parsed)) parsed = parsed[0];
-
-      // Unwrap changeRequestTerms if model returns it as an array
-      if (Array.isArray(parsed?.changeRequestTerms)) {
-        parsed.changeRequestTerms = parsed.changeRequestTerms[0] ?? {
-          requiresWrittenApproval: false,
-          summary: "No change request terms found in contract.",
-          sourceQuote: null,
-        };
+    const aiResult = await generateWithGeminiReliability(
+      buildContractPrompt(contractText, depth as 'quick' | 'standard' | 'deep'),
+      {
+        responseMimeType: "application/json",
+        responseSchema: CONTRACT_RESPONSE_SCHEMA,
       }
+    );
 
-      validated = ContractAnalysisSchema.parse(parsed);
-    } catch (aiError) {
-      console.warn("Gemini AI failed, using fallback data:", aiError);
+    if (aiResult.ok) {
+      providerUsed = aiResult.providerUsed;
+      modelUsed = aiResult.modelUsed;
+      attempts = aiResult.attempts;
+      retried = aiResult.retried;
+      // Qwen is a fallback provider — caller should know Gemini wasn't used
+      if (aiResult.providerUsed === "qwen") usedFallback = true;
+      try {
+        let parsed = extractJsonObject(aiResult.text) as Record<string, unknown>;
+
+        // Unwrap top-level array if model wraps the object
+        if (Array.isArray(parsed)) parsed = (parsed as unknown[])[0] as Record<string, unknown>;
+
+        // Unwrap changeRequestTerms if model returns it as an array
+        if (Array.isArray(parsed?.changeRequestTerms)) {
+          parsed.changeRequestTerms = (parsed.changeRequestTerms as unknown[])[0] ?? {
+            requiresWrittenApproval: false,
+            summary: "No change request terms found in contract.",
+            sourceQuote: null,
+          };
+        }
+
+        validated = ContractAnalysisSchema.parse(parsed);
+      } catch (parseError) {
+        if (aiResult.providerUsed === "qwen") {
+          console.warn("[Contract] Qwen raw response preview:", aiResult.text.slice(0, 800));
+        }
+        console.warn(`[Contract] Failed to parse/validate ${aiResult.providerUsed} response:`, parseError);
+        validated = FALLBACK_DATA;
+        usedFallback = true;
+        fallbackReason = "parse_error";
+        providerUsed = "local_fallback";
+      }
+    } else {
+      console.warn("[Contract] All AI providers failed — using local fallback data.", {
+        attempts: aiResult.attempts,
+        fallbackReason: aiResult.fallbackReason,
+        errorCode: aiResult.errorCode,
+      });
       validated = FALLBACK_DATA;
+      usedFallback = true;
+      fallbackReason = aiResult.fallbackReason;
+      errorCode = aiResult.errorCode;
+      attempts = aiResult.attempts;
+      retried = aiResult.retried;
+      providerUsed = "local_fallback";
     }
 
-    const { data: contractRow, error: contractError } = await supabaseAdmin
-      .from("contract_analyses")
-      .insert({
-        project_id: projectId || "clinic-booking-platform",
-        contract_text: contractText,
-        output_json: validated,
-        confidence_score: validated.confidenceScore,
-      })
-      .select()
-      .single();
+    // Only persist when Supabase is fully configured — skip silently otherwise
+    if (isSupabaseConfigured()) {
+      try {
+        const { data: contractRow, error: contractError } = await supabaseAdmin
+          .from("contract_analyses")
+          .insert({
+            project_id: projectId || "clinic-booking-platform",
+            contract_text: contractText,
+            output_json: validated,
+            confidence_score: validated.confidenceScore,
+          })
+          .select()
+          .single();
 
-    if (contractError) throw contractError;
+        if (!contractError && contractRow) {
+          const alertRows = [
+            ...validated.risks.map((risk) => ({
+              project_id: projectId || "clinic-booking-platform",
+              source_type: "contract",
+              source_id: contractRow.id,
+              title: risk.title,
+              message: risk.impact,
+              severity: risk.severity,
+              status: "open",
+            })),
+            ...validated.deadlines
+              .filter((d) => d.priority === "high" || d.priority === "critical")
+              .map((deadline) => ({
+                project_id: projectId || "clinic-booking-platform",
+                source_type: "contract_deadline",
+                source_id: contractRow.id,
+                title: deadline.title,
+                message: deadline.consequenceIfMissed || "Important contract deadline.",
+                severity: deadline.priority,
+                status: "open",
+              })),
+          ];
+          if (alertRows.length > 0) {
+            await supabaseAdmin.from("alerts").insert(alertRows);
+          }
+        } else if (contractError) {
+          console.error("[Contract] DB insert failed (non-blocking):", contractError);
+        }
 
-    const alertRows = [
-      ...validated.risks.map((risk) => ({
-        project_id: projectId || "clinic-booking-platform",
-        source_type: "contract",
-        source_id: contractRow.id,
-        title: risk.title,
-        message: risk.impact,
-        severity: risk.severity,
-        status: "open",
-      })),
-      ...validated.deadlines
-        .filter((deadline) => deadline.priority === "high" || deadline.priority === "critical")
-        .map((deadline) => ({
+        await supabaseAdmin.from("ai_outputs").insert({
           project_id: projectId || "clinic-booking-platform",
-          source_type: "contract_deadline",
-          source_id: contractRow.id,
-          title: deadline.title,
-          message: deadline.consequenceIfMissed || "Important contract deadline.",
-          severity: deadline.priority,
-          status: "open",
-        })),
-    ];
-
-    if (alertRows.length > 0) {
-      await supabaseAdmin.from("alerts").insert(alertRows);
+          type: "contract_analysis",
+          json: validated,
+        });
+      } catch (dbError) {
+        console.error("[Contract] Supabase persistence failed (non-blocking):", dbError);
+      }
+    } else {
+      console.warn("[Contract] Supabase not configured — skipping persistence.");
     }
-
-    await supabaseAdmin.from("ai_outputs").insert({
-      project_id: projectId || "clinic-booking-platform",
-      type: "contract_analysis",
-      json: validated,
-    });
 
     return NextResponse.json({
       success: true,
+      providerUsed,
+      source: usedFallback ? "fallback" : providerUsed,
+      usedFallback,
+      fallbackReason: fallbackReason ?? null,
+      errorCode: errorCode ?? null,
+      modelUsed,
+      attempts,
+      retried,
       data: validated,
     });
   } catch (error) {

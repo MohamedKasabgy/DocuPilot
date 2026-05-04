@@ -110,6 +110,178 @@ export default function SRSGeneratorPage() {
     setTimeout(() => setToast(null), 2800);
   }, []);
 
+  const handleSaveDraft = useCallback(() => {
+    if (!aiResult) {
+      showToast('Generate an SRS first before saving a draft', 'warning');
+      return;
+    }
+    const draft = {
+      timestamp: new Date().toISOString(),
+      options: { language, detailLevel, outputStyle, projectType, sections, clientFacingMode },
+      requestText,
+      srsOutput: aiResult,
+    };
+    try {
+      localStorage.setItem('docupilot_srs_draft', JSON.stringify(draft));
+      showToast('Draft saved successfully', 'success');
+    } catch {
+      showToast('Failed to save draft (storage full?)', 'error');
+    }
+  }, [aiResult, language, detailLevel, outputStyle, projectType, sections, clientFacingMode, requestText, showToast]);
+
+  const handleExportPdf = useCallback(() => {
+    if (!aiResult) {
+      showToast('Generate an SRS first before exporting', 'warning');
+      return;
+    }
+    const w = window.open('', '_blank');
+    if (!w) {
+      showToast('Popup blocked — allow popups and try again', 'error');
+      return;
+    }
+    const date = new Date().toLocaleDateString();
+    const isArabic = language === 'arabic';
+    const dir = isArabic ? 'rtl' : 'ltr';
+    const htmlLang = isArabic ? 'ar' : 'en';
+
+    // Arabic labels used only when language === 'arabic'
+    const PDF_AR: Record<string, string> = {
+      title: 'وثيقة متطلبات النظام',
+      projectBrief: 'ملخص المشروع',
+      userRoles: 'أدوار المستخدمين',
+      mainFeatures: 'الميزات الرئيسية',
+      functionalReqs: 'المتطلبات الوظيفية',
+      nonFunctionalReqs: 'المتطلبات غير الوظيفية',
+      missingQuestions: 'الفجوات والأسئلة المفتوحة',
+      clarificationQuestions: 'أسئلة التوضيح',
+      mvpScope: 'نطاق النسخة الأولية',
+      assumptions: 'الافتراضات والقيود',
+      acceptanceCriteria: 'معايير القبول',
+      userStories: 'قصص المستخدم',
+      generated: 'تاريخ الإنشاء',
+      language: 'اللغة',
+      style: 'النمط',
+      detail: 'مستوى التفصيل',
+      projectType: 'نوع المشروع',
+      confidence: 'نسبة الثقة',
+      industry: 'المجال',
+      complexity: 'درجة التعقيد',
+    };
+
+    // Return Arabic label when in Arabic mode, English otherwise
+    const pdfL = (key: string, en: string): string => isArabic ? (PDF_AR[key] ?? en) : en;
+
+    const gapLabel = isArabic
+      ? (clientFacingMode ? PDF_AR.clarificationQuestions : PDF_AR.missingQuestions)
+      : (clientFacingMode ? 'Clarification Questions' : 'AI Identified Gaps');
+
+    const projectLabel = PROJECT_TYPES.find(p => p.value === projectType)?.label ?? projectType;
+
+    // Wrap alphanumeric IDs (FR-01, NFR-01) in a LTR span so they don't reverse in RTL documents
+    const ltrId = (id: string) => `<span class="ltr">${id}</span>`;
+
+    const sec = (title: string, content: string) =>
+      `<section><h2>${title}</h2>${content}</section><hr>`;
+
+    let body = '';
+    if (sections.projectBrief) {
+      body += sec(pdfL('projectBrief', 'Project Brief'), `
+        <h3>${aiResult.projectBrief.projectName}</h3>
+        <p>
+          <strong>${pdfL('industry', 'Industry')}:</strong> ${aiResult.projectBrief.industry}
+          &nbsp;|&nbsp;
+          <strong>${pdfL('complexity', 'Complexity')}:</strong> ${aiResult.projectBrief.complexity}
+        </p>
+        <p>${aiResult.projectBrief.summary}</p>`);
+    }
+    if (sections.userRoles) {
+      body += sec(pdfL('userRoles', 'User Roles'), aiResult.userRoles.map(r =>
+        `<p><strong>${r.role}</strong> — ${r.description}</p>`).join(''));
+    }
+    if (sections.mainFeatures) {
+      body += sec(pdfL('mainFeatures', 'Main Features'), '<ul>' + aiResult.mainFeatures.map(f =>
+        `<li><strong>${f.title}</strong> (${f.priority}): ${f.description}</li>`).join('') + '</ul>');
+    }
+    if (sections.functionalReqs) {
+      body += sec(pdfL('functionalReqs', 'Functional Requirements'), '<ul>' + aiResult.functionalRequirements.map(fr =>
+        `<li>${ltrId(fr.id)} <strong>${fr.title}</strong>: ${fr.description}</li>`).join('') + '</ul>');
+    }
+    if (sections.nonFunctionalReqs) {
+      body += sec(pdfL('nonFunctionalReqs', 'Non-Functional Requirements'), '<ul>' + aiResult.nonFunctionalRequirements.map(nfr =>
+        `<li><strong>${nfr.category}:</strong> ${nfr.requirement}</li>`).join('') + '</ul>');
+    }
+    if (sections.missingQuestions) {
+      body += sec(gapLabel, '<ul>' + aiResult.missingQuestions.map(q =>
+        `<li>${q}</li>`).join('') + '</ul>');
+    }
+    if (sections.mvpScope) {
+      body += sec(pdfL('mvpScope', 'MVP Scope'), '<ol>' + aiResult.mvpScope.map(s =>
+        `<li>${s}</li>`).join('') + '</ol>');
+    }
+    if (sections.assumptions) {
+      body += sec(pdfL('assumptions', 'Assumptions & Constraints'), '<ul>' + aiResult.assumptions.map(a =>
+        `<li>${a}</li>`).join('') + '</ul>');
+    }
+    if (sections.acceptanceCriteria) {
+      body += sec(pdfL('acceptanceCriteria', 'Acceptance Criteria'), '<ul>' + aiResult.nonFunctionalRequirements.map(nfr =>
+        `<li>${nfr.requirement}</li>`).join('') + '</ul>');
+    }
+    if (sections.userStories) {
+      body += sec(pdfL('userStories', 'User Stories'), aiResult.userRoles.map(r =>
+        `<p><em>As a <strong>${r.role}</strong>, ${r.description}</em></p>`).join(''));
+    }
+
+    // Meta bar items — Arabic labels when in Arabic mode
+    const metaItems = isArabic
+      ? [
+          `${PDF_AR.generated}: ${date}`,
+          `${PDF_AR.language}: عربي`,
+          `${PDF_AR.style}: ${outputStyle}${clientFacingMode ? ' (عميل)' : ''}`,
+          `${PDF_AR.detail}: ${detailLevel}`,
+          `${PDF_AR.projectType}: ${projectLabel}`,
+          `${PDF_AR.confidence}: ${aiResult.confidenceScore}%`,
+        ]
+      : [
+          `Generated: ${date}`,
+          `Language: ${language}`,
+          `Style: ${outputStyle}${clientFacingMode ? ' (Client-Facing)' : ''}`,
+          `Detail: ${detailLevel}`,
+          `Project Type: ${projectLabel}`,
+          `AI Confidence: ${aiResult.confidenceScore}%`,
+        ];
+
+    const mainTitle = isArabic ? PDF_AR.title : 'Software Requirements Specification';
+
+    w.document.write(`<!DOCTYPE html>
+<html lang="${htmlLang}" dir="${dir}">
+<head>
+<meta charset="UTF-8">
+<title>SRS — ${aiResult.projectBrief.projectName}</title>
+<style>
+  body{font-family:Arial,sans-serif;max-width:860px;margin:0 auto;padding:32px;color:#111}
+  h1{font-size:1.6rem;border-bottom:2px solid #4F46E5;padding-bottom:8px}
+  h2{font-size:1.1rem;color:#4F46E5;margin-top:24px}
+  h3{font-size:1rem;margin:0 0 8px}
+  .meta{font-size:.8rem;color:#666;margin-bottom:24px}
+  .ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+  hr{border:none;border-top:1px solid #e5e7eb;margin:16px 0}
+  ul,ol{padding-inline-start:20px;padding-left:0}
+  li{margin-bottom:4px;line-height:1.5}
+  p{line-height:1.6}
+  section{margin-bottom:16px}
+  @media print{body{padding:16px}}
+  ${isArabic ? 'body{direction:rtl;text-align:right}.meta{direction:rtl}' : ''}
+</style>
+</head>
+<body>
+<h1>${mainTitle}</h1>
+<div class="meta">${metaItems.join(' &nbsp;|&nbsp; ')}</div>
+<hr>${body}
+</body></html>`);
+    w.document.close();
+    w.print();
+  }, [aiResult, language, detailLevel, outputStyle, projectType, sections, clientFacingMode, showToast]);
+
   const handleGenerate = async () => {
     if (requestText.trim().length < 10) {
       showToast('Request too short (min 10 characters)', 'warning');
@@ -121,14 +293,24 @@ export default function SRSGeneratorPage() {
       const res = await fetch('/api/ai/srs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientRequest: requestText }),
+        body: JSON.stringify({
+          clientRequest: requestText,
+          language,
+          detailLevel,
+          outputStyle,
+          projectType,
+          enabledSections: sections,
+          clientFacingMode,
+        }),
       });
       const result = await res.json();
       if (!res.ok || !result.success) throw new Error(result.error || 'Generation failed');
       setAiResult(result.data);
       setIsGenerated(true);
-      if (result.usedFallback) {
-        showToast('Gemini was temporarily unavailable — demo SRS loaded', 'warning');
+      if (result.providerUsed === 'qwen') {
+        showToast('SRS generated via Qwen AI (Gemini temporarily unavailable)', 'info');
+      } else if (result.providerUsed === 'local_fallback') {
+        showToast('All AI providers unavailable — demo SRS loaded', 'warning');
       } else {
         showToast('SRS generated successfully', 'success');
       }
@@ -164,10 +346,10 @@ export default function SRSGeneratorPage() {
             <p className="page-subtitle">Transform raw client requests into professional Software Requirements Specifications.</p>
           </div>
           <div className="page-header-actions">
-            <button className="btn btn-secondary" onClick={() => showToast('Draft saved', 'success')}>
+            <button className="btn btn-secondary" onClick={handleSaveDraft}>
               <i className="fa-regular fa-floppy-disk"></i> Save Draft
             </button>
-            <button className="btn btn-primary" onClick={() => showToast('Exporting PDF...', 'info')}>
+            <button className="btn btn-primary" onClick={handleExportPdf}>
               <i className="fa-solid fa-file-arrow-down"></i> Export PDF
             </button>
           </div>
@@ -441,10 +623,17 @@ export default function SRSGeneratorPage() {
                 {sections.missingQuestions && (
                   <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
                     <div className="card-header">
-                      <h2 className="card-title"><i className="fa-regular fa-circle-question text-accent"></i>{t('missingQuestions', language)}</h2>
+                      <h2 className="card-title">
+                        <i className="fa-regular fa-circle-question text-accent"></i>
+                        {clientFacingMode
+                          ? (language === 'arabic' ? 'أسئلة التوضيح' : language === 'bilingual' ? 'Clarification Questions / أسئلة التوضيح' : 'Clarification Questions')
+                          : t('missingQuestions', language)}
+                      </h2>
                       <span className="badge badge-warning">{aiResult.missingQuestions.length} Open</span>
                     </div>
-                    <p className="text-sm text-muted" style={{ marginBottom: 'var(--spacing-lg)' }}>Missing information required for a high-fidelity SRS:</p>
+                    <p className="text-sm text-muted" style={{ marginBottom: 'var(--spacing-lg)' }}>
+                      {clientFacingMode ? 'Items we recommend clarifying before development begins:' : 'Missing information required for a high-fidelity SRS:'}
+                    </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
                       {aiResult.missingQuestions.map((q, i) => (
                         <div key={i} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'flex-start', padding: 'var(--spacing-sm) var(--spacing-md)', background: 'rgba(217, 119, 6, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--status-warning-border)' }}>

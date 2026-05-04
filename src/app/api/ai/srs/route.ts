@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
 
-import { gemini, GEMINI_FAST_MODEL } from "@/lib/ai/gemini";
-import { supabaseAdmin } from "@/lib/db/supabaseAdmin";
+import { supabaseAdmin, isSupabaseConfigured } from "@/lib/db/supabaseAdmin";
 import { SrsSchema, srsJsonSchema, type SrsOutput } from "@/lib/ai/schemas/srs";
 import { buildSrsPrompt, buildRefinementPrompt } from "@/lib/ai/prompts/srs";
+import type { SrsPromptOptions } from "@/lib/ai/prompts/srs";
+import { generateWithGeminiReliability } from "@/lib/ai/geminiReliability";
+import { extractJsonObject } from "@/lib/ai/jsonUtils";
 
 interface SrsRequest {
   clientRequest: string;
   projectId?: string;
+  language?: SrsPromptOptions["language"];
+  detailLevel?: SrsPromptOptions["detailLevel"];
+  outputStyle?: SrsPromptOptions["outputStyle"];
+  projectType?: string;
+  enabledSections?: Record<string, boolean>;
+  clientFacingMode?: boolean;
   currentSrs?: SrsOutput;
   refinementMessage?: string;
 }
@@ -312,17 +320,153 @@ const CLINIC_KEYWORDS = [
   "عيادة", "حجز", "موعد", "طبيب", "مريض", "صحة", "مستشفى",
 ];
 
-function selectFallback(request: string): SrsOutput {
+/**
+ * Choose and adapt a fallback SRS based on the input domain and requested language.
+ * Avoids returning a static clinic SRS for unrelated Arabic inputs.
+ */
+function selectFallback(
+  request: string,
+  language: string = "english",
+  _projectType: string = "web-app"
+): SrsOutput {
   const lower = request.toLowerCase();
-  return CLINIC_KEYWORDS.some((kw) => lower.includes(kw))
-    ? CLINIC_FALLBACK
-    : GENERIC_FALLBACK;
+  const isClinic = CLINIC_KEYWORDS.some((kw) => lower.includes(kw));
+  const base: SrsOutput = isClinic
+    ? { ...CLINIC_FALLBACK, projectBrief: { ...CLINIC_FALLBACK.projectBrief } }
+    : { ...GENERIC_FALLBACK, projectBrief: { ...GENERIC_FALLBACK.projectBrief } };
+
+  if (language === "english") return base;
+
+  // Adapt project name and summary for Arabic / bilingual output
+  const nameEn = base.projectBrief.projectName;
+  const nameAr = isClinic ? "منصة حجز العيادات" : "نظام برمجي مخصص";
+  const summaryAr = isClinic
+    ? "نظام حجز مواعيد إلكتروني للعيادات يتضمن موقع حجز للمرضى ولوحة تحكم للإدارة مع إشعارات تلقائية وتقارير بسيطة. (نموذج توضيحي — الذكاء الاصطناعي غير متاح حالياً)"
+    : "منصة برمجية متكاملة تغطي إدارة البيانات الأساسية والأدوار والصلاحيات والإشعارات الآلية والتقارير الإدارية. (نموذج توضيحي — الذكاء الاصطناعي غير متاح حالياً)";
+
+  base.projectBrief.projectName =
+    language === "arabic" ? nameAr : `${nameEn} / ${nameAr}`;
+  base.projectBrief.summary =
+    language === "arabic"
+      ? summaryAr
+      : `${base.projectBrief.summary}\n\n[عربي] ${summaryAr}`;
+
+  return base;
+}
+
+// ─── Qwen schema hint ─────────────────────────────────────────────────────────
+// Compact description of the SRS JSON shape sent to Qwen's system message.
+// Gemini uses responseSchema instead and ignores this.
+const SRS_SCHEMA_HINT = `{
+  "projectBrief": { "projectName": "string", "clientName": "string or null", "industry": "string", "complexity": "low|medium|high", "summary": "string" },
+  "userRoles": [ { "role": "string", "description": "string", "permissions": ["string"] } ],
+  "mainFeatures": [ { "title": "string", "description": "string", "priority": "critical|high|medium|low" } ],
+  "functionalRequirements": [ { "id": "FR-01", "title": "string", "description": "string", "priority": "critical|high|medium|low" } ],
+  "nonFunctionalRequirements": [ { "category": "string", "requirement": "string" } ],
+  "missingQuestions": ["string"],
+  "mvpScope": ["string"],
+  "assumptions": ["string"],
+  "confidenceScore": 75
+}`;
+
+// ─── SRS response normalization ───────────────────────────────────────────────
+// Applied before Zod validation to handle common Qwen output quirks:
+//  - Wrapper keys (srs/data/output/result) when the model nests the object
+//  - snake_case top-level keys (project_brief → projectBrief, etc.)
+//  - Missing nullable field clientName
+//  - userRoles with no permissions array
+
+const SRS_TOP_LEVEL_KEYS = new Set([
+  "projectBrief", "project_brief",
+  "userRoles", "user_roles",
+  "mainFeatures", "main_features",
+  "functionalRequirements", "functional_requirements",
+  "nonFunctionalRequirements", "non_functional_requirements",
+  "missingQuestions", "missing_questions",
+  "mvpScope", "mvp_scope",
+  "assumptions",
+  "confidenceScore", "confidence_score",
+]);
+
+const SNAKE_TO_CAMEL: Record<string, string> = {
+  project_brief: "projectBrief",
+  user_roles: "userRoles",
+  main_features: "mainFeatures",
+  functional_requirements: "functionalRequirements",
+  non_functional_requirements: "nonFunctionalRequirements",
+  missing_questions: "missingQuestions",
+  mvp_scope: "mvpScope",
+  confidence_score: "confidenceScore",
+};
+
+function normalizeSrsResponse(raw: unknown): unknown {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return raw;
+
+  let data = raw as Record<string, unknown>;
+
+  // Unwrap a wrapper key only when the nested object actually contains SRS fields
+  for (const wrapKey of ["srs", "data", "output", "result"]) {
+    const val = data[wrapKey];
+    if (val && typeof val === "object" && !Array.isArray(val)) {
+      const inner = val as Record<string, unknown>;
+      if (Object.keys(inner).some((k) => SRS_TOP_LEVEL_KEYS.has(k))) {
+        data = inner;
+        break;
+      }
+    }
+  }
+
+  // Map snake_case → camelCase for any top-level keys that are absent in camelCase form
+  const result: Record<string, unknown> = { ...data };
+  for (const [snake, camel] of Object.entries(SNAKE_TO_CAMEL)) {
+    if (snake in result && !(camel in result)) {
+      result[camel] = result[snake];
+      delete result[snake];
+    }
+  }
+
+  // Ensure projectBrief.clientName exists (Zod schema requires it, even as null)
+  if (result.projectBrief && typeof result.projectBrief === "object" && !Array.isArray(result.projectBrief)) {
+    const brief = result.projectBrief as Record<string, unknown>;
+    if (!("clientName" in brief)) brief.clientName = null;
+  }
+
+  // Ensure every userRole has a permissions array (Zod requires it)
+  if (Array.isArray(result.userRoles)) {
+    result.userRoles = (result.userRoles as unknown[]).map((role) => {
+      if (!role || typeof role !== "object" || Array.isArray(role)) return role;
+      const r = { ...(role as Record<string, unknown>) };
+      if (!Array.isArray(r.permissions)) {
+        r.permissions = r.permissions ? [String(r.permissions)] : [];
+      }
+      return r;
+    });
+  }
+
+  // Normalize confidenceScore: Gemini sometimes returns a 0–1 fraction instead of 0–100 integer.
+  // Any value ≤ 1.0 is treated as a fraction and scaled up.
+  if (typeof result.confidenceScore === "number" && result.confidenceScore >= 0 && result.confidenceScore <= 1) {
+    result.confidenceScore = Math.round(result.confidenceScore * 100);
+  }
+
+  return result;
 }
 
 export async function POST(req: Request) {
   try {
     const body: SrsRequest = await req.json();
-    const { clientRequest, projectId, currentSrs, refinementMessage } = body;
+    const {
+      clientRequest,
+      projectId,
+      language = "english",
+      detailLevel = "standard",
+      outputStyle = "business",
+      projectType = "web-app",
+      enabledSections = {},
+      clientFacingMode = false,
+      currentSrs,
+      refinementMessage,
+    } = body;
 
     if (!clientRequest || clientRequest.trim().length < 10) {
       return NextResponse.json(
@@ -334,66 +478,124 @@ export async function POST(req: Request) {
     const isRefinement = !!(refinementMessage && currentSrs);
     const prompt = isRefinement
       ? buildRefinementPrompt(currentSrs, refinementMessage)
-      : buildSrsPrompt(clientRequest);
+      : buildSrsPrompt(clientRequest, {
+          language,
+          detailLevel,
+          outputStyle,
+          projectType,
+          enabledSections,
+          clientFacingMode,
+        });
 
     let validated: SrsOutput;
     let usedFallback = false;
+    let fallbackReason: string | null = null;
+    let errorCode: number | null = null;
+    let modelUsed: string | null = null;
+    let attempts = 0;
+    let retried = false;
+    let providerUsed: "gemini" | "qwen" | "local_fallback" = "local_fallback";
 
-    try {
-      const response = await gemini.models.generateContent({
-        model: GEMINI_FAST_MODEL,
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: srsJsonSchema,
-        },
+    const aiResult = await generateWithGeminiReliability(
+      prompt,
+      { responseMimeType: "application/json", responseSchema: srsJsonSchema },
+      { schemaHint: SRS_SCHEMA_HINT }
+    );
+
+    if (aiResult.ok) {
+      providerUsed = aiResult.providerUsed;
+      modelUsed = aiResult.modelUsed;
+      attempts = aiResult.attempts;
+      retried = aiResult.retried;
+      // Qwen is a fallback provider — caller should know Gemini wasn't used
+      if (aiResult.providerUsed === "qwen") usedFallback = true;
+      try {
+        const extracted = extractJsonObject(aiResult.text);
+        const normalized = normalizeSrsResponse(extracted);
+        validated = SrsSchema.parse(normalized);
+      } catch (parseError) {
+        // Log a raw preview server-side to diagnose Qwen output shape — never sent to client
+        if (aiResult.providerUsed === "qwen") {
+          console.warn("[SRS] Qwen raw response preview:", aiResult.text.slice(0, 800));
+        }
+        console.warn(`[SRS] Failed to parse/validate ${aiResult.providerUsed} response:`, parseError);
+        validated = isRefinement
+          ? (currentSrs as SrsOutput)
+          : selectFallback(clientRequest, language, projectType);
+        usedFallback = true;
+        fallbackReason = "parse_error";
+        providerUsed = "local_fallback";
+      }
+    } else {
+      console.warn("[SRS] All AI providers failed — using local fallback SRS.", {
+        attempts: aiResult.attempts,
+        fallbackReason: aiResult.fallbackReason,
+        errorCode: aiResult.errorCode,
       });
-
-      const raw = response.text;
-      if (!raw) throw new Error("Empty Gemini response");
-
-      const parsed = JSON.parse(raw);
-      validated = SrsSchema.parse(parsed);
-    } catch (aiError) {
-      console.warn(
-        "Gemini AI unavailable, using fallback SRS:",
-        aiError instanceof Error ? aiError.message : String(aiError)
-      );
-      // For refinements: keep the existing SRS rather than overwriting with a generic fallback
       validated = isRefinement
         ? (currentSrs as SrsOutput)
-        : selectFallback(clientRequest);
+        : selectFallback(clientRequest, language, projectType);
       usedFallback = true;
+      fallbackReason = aiResult.fallbackReason;
+      errorCode = aiResult.errorCode;
+      attempts = aiResult.attempts;
+      retried = aiResult.retried;
+      providerUsed = "local_fallback";
     }
 
-    try {
-      await supabaseAdmin.from("srs_documents").insert({
-        project_id: projectId || "default-project",
-        client_request: clientRequest,
-        output_json: validated,
-        confidence_score: validated.confidenceScore,
-      });
+    // Only persist when Supabase is fully configured — skip silently otherwise
+    if (isSupabaseConfigured()) {
+      try {
+        await supabaseAdmin.from("srs_documents").insert({
+          project_id: projectId || "default-project",
+          client_request: clientRequest,
+          output_json: validated,
+          confidence_score: validated.confidenceScore,
+        });
 
-      await supabaseAdmin.from("ai_outputs").insert({
-        project_id: projectId || "default-project",
-        type: "srs",
-        json: validated,
-      });
-    } catch (dbError) {
-      console.error("Supabase persistence failed (non-blocking):", dbError);
+        await supabaseAdmin.from("ai_outputs").insert({
+          project_id: projectId || "default-project",
+          type: "srs",
+          json: validated,
+        });
+      } catch (dbError) {
+        console.error("[SRS] Supabase persistence failed (non-blocking):", dbError);
+      }
+    } else {
+      console.warn("[SRS] Supabase not configured — skipping persistence. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local.");
     }
 
     if (usedFallback) {
+      const isLocalFallback = providerUsed === "local_fallback";
       return NextResponse.json({
         success: true,
-        source: "fallback",
+        providerUsed,
+        source: isLocalFallback ? "fallback" : providerUsed,
         usedFallback: true,
-        warning: "Gemini was temporarily unavailable. DocuPilot returned a safe demo fallback.",
+        fallbackReason,
+        errorCode,
+        modelUsed,
+        attempts,
+        retried,
+        warning: isLocalFallback
+          ? "All AI providers unavailable — local fallback SRS loaded."
+          : `Gemini unavailable — SRS generated by ${providerUsed}.`,
         data: validated,
       });
     }
 
-    return NextResponse.json({ success: true, source: "gemini", data: validated });
+    return NextResponse.json({
+      success: true,
+      providerUsed,
+      source: providerUsed,
+      usedFallback: false,
+      fallbackReason: null,
+      errorCode: null,
+      modelUsed,
+      attempts,
+      retried,
+      data: validated,
+    });
   } catch (error) {
     console.error("SRS generation failed:", error);
     return NextResponse.json(

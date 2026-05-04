@@ -109,7 +109,7 @@ export const srsJsonSchema = {
     missingQuestions: { type: "array", items: { type: "string" } },
     mvpScope: { type: "array", items: { type: "string" } },
     assumptions: { type: "array", items: { type: "string" } },
-    confidenceScore: { type: "number" },
+    confidenceScore: { type: "integer", minimum: 0, maximum: 100 },
   },
   required: [
     "projectBrief",
