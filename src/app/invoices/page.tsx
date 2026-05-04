@@ -154,7 +154,7 @@ export default function InvoicesPage() {
           </div>
 
           {/* Right Panel */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+          <div className="section-gap">
 
             {/* Finance Controls */}
             <div className="card">
