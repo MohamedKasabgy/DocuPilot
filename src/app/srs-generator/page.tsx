@@ -1,6 +1,7 @@
 'use client';
 import { useState, useCallback } from 'react';
 import Header from '@/components/layout/Header';
+import type { SrsOutput } from '@/lib/ai/schemas/srs';
 
 type Language = 'english' | 'arabic' | 'bilingual';
 type DetailLevel = 'concise' | 'standard' | 'detailed';
@@ -39,16 +40,16 @@ const FR_DATA: Record<DetailLevel, { id: string; title: string; desc: string }[]
 };
 
 const SECTION_LABELS: Record<string, Record<Language, string>> = {
-  projectBrief:      { english: 'Project Brief', arabic: 'ملخص المشروع', bilingual: 'Project Brief / ملخص المشروع' },
-  userRoles:         { english: 'User Roles', arabic: 'أدوار المستخدمين', bilingual: 'User Roles / أدوار المستخدمين' },
-  mainFeatures:      { english: 'Main Features', arabic: 'الميزات الرئيسية', bilingual: 'Main Features / الميزات الرئيسية' },
-  functionalReqs:    { english: 'Functional Requirements', arabic: 'المتطلبات الوظيفية', bilingual: 'Functional Requirements / المتطلبات الوظيفية' },
+  projectBrief: { english: 'Project Brief', arabic: 'ملخص المشروع', bilingual: 'Project Brief / ملخص المشروع' },
+  userRoles: { english: 'User Roles', arabic: 'أدوار المستخدمين', bilingual: 'User Roles / أدوار المستخدمين' },
+  mainFeatures: { english: 'Main Features', arabic: 'الميزات الرئيسية', bilingual: 'Main Features / الميزات الرئيسية' },
+  functionalReqs: { english: 'Functional Requirements', arabic: 'المتطلبات الوظيفية', bilingual: 'Functional Requirements / المتطلبات الوظيفية' },
   nonFunctionalReqs: { english: 'Non-Functional Requirements', arabic: 'المتطلبات غير الوظيفية', bilingual: 'Non-Functional Requirements / المتطلبات غير الوظيفية' },
-  missingQuestions:  { english: 'AI Identified Gaps', arabic: 'ثغرات مكتشفة بالذكاء الاصطناعي', bilingual: 'AI Identified Gaps / الثغرات المكتشفة' },
-  mvpScope:          { english: 'MVP Scope Definition', arabic: 'تعريف نطاق MVP', bilingual: 'MVP Scope / تعريف نطاق MVP' },
-  assumptions:       { english: 'Assumptions & Constraints', arabic: 'الافتراضات والقيود', bilingual: 'Assumptions / الافتراضات' },
-  acceptanceCriteria:{ english: 'Acceptance Criteria', arabic: 'معايير القبول', bilingual: 'Acceptance Criteria / معايير القبول' },
-  userStories:       { english: 'User Stories', arabic: 'قصص المستخدم', bilingual: 'User Stories / قصص المستخدم' },
+  missingQuestions: { english: 'AI Identified Gaps', arabic: 'ثغرات مكتشفة بالذكاء الاصطناعي', bilingual: 'AI Identified Gaps / الثغرات المكتشفة' },
+  mvpScope: { english: 'MVP Scope Definition', arabic: 'تعريف نطاق MVP', bilingual: 'MVP Scope / تعريف نطاق MVP' },
+  assumptions: { english: 'Assumptions & Constraints', arabic: 'الافتراضات والقيود', bilingual: 'Assumptions / الافتراضات' },
+  acceptanceCriteria: { english: 'Acceptance Criteria', arabic: 'معايير القبول', bilingual: 'Acceptance Criteria / معايير القبول' },
+  userStories: { english: 'User Stories', arabic: 'قصص المستخدم', bilingual: 'User Stories / قصص المستخدم' },
 };
 
 function t(key: string, lang: Language): string {
@@ -57,17 +58,17 @@ function t(key: string, lang: Language): string {
 
 const TOAST_ICONS: Record<ToastType, string> = {
   success: 'fa-solid fa-circle-check',
-  info:    'fa-solid fa-circle-info',
+  info: 'fa-solid fa-circle-info',
   warning: 'fa-solid fa-triangle-exclamation',
-  error:   'fa-solid fa-circle-xmark',
+  error: 'fa-solid fa-circle-xmark',
 };
 
 const TECH_STACKS: Record<string, { frontend: string; backend: string; db: string; infra: string }> = {
-  'web-app':    { frontend: 'React / Next.js',    backend: 'Node.js / Express',      db: 'PostgreSQL',           infra: 'Vercel / Railway' },
-  'mobile':     { frontend: 'React Native',        backend: 'Node.js / Fastify',       db: 'SQLite + Cloud Sync',  infra: 'Expo + AWS Amplify' },
-  'saas':       { frontend: 'React / Next.js',    backend: 'Nest.js + Microservices', db: 'PostgreSQL + Redis',   infra: 'AWS ECS / RDS' },
-  'api':        { frontend: 'OpenAPI / Swagger',  backend: 'FastAPI (Python)',         db: 'PostgreSQL + MongoDB', infra: 'Docker + Kubernetes' },
-  'enterprise': { frontend: 'React / TypeScript', backend: 'Java Spring Boot',        db: 'Oracle / MSSQL',       infra: 'Azure AKS' },
+  'web-app': { frontend: 'React / Next.js', backend: 'Node.js / Express', db: 'PostgreSQL', infra: 'Vercel / Railway' },
+  'mobile': { frontend: 'React Native', backend: 'Node.js / Fastify', db: 'SQLite + Cloud Sync', infra: 'Expo + AWS Amplify' },
+  'saas': { frontend: 'React / Next.js', backend: 'Nest.js + Microservices', db: 'PostgreSQL + Redis', infra: 'AWS ECS / RDS' },
+  'api': { frontend: 'OpenAPI / Swagger', backend: 'FastAPI (Python)', db: 'PostgreSQL + MongoDB', infra: 'Docker + Kubernetes' },
+  'enterprise': { frontend: 'React / TypeScript', backend: 'Java Spring Boot', db: 'Oracle / MSSQL', infra: 'Azure AKS' },
 };
 
 function computeComplexity(dl: DetailLevel, pt: string) {
@@ -76,7 +77,7 @@ function computeComplexity(dl: DetailLevel, pt: string) {
   const score = Math.round(Math.min(base * (mult[pt] ?? 1), 95));
   const label = score < 40 ? 'Low' : score < 65 ? 'Moderate' : score < 80 ? 'High' : 'Very High';
   const weeks = score < 40 ? '4–8' : score < 65 ? '8–16' : score < 80 ? '16–28' : '28+';
-  const team  = score < 40 ? '2–3 devs' : score < 65 ? '3–5 devs' : score < 80 ? '5–8 devs' : '8+ devs';
+  const team = score < 40 ? '2–3 devs' : score < 65 ? '3–5 devs' : score < 80 ? '5–8 devs' : '8+ devs';
   return { score, label, weeks, team };
 }
 
@@ -100,7 +101,8 @@ export default function SRSGeneratorPage() {
   const [requestText, setRequestText] = useState(SAMPLE_REQUEST);
   const [clientFacingMode, setClientFacingMode] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isGenerated, setIsGenerated] = useState(true);
+  const [isGenerated, setIsGenerated] = useState(false);
+  const [aiResult, setAiResult] = useState<SrsOutput | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
   const showToast = useCallback((msg: string, type: ToastType = 'success') => {
@@ -108,14 +110,29 @@ export default function SRSGeneratorPage() {
     setTimeout(() => setToast(null), 2800);
   }, []);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
+    if (requestText.trim().length < 10) {
+      showToast('Request too short (min 10 characters)', 'warning');
+      return;
+    }
     setIsGenerating(true);
     setIsGenerated(false);
-    setTimeout(() => {
-      setIsGenerating(false);
+    try {
+      const res = await fetch('/api/ai/srs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientRequest: requestText }),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.error || 'Generation failed');
+      setAiResult(result.data);
       setIsGenerated(true);
       showToast('SRS generated successfully', 'success');
-    }, 2000);
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Failed to generate SRS', 'error');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const toggleSection = (key: string) => {
@@ -137,7 +154,7 @@ export default function SRSGeneratorPage() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-xs)' }}>
               <p className="page-label" style={{ margin: 0 }}>AI Laboratory</p>
-              <span className="demo-badge"><i className="fa-solid fa-flask"></i> Demo Mode</span>
+              <span className="demo-badge"><i className="fa-solid fa-bolt"></i> Gemini AI</span>
             </div>
             <h1 className="page-title">Smart SRS Generator</h1>
             <p className="page-subtitle">Transform raw client requests into professional Software Requirements Specifications.</p>
@@ -271,8 +288,16 @@ export default function SRSGeneratorPage() {
           </div>
         )}
 
-        {isGenerated && !isGenerating && (
+        {isGenerated && !isGenerating && aiResult && (
           <>
+            {/* Confidence Score */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--spacing-md)' }}>
+              <div style={{ padding: 'var(--spacing-xs) var(--spacing-md)', borderRadius: 'var(--radius-full)', background: aiResult.confidenceScore >= 80 ? 'rgba(5, 150, 105, 0.1)' : 'rgba(217, 119, 6, 0.1)', border: `1px solid ${aiResult.confidenceScore >= 80 ? 'rgba(5, 150, 105, 0.3)' : 'rgba(217, 119, 6, 0.3)'}`, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <i className={`fa-solid fa-gauge-high ${aiResult.confidenceScore >= 80 ? 'text-success' : 'text-warning'}`}></i>
+                <span className="text-xs font-bold">AI Confidence: {aiResult.confidenceScore}%</span>
+              </div>
+            </div>
+
             {/* Project Brief + User Roles */}
             {(sections.projectBrief || sections.userRoles) && (
               <div className="grid" style={{ gridTemplateColumns: sections.projectBrief && sections.userRoles ? '1fr 320px' : '1fr', marginBottom: 'var(--spacing-lg)' }}>
@@ -287,20 +312,20 @@ export default function SRSGeneratorPage() {
                       {outputStyle === 'technical' && <span className="badge badge-info">Technical</span>}
                       {outputStyle === 'client' && <span className="badge badge-accent">Client-Facing</span>}
                     </div>
+                    <h3 className="font-semibold" style={{ marginBottom: 'var(--spacing-sm)', fontSize: '1.1rem' }}>{aiResult.projectBrief.projectName}</h3>
+                    {aiResult.projectBrief.clientName && <div className="text-xs text-muted" style={{ marginBottom: 'var(--spacing-sm)' }}>Client: {aiResult.projectBrief.clientName}</div>}
                     <p className="text-sm leading-relaxed text-secondary" style={{ marginBottom: 'var(--spacing-xl)' }}>
-                      The project aims to develop a comprehensive <strong className="text-accent">Clinic Reservation Ecosystem</strong>.
-                      {detailLevel !== 'concise' && ' It focuses on bridging the gap between patients and clinic administrators through a digital-first approach.'}
-                      {detailLevel === 'detailed' && ' The core objective is to automate the appointment lifecycle—from initial booking to post-consultation reporting—minimizing manual intervention and optimizing clinic resource allocation.'}
+                      {aiResult.projectBrief.summary}
                     </p>
                     <div className="grid grid-cols-3" style={{ marginTop: 'auto', gap: 'var(--spacing-md)' }}>
                       {[
-                        { label: 'Complexity', value: detailLevel === 'concise' ? 'Low / Tier 1' : 'Moderate / Tier 2' },
+                        { label: 'Complexity', value: aiResult.projectBrief.complexity },
                         { label: 'Infrastructure', value: projectType === 'saas' ? 'SaaS / Multi-Tenant' : 'Cloud-Native' },
-                        { label: 'Industry', value: 'Healthcare / MedTech' },
+                        { label: 'Industry', value: aiResult.projectBrief.industry },
                       ].map(item => (
                         <div key={item.label} style={{ background: 'var(--bg-main)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', border: 'var(--glass-border)' }}>
                           <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>{item.label}</div>
-                          <div className="text-sm font-bold">{item.value}</div>
+                          <div className="text-sm font-bold" style={{ textTransform: 'capitalize' }}>{item.value}</div>
                         </div>
                       ))}
                     </div>
@@ -311,24 +336,30 @@ export default function SRSGeneratorPage() {
                   <div className="card">
                     <div className="card-header">
                       <h2 className="card-title"><i className="fa-solid fa-users" style={{ color: 'var(--status-warning)' }}></i>{t('userRoles', language)}</h2>
-                      <span className="badge badge-neutral">3 Roles</span>
+                      <span className="badge badge-neutral">{aiResult.userRoles.length} Roles</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                      {[
-                        { icon: 'fa-regular fa-user', label: 'Patient', desc: 'External users booking appointments and receiving notifications.', color: 'var(--status-info)', bg: 'var(--status-info-bg)' },
-                        { icon: 'fa-solid fa-shield-halved', label: 'Admin', desc: 'Global system management, clinic settings, and staff access control.', color: 'var(--accent-primary)', bg: 'rgba(37, 99, 235, 0.08)' },
-                        { icon: 'fa-solid fa-briefcase-medical', label: 'Doctor', desc: 'Schedule viewing and basic session management.', color: 'var(--status-success)', bg: 'var(--status-success-bg)' },
-                      ].map(role => (
-                        <div key={role.label} style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
-                          <div className="list-item-icon" style={{ background: role.bg, color: role.color, flexShrink: 0 }}>
-                            <i className={role.icon}></i>
+                      {aiResult.userRoles.map((role, i) => {
+                        const icons = [
+                          { icon: 'fa-regular fa-user', color: 'var(--status-info)', bg: 'var(--status-info-bg)' },
+                          { icon: 'fa-solid fa-shield-halved', color: 'var(--accent-primary)', bg: 'rgba(37, 99, 235, 0.08)' },
+                          { icon: 'fa-solid fa-briefcase-medical', color: 'var(--status-success)', bg: 'var(--status-success-bg)' },
+                          { icon: 'fa-solid fa-user-gear', color: 'var(--status-warning)', bg: 'rgba(217, 119, 6, 0.08)' },
+                          { icon: 'fa-solid fa-user-tie', color: 'var(--text-muted)', bg: 'var(--bg-surface)' },
+                        ];
+                        const iconData = icons[i % icons.length];
+                        return (
+                          <div key={i} style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
+                            <div className="list-item-icon" style={{ background: iconData.bg, color: iconData.color, flexShrink: 0 }}>
+                              <i className={iconData.icon}></i>
+                            </div>
+                            <div>
+                              <div className="font-semibold text-sm">{role.role}</div>
+                              <div className="text-xs text-muted" style={{ marginTop: '2px', lineHeight: 1.5 }}>{role.description}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="font-semibold text-sm">{role.label}</div>
-                            <div className="text-xs text-muted" style={{ marginTop: '2px', lineHeight: 1.5 }}>{role.desc}</div>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -342,13 +373,16 @@ export default function SRSGeneratorPage() {
                   <div className="card">
                     <div className="card-header">
                       <h2 className="card-title"><i className="fa-regular fa-square-check" style={{ color: 'var(--status-success)' }}></i>{t('mainFeatures', language)}</h2>
-                      <span className="badge badge-success">5 Confirmed</span>
+                      <span className="badge badge-success">{aiResult.mainFeatures.length} Confirmed</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {['Booking Portal', 'Admin Dashboard', 'Schedule Management', 'Notification Engine', 'BI Reporting'].map(f => (
-                        <div key={f} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'var(--status-success-bg)', border: '1px solid var(--status-success-border)', borderRadius: 'var(--radius-md)' }}>
-                          <span className="text-sm font-semibold">{f}</span>
-                          <i className="fa-solid fa-circle-check" style={{ color: 'var(--status-success)' }}></i>
+                      {aiResult.mainFeatures.map((f, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'var(--status-success-bg)', border: '1px solid var(--status-success-border)', borderRadius: 'var(--radius-md)' }}>
+                          <div>
+                            <span className="text-sm font-semibold">{f.title}</span>
+                            <div className="text-xs text-muted" style={{ marginTop: '2px' }}>{f.description}</div>
+                          </div>
+                          <i className="fa-solid fa-circle-check" style={{ color: 'var(--status-success)', flexShrink: 0 }}></i>
                         </div>
                       ))}
                     </div>
@@ -358,15 +392,15 @@ export default function SRSGeneratorPage() {
                   <div className="card">
                     <div className="card-header">
                       <h2 className="card-title"><i className="fa-solid fa-list-check" style={{ color: 'var(--status-info)' }}></i>{t('functionalReqs', language)}</h2>
-                      <span className="badge badge-info">{frList.length} Requirements</span>
+                      <span className="badge badge-info">{aiResult.functionalRequirements.length} Requirements</span>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
-                      {frList.map(fr => (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)', maxHeight: '500px', overflowY: 'auto' }}>
+                      {aiResult.functionalRequirements.map(fr => (
                         <div key={fr.id} style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
                           <div style={{ background: 'var(--status-info-bg)', color: 'var(--status-info)', padding: '3px 8px', borderRadius: 'var(--radius-sm)', fontSize: '0.6875rem', fontWeight: 700, flexShrink: 0, marginTop: '2px', border: '1px solid var(--status-info-border)' }}>{fr.id}</div>
                           <div>
                             <div className="text-sm font-semibold">{fr.title}</div>
-                            <div className="text-xs text-muted" style={{ marginTop: '3px', lineHeight: 1.5, fontStyle: 'italic' }}>{fr.desc}</div>
+                            <div className="text-xs text-muted" style={{ marginTop: '3px', lineHeight: 1.5, fontStyle: 'italic' }}>{fr.description}</div>
                           </div>
                         </div>
                       ))}
@@ -381,21 +415,16 @@ export default function SRSGeneratorPage() {
               <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
                 <div className="card-header">
                   <h2 className="card-title"><i className="fa-solid fa-gauge-high" style={{ color: 'var(--accent-ai)' }}></i>{t('nonFunctionalReqs', language)}</h2>
-                  <span className="badge badge-neutral">4 Constraints</span>
+                  <span className="badge badge-neutral">{aiResult.nonFunctionalRequirements.length} Constraints</span>
                 </div>
                 <div className="grid grid-cols-2" style={{ gap: 'var(--spacing-md)' }}>
-                  {[
-                    { id: 'NFR-01', label: 'Performance', value: 'Page load < 2s under 500 concurrent users' },
-                    { id: 'NFR-02', label: 'Availability', value: '99.5% uptime SLA with auto-failover' },
-                    { id: 'NFR-03', label: 'Security', value: 'HTTPS, JWT auth, OWASP Top 10 compliance' },
-                    { id: 'NFR-04', label: 'Scalability', value: 'Horizontal scaling via containerized deployment' },
-                  ].map(nfr => (
-                    <div key={nfr.id} style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)' }}>
+                  {aiResult.nonFunctionalRequirements.map((nfr, i) => (
+                    <div key={i} style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)' }}>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-                        <span style={{ background: 'rgba(124,58,237,0.1)', color: 'var(--accent-ai)', padding: '2px 7px', borderRadius: 'var(--radius-sm)', fontSize: '0.6875rem', fontWeight: 700 }}>{nfr.id}</span>
-                        <span className="text-sm font-semibold">{nfr.label}</span>
+                        <span style={{ background: 'rgba(124,58,237,0.1)', color: 'var(--accent-ai)', padding: '2px 7px', borderRadius: 'var(--radius-sm)', fontSize: '0.6875rem', fontWeight: 700 }}>NFR-{String(i + 1).padStart(2, '0')}</span>
+                        <span className="text-sm font-semibold">{nfr.category}</span>
                       </div>
-                      <p className="text-xs text-muted" style={{ lineHeight: 1.5 }}>{nfr.value}</p>
+                      <p className="text-xs text-muted" style={{ lineHeight: 1.5 }}>{nfr.requirement}</p>
                     </div>
                   ))}
                 </div>
@@ -409,18 +438,14 @@ export default function SRSGeneratorPage() {
                   <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
                     <div className="card-header">
                       <h2 className="card-title"><i className="fa-regular fa-circle-question text-accent"></i>{t('missingQuestions', language)}</h2>
-                      <span className="badge badge-warning">3 Open</span>
+                      <span className="badge badge-warning">{aiResult.missingQuestions.length} Open</span>
                     </div>
                     <p className="text-sm text-muted" style={{ marginBottom: 'var(--spacing-lg)' }}>Missing information required for a high-fidelity SRS:</p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
-                      {[
-                        'Do we need to support <strong>multiple clinic locations</strong> within a single dashboard?',
-                        'Will there be an <strong>online payment integration</strong> at the time of booking?',
-                        'What specific <strong>types of reports</strong> are required (CSV, PDF, or Live Dashboard)?',
-                      ].map((q, i) => (
+                      {aiResult.missingQuestions.map((q, i) => (
                         <div key={i} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'flex-start', padding: 'var(--spacing-sm) var(--spacing-md)', background: 'rgba(217, 119, 6, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--status-warning-border)' }}>
                           <i className="fa-regular fa-circle-question text-accent" style={{ marginTop: '3px', flexShrink: 0 }}></i>
-                          <div className="text-sm" dangerouslySetInnerHTML={{ __html: q }}></div>
+                          <div className="text-sm">{q}</div>
                         </div>
                       ))}
                     </div>
@@ -433,18 +458,14 @@ export default function SRSGeneratorPage() {
                   <div className="card">
                     <div className="card-header">
                       <h2 className="card-title"><i className="fa-solid fa-rocket text-accent"></i>{t('mvpScope', language)}</h2>
-                      <span className="badge badge-accent">3 Phases</span>
+                      <span className="badge badge-accent">{aiResult.mvpScope.length} Items</span>
                     </div>
                     <div style={{ position: 'relative', paddingLeft: '24px', borderLeft: '2px solid var(--border-subtle)', marginLeft: '8px', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)', marginTop: 'var(--spacing-md)' }}>
-                      {[
-                        { label: 'Phase 1: Foundation', desc: 'Booking website with basic slot management and Email notifications.', active: true },
-                        { label: 'Phase 2: Management Hub', desc: 'Admin dashboard for multi-doctor schedules and basic reporting.', active: false },
-                        { label: 'Phase 3: Optimization', desc: 'SMS Integration, advanced BI analytics, and patient records.', active: false },
-                      ].map(phase => (
-                        <div key={phase.label} style={{ position: 'relative' }}>
-                          <div style={{ position: 'absolute', left: '-30px', top: '3px', width: '10px', height: '10px', borderRadius: '50%', background: phase.active ? 'var(--accent-primary)' : 'var(--border-strong)', boxShadow: phase.active ? '0 0 0 4px rgba(37, 99, 235, 0.2)' : 'none' }}></div>
-                          <div className="text-sm font-semibold" style={{ marginBottom: '4px', color: phase.active ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{phase.label}</div>
-                          <div className="text-xs text-muted" style={{ lineHeight: 1.6 }}>{phase.desc}</div>
+                      {aiResult.mvpScope.map((item, i) => (
+                        <div key={i} style={{ position: 'relative' }}>
+                          <div style={{ position: 'absolute', left: '-30px', top: '3px', width: '10px', height: '10px', borderRadius: '50%', background: i === 0 ? 'var(--accent-primary)' : 'var(--border-strong)', boxShadow: i === 0 ? '0 0 0 4px rgba(37, 99, 235, 0.2)' : 'none' }}></div>
+                          <div className="text-sm font-semibold" style={{ marginBottom: '4px', color: i === 0 ? 'var(--text-primary)' : 'var(--text-secondary)' }}>Phase {i + 1}</div>
+                          <div className="text-xs text-muted" style={{ lineHeight: 1.6 }}>{item}</div>
                         </div>
                       ))}
                     </div>
@@ -460,12 +481,7 @@ export default function SRSGeneratorPage() {
                   <h2 className="card-title"><i className="fa-solid fa-lightbulb" style={{ color: 'var(--status-warning)' }}></i>{t('assumptions', language)}</h2>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {[
-                    'Client will provide all branding assets (logos, colors) before design phase.',
-                    'The system will be deployed on a cloud provider chosen by the client (AWS / Azure).',
-                    'Third-party SMS gateway integration is subject to client procurement.',
-                    'Initial data migration from existing records is out of scope for Phase 1.',
-                  ].map((a, i) => (
+                  {aiResult.assumptions.map((a, i) => (
                     <div key={i} style={{ display: 'flex', gap: 'var(--spacing-sm)', padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                       <i className="fa-solid fa-circle-dot text-muted" style={{ marginTop: '3px', fontSize: '0.625rem', flexShrink: 0 }}></i>
                       <span className="text-sm">{a}</span>
@@ -475,44 +491,35 @@ export default function SRSGeneratorPage() {
               </div>
             )}
 
-            {/* User Stories */}
+            {/* User Stories - generated from roles */}
             {sections.userStories && (
               <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
                 <div className="card-header">
                   <h2 className="card-title"><i className="fa-regular fa-comment-dots text-accent"></i>{t('userStories', language)}</h2>
-                  <span className="badge badge-neutral">3 Stories</span>
+                  <span className="badge badge-neutral">{aiResult.userRoles.length} Stories</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
-                  {[
-                    { role: 'Patient', story: 'I want to book an appointment online so that I can avoid calling the clinic during busy hours.' },
-                    { role: 'Admin', story: 'I want to view all bookings in a unified calendar so that I can manage clinic capacity efficiently.' },
-                    { role: 'Doctor', story: 'I want to see my daily schedule at a glance so that I can prepare for upcoming patient sessions.' },
-                  ].map((s, i) => (
+                  {aiResult.userRoles.map((role, i) => (
                     <div key={i} style={{ padding: 'var(--spacing-md)', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', borderLeft: '3px solid var(--accent-primary)' }}>
-                      <div className="text-xs font-bold text-accent uppercase tracking-wider" style={{ marginBottom: '4px' }}>As a {s.role}</div>
-                      <p className="text-sm">{s.story}</p>
+                      <div className="text-xs font-bold text-accent uppercase tracking-wider" style={{ marginBottom: '4px' }}>As a {role.role}</div>
+                      <p className="text-sm">{role.description}</p>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Acceptance Criteria */}
-            {sections.acceptanceCriteria && (
+            {/* Acceptance Criteria - derived from NFRs */}
+            {sections.acceptanceCriteria && aiResult.nonFunctionalRequirements.length > 0 && (
               <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
                 <div className="card-header">
                   <h2 className="card-title"><i className="fa-solid fa-check-double" style={{ color: 'var(--status-success)' }}></i>{t('acceptanceCriteria', language)}</h2>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {[
-                    'Booking flow completes in under 3 steps with no more than 1 page reload.',
-                    'Notification delivery rate ≥ 98% verified via gateway logs.',
-                    'Admin dashboard renders within 2 seconds for up to 1,000 daily records.',
-                    'All patient data is stored encrypted at rest (AES-256).',
-                  ].map((c, i) => (
+                  {aiResult.nonFunctionalRequirements.map((nfr, i) => (
                     <div key={i} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'flex-start', padding: '8px 12px', background: 'var(--status-success-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--status-success-border)' }}>
                       <i className="fa-solid fa-circle-check text-success" style={{ marginTop: '2px', fontSize: '0.75rem', flexShrink: 0 }}></i>
-                      <span className="text-sm">{c}</span>
+                      <span className="text-sm">{nfr.requirement}</span>
                     </div>
                   ))}
                 </div>
@@ -572,10 +579,10 @@ export default function SRSGeneratorPage() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
                   {([
-                    { layer: 'Frontend',     value: techStack.frontend, icon: 'fa-solid fa-display',      color: 'var(--accent-primary)', bg: 'rgba(37,99,235,0.08)' },
-                    { layer: 'Backend',      value: techStack.backend,  icon: 'fa-solid fa-server',       color: 'var(--status-success)', bg: 'var(--status-success-bg)' },
-                    { layer: 'Database',     value: techStack.db,       icon: 'fa-solid fa-database',     color: 'var(--status-warning)', bg: 'var(--status-warning-bg)' },
-                    { layer: 'Infra/Deploy', value: techStack.infra,    icon: 'fa-solid fa-cloud-arrow-up', color: 'var(--status-info)',    bg: 'var(--status-info-bg)' },
+                    { layer: 'Frontend', value: techStack.frontend, icon: 'fa-solid fa-display', color: 'var(--accent-primary)', bg: 'rgba(37,99,235,0.08)' },
+                    { layer: 'Backend', value: techStack.backend, icon: 'fa-solid fa-server', color: 'var(--status-success)', bg: 'var(--status-success-bg)' },
+                    { layer: 'Database', value: techStack.db, icon: 'fa-solid fa-database', color: 'var(--status-warning)', bg: 'var(--status-warning-bg)' },
+                    { layer: 'Infra/Deploy', value: techStack.infra, icon: 'fa-solid fa-cloud-arrow-up', color: 'var(--status-info)', bg: 'var(--status-info-bg)' },
                   ] as { layer: string; value: string; icon: string; color: string; bg: string }[]).map(row => (
                     <div key={row.layer} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', padding: '8px var(--spacing-md)', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                       <div className="list-item-icon" style={{ background: row.bg, color: row.color, width: '32px', height: '32px', flexShrink: 0, fontSize: '0.875rem' }}>
