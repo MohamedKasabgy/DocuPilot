@@ -154,7 +154,7 @@ export default function RisksPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--spacing-md)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-subtle)' }}>
+                <div className="grid-3col" style={{ paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-subtle)' }}>
                   <div className="info-pair">
                     <span className="info-pair-label">Source</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-primary)', marginTop: '2px' }}>
@@ -308,7 +308,7 @@ export default function RisksPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
+                <div className="grid-2col">
                   <div className="info-pair">
                     <span className="info-pair-label">Related Project</span>
                     <span className="info-pair-value text-sm">DesignPro Studio Rebrand</span>
@@ -389,7 +389,7 @@ export default function RisksPage() {
                   <i className="fa-solid fa-clipboard-question" style={{ color: 'var(--status-warning)', fontSize: '1.5rem', flexShrink: 0 }}></i>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
+                <div className="grid-2col">
                   <div style={{ background: 'var(--status-success-bg)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', border: '1px solid var(--status-success-border)' }}>
                     <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>Suggested Action</div>
                     <div className="text-sm font-medium">Hold sprint kickoff until sign-off is secured.</div>

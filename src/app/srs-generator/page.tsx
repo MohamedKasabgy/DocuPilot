@@ -269,7 +269,7 @@ export default function SRSGeneratorPage() {
             <h2 className="card-title"><i className="fa-solid fa-sliders text-accent"></i> Include Sections</h2>
             <button className="btn btn-ghost btn-sm text-muted" onClick={() => setSections(Object.fromEntries(Object.keys(sections).map(k => [k, true])) as typeof sections)}>Enable All</button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2px 24px' }}>
+          <div className="grid-2col" style={{ gap: '2px 24px' }}>
             {(Object.keys(sections) as (keyof typeof sections)[]).map(key => (
               <div key={key} className="toggle-row">
                 <span className="toggle-row-label text-sm">{t(key, language)}</span>
@@ -304,7 +304,7 @@ export default function SRSGeneratorPage() {
 
             {/* Project Brief + User Roles */}
             {(sections.projectBrief || sections.userRoles) && (
-              <div className="grid" style={{ gridTemplateColumns: sections.projectBrief && sections.userRoles ? '1fr 320px' : '1fr', marginBottom: 'var(--spacing-lg)' }}>
+              <div className="grid layout-sidebar-right" style={{ marginBottom: 'var(--spacing-lg)' }}>
 
                 {sections.projectBrief && (
                   <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>

@@ -281,7 +281,7 @@ export default function ContractsPage() {
                 )}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-lg)' }}>
+              <div className="grid-2col" style={{ gap: 'var(--spacing-lg)' }}>
                 <div className="upload-zone" onClick={() => showToast('PDF upload is not connected yet — paste contract text below to analyze.', 'info')}>
                   <i className="fa-solid fa-cloud-arrow-up upload-icon"></i>
                   <div className="font-semibold" style={{ marginBottom: '4px' }}>Upload Contract PDF</div>

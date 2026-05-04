@@ -190,7 +190,7 @@ export default function AskDocuPilotPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
+            <div className="grid-2col" style={{ marginBottom: 'var(--spacing-md)' }}>
               <div>
                 <label className="text-xs font-bold text-muted" style={{ display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Document Title</label>
                 <input
