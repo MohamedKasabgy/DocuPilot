@@ -107,6 +107,12 @@
   background-color: var(--accent-primary);
 }
 
+.nav-item.active a,
+.nav-item.active span,
+.nav-item.active i {
+  color: #FFFFFF !important;
+}
+
 .nav-item.active::before {
   content: '';
   position: absolute;
@@ -123,6 +129,17 @@
   background-color: rgba(79, 70, 229, 0.1);
   border-radius: var(--radius-md);
   margin: 0 var(--spacing-sm);
+}
+
+.nav-item-special.active {
+  color: #FFFFFF;
+  background-color: var(--accent-primary);
+}
+
+.nav-item-special.active a,
+.nav-item-special.active span,
+.nav-item-special.active i {
+  color: #FFFFFF !important;
 }
 
 .nav-item-special:hover {
