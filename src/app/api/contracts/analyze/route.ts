@@ -1,11 +1,167 @@
 import { NextResponse } from "next/server";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { Type } from "@google/genai";
 
 import { gemini, GEMINI_PRO_MODEL } from "@/lib/ai/gemini";
 import { supabaseAdmin } from "@/lib/db/supabaseAdmin";
 import { ContractAnalysisSchema } from "@/lib/ai/schemas/contract";
 import { buildContractPrompt } from "@/lib/ai/prompts/contract";
 import type { ContractAnalysisOutput } from "@/lib/ai/schemas/contract";
+
+const CONTRACT_RESPONSE_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    contractTitle: { type: Type.STRING },
+    projectName: { type: Type.STRING, nullable: true },
+    clientName: { type: Type.STRING, nullable: true },
+    parties: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          name: { type: Type.STRING },
+          role: { type: Type.STRING, enum: ["client", "vendor", "partner", "unknown"] },
+        },
+        required: ["name", "role"],
+      },
+    },
+    scope: {
+      type: Type.OBJECT,
+      properties: {
+        included: { type: Type.ARRAY, items: { type: Type.STRING } },
+        excluded: { type: Type.ARRAY, items: { type: Type.STRING } },
+        summary: { type: Type.STRING },
+      },
+      required: ["included", "excluded", "summary"],
+    },
+    deliverables: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING },
+          description: { type: Type.STRING },
+          dueDate: { type: Type.STRING, nullable: true },
+          sourceQuote: { type: Type.STRING },
+        },
+        required: ["title", "description", "dueDate", "sourceQuote"],
+      },
+    },
+    deadlines: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING },
+          dueDate: { type: Type.STRING, nullable: true },
+          relativeTimeline: { type: Type.STRING, nullable: true },
+          consequenceIfMissed: { type: Type.STRING, nullable: true },
+          priority: { type: Type.STRING, enum: ["low", "medium", "high", "critical"] },
+          sourceQuote: { type: Type.STRING },
+        },
+        required: ["title", "dueDate", "relativeTimeline", "consequenceIfMissed", "priority", "sourceQuote"],
+      },
+    },
+    payments: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING },
+          trigger: { type: Type.STRING },
+          percentage: { type: Type.STRING, nullable: true },
+          amount: { type: Type.STRING, nullable: true },
+          dueDate: { type: Type.STRING, nullable: true },
+          sourceQuote: { type: Type.STRING },
+        },
+        required: ["title", "trigger", "percentage", "amount", "dueDate", "sourceQuote"],
+      },
+    },
+    obligations: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING },
+          owner: { type: Type.STRING, enum: ["client", "vendor", "both", "unknown"] },
+          description: { type: Type.STRING },
+          suggestedAction: { type: Type.STRING },
+          severity: { type: Type.STRING, enum: ["low", "medium", "high", "critical"] },
+          sourceQuote: { type: Type.STRING },
+        },
+        required: ["title", "owner", "description", "suggestedAction", "severity", "sourceQuote"],
+      },
+    },
+    risks: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING },
+          severity: { type: Type.STRING, enum: ["low", "medium", "high", "critical"] },
+          category: {
+            type: Type.STRING,
+            enum: ["delivery", "payment", "scope", "legal", "compliance", "operational", "other"],
+          },
+          impact: { type: Type.STRING },
+          reason: { type: Type.STRING },
+          suggestedAction: { type: Type.STRING },
+          sourceQuote: { type: Type.STRING },
+        },
+        required: ["title", "severity", "category", "impact", "reason", "suggestedAction", "sourceQuote"],
+      },
+    },
+    changeRequestTerms: {
+      type: Type.OBJECT,
+      properties: {
+        requiresWrittenApproval: { type: Type.BOOLEAN },
+        summary: { type: Type.STRING },
+        sourceQuote: { type: Type.STRING, nullable: true },
+      },
+      required: ["requiresWrittenApproval", "summary", "sourceQuote"],
+    },
+    suggestedActions: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          type: {
+            type: Type.STRING,
+            enum: [
+              "create_task",
+              "create_risk",
+              "create_payment_milestone",
+              "create_approval",
+              "draft_amendment",
+              "notify_manager",
+            ],
+          },
+          title: { type: Type.STRING },
+          description: { type: Type.STRING },
+          priority: { type: Type.STRING, enum: ["low", "medium", "high", "critical"] },
+        },
+        required: ["type", "title", "description", "priority"],
+      },
+    },
+    executiveSummary: { type: Type.STRING },
+    confidenceScore: { type: Type.NUMBER },
+  },
+  required: [
+    "contractTitle",
+    "projectName",
+    "clientName",
+    "parties",
+    "scope",
+    "deliverables",
+    "deadlines",
+    "payments",
+    "obligations",
+    "risks",
+    "changeRequestTerms",
+    "suggestedActions",
+    "executiveSummary",
+    "confidenceScore",
+  ],
+};
 
 const FALLBACK_DATA: ContractAnalysisOutput = {
   contractTitle: "Clinic Booking Platform Development Agreement",
@@ -169,15 +325,27 @@ export async function POST(req: Request) {
         contents: buildContractPrompt(contractText),
         config: {
           responseMimeType: "application/json",
-          // @ts-ignore
-          responseJsonSchema: zodToJsonSchema(ContractAnalysisSchema),
+          responseSchema: CONTRACT_RESPONSE_SCHEMA,
         },
       });
 
       const raw = response.text;
       if (!raw) throw new Error("Empty Gemini response");
 
-      const parsed = JSON.parse(raw);
+      let parsed = JSON.parse(raw);
+
+      // Unwrap top-level array if model wraps the object
+      if (Array.isArray(parsed)) parsed = parsed[0];
+
+      // Unwrap changeRequestTerms if model returns it as an array
+      if (Array.isArray(parsed?.changeRequestTerms)) {
+        parsed.changeRequestTerms = parsed.changeRequestTerms[0] ?? {
+          requiresWrittenApproval: false,
+          summary: "No change request terms found in contract.",
+          sourceQuote: null,
+        };
+      }
+
       validated = ContractAnalysisSchema.parse(parsed);
     } catch (aiError) {
       console.warn("Gemini AI failed, using fallback data:", aiError);
