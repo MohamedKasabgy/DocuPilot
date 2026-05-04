@@ -282,3 +282,96 @@ The main value is turning documents into:
 - Dashboard insights
 
 Always preserve this product direction.
+
+---
+
+## Latest Integration Update — Contract-to-Actions
+
+**Branch:** `integration/mvp-merge`
+**Date:** May 2026
+**Status:** Demo-ready. Real AI + database behavior requires `.env.local` with valid keys.
+
+### What Is Now Connected
+
+The `/contracts` page is connected to a real backend endpoint. Submitting contract text triggers a live Gemini call, Zod validation, Supabase persistence, and returns structured data rendered in the UI.
+
+### Endpoint
+
+```
+POST /api/contracts/analyze
+```
+
+Source: `src/app/api/contracts/analyze/route.ts`
+
+**Request body:**
+```json
+{
+  "projectId": "clinic-booking-platform",
+  "contractText": "...",
+  "depth": "quick | standard | deep"
+}
+```
+
+> The frontend also sends `riskSensitivity` and `language`, but the current backend only reads `projectId`, `contractText`, and `depth`. Risk sensitivity filtering is applied client-side. Language selection shows an info banner only.
+
+**Success response:**
+```json
+{ "success": true, "data": { ...ContractAnalysisOutput } }
+```
+
+**Error response:**
+```json
+{ "success": false, "error": "Failed to analyze contract." }
+```
+
+### AI Layer
+
+- **Model:** `gemini-2.5-flash` (constant `GEMINI_PRO_MODEL` in `src/lib/ai/gemini.ts`)
+- **Structured output:** `responseSchema` using `@google/genai` Type enums — enforces JSON shape at the model level before Zod runs
+- **Prompt:** `buildContractPrompt()` in `src/lib/ai/prompts/contract.ts` — depth parameter controls extraction verbosity
+- **Zod schema:** `ContractAnalysisSchema` in `src/lib/ai/schemas/contract.ts` — validates the parsed Gemini response
+- **Fallback:** If Gemini fails or Zod rejects the output, `FALLBACK_DATA` (a hardcoded demo analysis) is used so Supabase writes and the UI still succeed
+
+### Supabase Writes Per Analysis
+
+1. `contract_analyses` — full contract text, structured JSON output, confidence score
+2. `alerts` — one row per extracted risk + one row per high/critical deadline
+3. `ai_outputs` — raw structured output, typed as `contract_analysis`
+
+All rows reference `project_id`. The `project_id` must exist in the `projects` table. Demo ID: `clinic-booking-platform`.
+
+### Required Tables
+
+`projects`, `contract_analyses`, `alerts`, `ai_outputs`
+
+If the API returns a 500 with a foreign key violation, confirm that `clinic-booking-platform` exists in the `projects` table.
+
+### UI States
+
+| State | Behavior |
+|---|---|
+| Before analysis | Mock/static data shown |
+| Loading | Button shows spinner + "Analyzing…", disabled |
+| Success | "AI Analyzed" badge, real extracted data rendered |
+| Error | Red error banner + toast notification |
+| Re-run | Button changes to "Re-analyze Contract" |
+
+### Environment Variables Required
+
+```env
+GEMINI_API_KEY=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` is server-side only — never prefix it with `NEXT_PUBLIC_`.
+
+### What Remains Placeholder
+
+- PDF upload (toast message only — no file parsing)
+- Contract Vault (toast message only)
+- `language` and `riskSensitivity` not used server-side
+- `projectId` is hardcoded; no project selector UI yet
+- Results not persisted in browser after page refresh
+
+See `CONTRACTS_FLOW_HANDOFF.md` for the full test scenario, browser checklist, and recommended next tasks.
