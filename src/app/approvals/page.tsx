@@ -104,7 +104,7 @@ export default function ApprovalsPage() {
           </div>
 
           {/* Right Panel */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+          <div className="section-gap">
 
             {/* Extracted Data */}
             <div className="card">

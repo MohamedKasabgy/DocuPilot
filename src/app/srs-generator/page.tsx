@@ -215,7 +215,7 @@ export default function SRSGeneratorPage() {
               {PROJECT_TYPES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
           </div>
-          <div style={{ marginLeft: 'auto' }}>
+          <div>
             <span className="opts-label">Sections Enabled</span>
             <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent-primary)' }}>{enabledSectionCount} / {Object.keys(sections).length}</div>
           </div>
@@ -269,7 +269,7 @@ export default function SRSGeneratorPage() {
             <h2 className="card-title"><i className="fa-solid fa-sliders text-accent"></i> Include Sections</h2>
             <button className="btn btn-ghost btn-sm text-muted" onClick={() => setSections(Object.fromEntries(Object.keys(sections).map(k => [k, true])) as typeof sections)}>Enable All</button>
           </div>
-          <div className="grid-2col" style={{ gap: '2px 24px' }}>
+          <div className="grid-2col" style={{ gap: '2px var(--spacing-md)' }}>
             {(Object.keys(sections) as (keyof typeof sections)[]).map(key => (
               <div key={key} className="toggle-row">
                 <span className="toggle-row-label text-sm">{t(key, language)}</span>
@@ -304,7 +304,7 @@ export default function SRSGeneratorPage() {
 
             {/* Project Brief + User Roles */}
             {(sections.projectBrief || sections.userRoles) && (
-              <div className="grid layout-sidebar-right" style={{ marginBottom: 'var(--spacing-lg)' }}>
+              <div className="layout-sidebar-right" style={{ marginBottom: 'var(--spacing-lg)' }}>
 
                 {sections.projectBrief && (
                   <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -533,7 +533,7 @@ export default function SRSGeneratorPage() {
             {/* Complexity + Tech Stack */}
             <div className="grid grid-cols-2" style={{ marginBottom: 'var(--spacing-lg)' }}>
 
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card content-gap">
                 <div className="card-header">
                   <h2 className="card-title">
                     <i className="fa-solid fa-gauge-high" style={{ color: 'var(--accent-ai)' }}></i>
@@ -608,23 +608,23 @@ export default function SRSGeneratorPage() {
             </div>
 
             {/* CTA */}
-            <div className="card card-accent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--spacing-xl)', overflow: 'hidden' }}>
-              <div>
+            <div className="card card-accent" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--spacing-lg)', overflow: 'hidden', position: 'relative' }}>
+              <div style={{ flex: '1 1 240px', minWidth: 0 }}>
                 <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>Ready to finalize?</h2>
                 <p className="text-sm text-muted" style={{ lineHeight: 1.7 }}>
-                  The AI has analyzed your request and structured the initial scope.<br />
+                  The AI has analyzed your request and structured the initial scope.
                   Push this to the Contracts module or refine the requirements further.
                 </p>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)', flexShrink: 0 }}>
-                <button className="btn btn-primary btn-lg" onClick={() => showToast('SRS pushed to Contracts', 'success')}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)', flex: '0 0 auto', width: '100%', maxWidth: '260px' }}>
+                <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => showToast('SRS pushed to Contracts', 'success')}>
                   <i className="fa-solid fa-file-signature"></i> Push to Contracts
                 </button>
-                <button className="btn btn-secondary" onClick={() => showToast('Requirements saved for refinement', 'info')}>
+                <button className="btn btn-secondary" style={{ width: '100%' }} onClick={() => showToast('Requirements saved for refinement', 'info')}>
                   Refine Requirements
                 </button>
               </div>
-              <div style={{ fontSize: '5rem', opacity: 0.06, color: 'var(--accent-primary)', pointerEvents: 'none', position: 'absolute', right: '120px' }}>
+              <div style={{ fontSize: '5rem', opacity: 0.06, color: 'var(--accent-primary)', pointerEvents: 'none', position: 'absolute', right: '40px' }}>
                 <i className="fa-solid fa-chart-network"></i>
               </div>
             </div>

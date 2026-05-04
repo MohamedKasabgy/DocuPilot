@@ -97,7 +97,7 @@ export default function ScopeGuardPage() {
         </div>
 
         {/* Main Analysis Grid */}
-        <div className="grid grid-cols-2" style={{ marginBottom: 'var(--spacing-lg)' }}>
+        <div className="grid grid-cols-2 section-mb">
 
           {/* Incoming Request */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>

@@ -246,6 +246,7 @@
   flex-direction: column;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   min-width: 0;
 }
@@ -491,6 +492,11 @@
   gap: var(--spacing-md);
 }
 
+/* ── Responsive Spacing Utilities ── */
+.section-mb   { margin-bottom: var(--spacing-xl); }
+.section-gap  { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.content-gap  { display: flex; flex-direction: column; gap: var(--spacing-md); }
+
 /* ── Timeline ── */
 .timeline {
   display: flex;
@@ -554,6 +560,82 @@
   background: var(--accent-primary);
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+}
+
+/* ── Vertical Timeline (mobile) ── */
+.timeline-vertical {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xs) 0;
+}
+
+.timeline-node-v {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-lg);
+  position: relative;
+}
+
+.timeline-node-v:last-child { padding-bottom: 0; }
+
+.timeline-node-v::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 24px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-strong);
+  z-index: 0;
+}
+
+.timeline-node-v:last-child::before { display: none; }
+.timeline-node-v.completed::before { background: var(--status-success); }
+.timeline-node-v.active::before {
+  background: linear-gradient(to bottom, var(--status-success) 50%, var(--border-strong) 50%);
+}
+
+.timeline-node-v .node-content {
+  display: flex;
+  flex-direction: column;
+  padding-top: 2px;
+  min-width: 0;
+}
+
+.timeline-node-v .node-date {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.timeline-node-v.active .node-date { color: var(--accent-primary); }
+
+.timeline-node-v .node-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.timeline-node-v.active .node-label {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timeline-node-v.completed .node-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Timeline responsive visibility */
+@media (min-width: 769px) {
+  .timeline-vertical { display: none; }
+}
+@media (max-width: 768px) {
+  .timeline-horizontal { display: none; }
 }
 
 /* ── Vault Items ── */
@@ -1142,6 +1224,28 @@
 
   /* Risk sub-bar: stack on small screens */
   .risk-sub-bar-track { width: 60px; }
+
+  /* Responsive spacing utilities */
+  .section-mb       { margin-bottom: var(--spacing-md); }
+  .section-gap      { gap: var(--spacing-md); }
+  .content-gap      { gap: var(--spacing-sm); }
+  .layout-sidebar-right { gap: var(--spacing-md); }
+
+  /* Options panel: stack controls vertically */
+  .opts-panel {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: var(--spacing-md) !important;
+  }
+
+  /* Timeline: contain scrolling inside card */
+  .timeline {
+    min-width: 0;
+  }
+  .timeline-node { min-width: 56px; }
+
+  /* Page container: prevent children overflow */
+  .page-container { overflow-x: hidden; }
 }
 
 /* Phone */
@@ -1175,9 +1279,16 @@
     padding: 0.4375rem 0.75rem;
   }
 
+  /* Responsive spacing utilities */
+  .section-mb       { margin-bottom: var(--spacing-sm); }
+  .section-gap      { gap: var(--spacing-sm); }
+  .content-gap      { gap: 6px; }
+  .grid             { gap: var(--spacing-sm); }
+  .page-header      { margin-bottom: var(--spacing-sm); }
+
   /* Cards: tighter padding */
-  .card { padding: var(--spacing-md); }
-  .stat-card { padding: var(--spacing-md); }
+  .card { padding: 0.75rem; }
+  .stat-card { padding: 0.75rem; }
 
   /* Stat values: smaller on phones */
   .stat-value { font-size: 1.75rem; }
@@ -1226,6 +1337,20 @@
   .chat-bubble-user { max-width: 90%; }
   .chat-bubble-ai { max-width: 95%; }
   .chat-container { height: calc(100vh - 56px - 2rem); height: calc(100dvh - 56px - 2rem); }
+
+  /* Timeline: tighter for small phones */
+  .timeline-node { min-width: 48px; padding: 0 2px; font-size: 0.75rem; }
+
+  /* Grid-2col: always single column on phones */
+  .grid-2col { gap: var(--spacing-sm) !important; }
+
+  /* Opts panel: compact */
+  .opts-panel {
+    gap: var(--spacing-sm) !important;
+  }
+
+  /* Tab items: smaller on phones */
+  .tab-item { padding: 0.5rem var(--spacing-sm); font-size: 0.8125rem; }
 }
 
 /* Extra small phones (iPhone SE, Galaxy S10e) */

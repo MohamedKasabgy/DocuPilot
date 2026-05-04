@@ -129,10 +129,10 @@ export default function RisksPage() {
             <p className="text-sm text-muted" style={{ marginTop: '6px' }}>Try adjusting severity, source, or status filters above.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2" style={{ marginBottom: 'var(--spacing-xl)' }}>
+          <div className="grid grid-cols-2 section-mb">
 
             {show(1) && (
-              <div className="card risk-card-high" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-high content-gap">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start', flex: 1 }}>
                     <div className="list-item-icon" style={{ background: 'var(--status-danger-bg)', color: 'var(--status-danger)', width: '44px', height: '44px', fontSize: '1.125rem', flexShrink: 0 }}>
@@ -223,7 +223,7 @@ export default function RisksPage() {
             )}
 
             {show(2) && (
-              <div className="card risk-card-high" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-high content-gap">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
@@ -292,7 +292,7 @@ export default function RisksPage() {
             )}
 
             {show(3) && (
-              <div className="card risk-card-medium" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-medium content-gap">
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-md)' }}>
                   <div className="list-item-icon" style={{ background: 'var(--status-warning-bg)', color: 'var(--status-warning)', width: '44px', height: '44px', fontSize: '1.125rem', flexShrink: 0 }}>
                     <i className="fa-solid fa-file-invoice-dollar"></i>
@@ -375,7 +375,7 @@ export default function RisksPage() {
             )}
 
             {show(4) && (
-              <div className="card risk-card-medium" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+              <div className="card risk-card-medium content-gap">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>

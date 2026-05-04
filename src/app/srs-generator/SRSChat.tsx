@@ -486,7 +486,7 @@ function SRSResultCards({ srs, isUpdating }: { srs: SrsOutput; isUpdating: boole
           <p className="text-sm text-muted" style={{ marginBottom: 'var(--spacing-lg)' }}>
             Missing information required for a high-fidelity SRS:
           </p>
-          <div className="list-group" style={{ marginBottom: 'var(--spacing-xl)' }}>
+          <div className="list-group section-mb">
             {srs.missingQuestions.map((q, i) => (
               <div key={i} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'flex-start' }}>
                 <i className="fa-regular fa-circle-question text-accent" style={{ marginTop: '4px' }}></i>

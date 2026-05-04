@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const navItems = [
@@ -16,7 +16,14 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const flash = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2400);
+  };
 
   useEffect(() => {
     setMobileOpen(false);
@@ -108,26 +115,44 @@ export default function Sidebar() {
 
         {/* Footer */}
         <div className="sidebar-footer">
-          <button className="btn-new-project">
+          <button
+            className="btn-new-project"
+            onClick={() => { setMobileOpen(false); router.push('/srs-generator'); flash('Start by generating an SRS for the new project'); }}
+          >
             <i className="fa-solid fa-plus"></i>
             New Project
           </button>
           <ul className="nav-list">
             <li className="nav-item" style={{ fontSize: '0.875rem' }}>
-              <span className="flex items-center gap-3 w-full">
+              <button
+                onClick={() => { setMobileOpen(false); flash('Support center coming soon — reach us at support@docupilot.io'); }}
+                className="flex items-center gap-3 w-full"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'inherit', font: 'inherit', textAlign: 'left' }}
+              >
                 <i className="fa-regular fa-circle-question w-5 text-center"></i>
                 Support
-              </span>
+              </button>
             </li>
             <li className="nav-item" style={{ fontSize: '0.875rem', color: 'var(--status-danger)', opacity: 0.8 }}>
-              <span className="flex items-center gap-3 w-full">
+              <button
+                onClick={() => { setMobileOpen(false); flash('Sign-out is disabled in the demo'); }}
+                className="flex items-center gap-3 w-full"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'inherit', font: 'inherit', textAlign: 'left' }}
+              >
                 <i className="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
                 Sign Out
-              </span>
+              </button>
             </li>
           </ul>
         </div>
       </aside>
+
+      {toast && (
+        <div className="toast toast-info" style={{ zIndex: 200 }}>
+          <i className="fa-solid fa-circle-info"></i>
+          {toast}
+        </div>
+      )}
     </>
   );
 }
