@@ -37,7 +37,7 @@ export default function MetricCard({
         <span className={`badge badge-${badgeType}`}>{badgeText}</span>
       </div>
 
-      <div className="stat-value">{value}</div>
+      <div className="stat-value tabular-nums">{value}</div>
       <div className="stat-label">{title}</div>
 
       {trend && (

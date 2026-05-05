@@ -1,0 +1,524 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - text: 
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e7]: 
+          - generic [ref=e8]:
+            - text: DocuPilot
+            - generic [ref=e9]: AI-Powered Software Ops
+        - text: 
+      - generic [ref=e11]:
+        - generic [ref=e12]: Workspace
+        - list [ref=e13]:
+          - listitem [ref=e14] [cursor=pointer]:
+            - link " Dashboard" [ref=e15]:
+              - /url: /
+              - generic [ref=e16]: 
+              - text: Dashboard
+          - listitem [ref=e17] [cursor=pointer]:
+            - link " Projects" [ref=e18]:
+              - /url: /projects
+              - generic [ref=e19]: 
+              - text: Projects
+          - listitem [ref=e20] [cursor=pointer]:
+            - link " SRS Generator" [ref=e21]:
+              - /url: /srs-generator
+              - generic [ref=e22]: 
+              - text: SRS Generator
+          - listitem [ref=e23] [cursor=pointer]:
+            - link " Contracts" [ref=e24]:
+              - /url: /contracts
+              - generic [ref=e25]: 
+              - text: Contracts
+          - listitem [ref=e26] [cursor=pointer]:
+            - link " Invoices & Approvals" [ref=e27]:
+              - /url: /invoices
+              - generic [ref=e28]: 
+              - text: Invoices & Approvals
+          - listitem [ref=e29] [cursor=pointer]:
+            - link " Scope Guard" [ref=e30]:
+              - /url: /scope-guard
+              - generic [ref=e31]: 
+              - text: Scope Guard
+          - listitem [ref=e32] [cursor=pointer]:
+            - link " Risk Radar" [ref=e33]:
+              - /url: /risks
+              - generic [ref=e34]: 
+              - text: Risk Radar
+      - generic [ref=e36]:
+        - generic [ref=e37]: AI Intelligence
+        - list [ref=e38]:
+          - listitem [ref=e39] [cursor=pointer]:
+            - link " Ask DocuPilot" [ref=e40]:
+              - /url: /ask-docupilot
+              - generic [ref=e41]: 
+              - text: Ask DocuPilot
+      - generic [ref=e42]:
+        - button "+ New Project" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: +
+          - text: New Project
+        - list [ref=e45]:
+          - listitem [ref=e46] [cursor=pointer]:
+            - button " Support" [ref=e47]:
+              - generic [ref=e48]: 
+              - text: Support
+          - listitem [ref=e49] [cursor=pointer]:
+            - button " Sign Out" [ref=e50]:
+              - generic [ref=e51]: 
+              - text: Sign Out
+    - main [ref=e52]:
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: 
+            - textbox "Search" [ref=e59]:
+              - /placeholder: Search projects, contracts, tasks...
+          - generic [ref=e60]:
+            - button "Notifications" [ref=e62] [cursor=pointer]:
+              - generic [ref=e63]: 
+            - button "User menu" [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]:
+                - generic [ref=e68]: DP
+                - generic [ref=e69]:
+                  - generic [ref=e70]: DocuPilot Admin
+                  - generic [ref=e71]: Operations Manager
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - paragraph [ref=e76]: May 5, 2026
+                - generic [ref=e77]: AI-Powered
+                - generic "Supabase not configured or no data yet" [ref=e78]:
+                  - generic [ref=e79]: 
+                  - text: Demo Data
+              - heading "Decision Dashboard" [level=1] [ref=e80]
+              - paragraph [ref=e81]: Active decisions, project health, financial signal, and AI-recommended next moves.
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - button "Today" [pressed] [ref=e84] [cursor=pointer]
+                - button "This Week" [ref=e85] [cursor=pointer]
+                - button "This Month" [ref=e86] [cursor=pointer]
+              - button " Export" [ref=e87] [cursor=pointer]:
+                - generic [ref=e88]: 
+                - text: Export
+              - button "+ New Project" [ref=e89] [cursor=pointer]:
+                - generic [ref=e90]: +
+                - text: New Project
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - generic [ref=e93]:
+                - generic [ref=e95]: 
+                - generic [ref=e96]: +2 this week
+              - generic [ref=e97]: "12"
+              - generic [ref=e98]: Active Projects
+              - generic [ref=e99]:
+                - generic [ref=e100]: 
+                - text: 2 new this week
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - generic [ref=e104]: 
+                - generic [ref=e105]: Needs Attention
+              - generic [ref=e106]: "8"
+              - generic [ref=e107]: Pending Invoices
+              - generic [ref=e108]:
+                - generic [ref=e109]: 
+                - text: 3 overdue
+            - generic [ref=e110]:
+              - generic [ref=e111]:
+                - generic [ref=e113]: 
+                - generic [ref=e114]: 5 Pending
+              - generic [ref=e115]: "5"
+              - generic [ref=e116]: Required Approvals
+              - generic [ref=e117]:
+                - generic [ref=e118]: 
+                - text: Due today
+            - generic [ref=e119]:
+              - generic [ref=e120]:
+                - generic [ref=e122]: 
+                - generic [ref=e123]: Critical
+              - generic [ref=e124]: "3"
+              - generic [ref=e125]: High Risks
+              - generic [ref=e126]:
+                - generic [ref=e127]: 
+                - text: 2 unresolved
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - heading " Active Decisions" [level=2] [ref=e130]:
+                - generic [ref=e131]: 
+                - text: Active Decisions
+              - generic [ref=e132]: 4 Awaiting
+            - paragraph [ref=e133]: Projects, scope changes, and approvals that need a call this week.
+            - generic [ref=e134]:
+              - link " Clinic Booking Platform — pilot decision Conditional Project Intelligence recommends a 4-week paid pilot before full build commitment." [ref=e135] [cursor=pointer]:
+                - /url: /srs-generator
+                - generic [ref=e137]: 
+                - generic [ref=e138]:
+                  - generic [ref=e139]:
+                    - generic [ref=e140]: Clinic Booking Platform — pilot decision
+                    - generic [ref=e141]: Conditional
+                  - generic [ref=e142]: Project Intelligence recommends a 4-week paid pilot before full build commitment.
+              - link " Mobile app request — out of scope Out of Scope Scope Impact Engine flagged iOS/Android request. CR-2026-014 awaiting approval." [ref=e143] [cursor=pointer]:
+                - /url: /scope-guard
+                - generic [ref=e145]: 
+                - generic [ref=e146]:
+                  - generic [ref=e147]:
+                    - generic [ref=e148]: Mobile app request — out of scope
+                    - generic [ref=e149]: Out of Scope
+                  - generic [ref=e150]: Scope Impact Engine flagged iOS/Android request. CR-2026-014 awaiting approval.
+              - link " DesignPro Studio invoice $12,450 awaiting approval Awaiting PM signoff complete. Pending Finance + Director." [ref=e151] [cursor=pointer]:
+                - /url: /approvals
+                - generic [ref=e153]: 
+                - generic [ref=e154]:
+                  - generic [ref=e155]:
+                    - generic [ref=e156]: DesignPro Studio invoice $12,450 awaiting approval
+                    - generic [ref=e157]: Awaiting
+                  - generic [ref=e158]: PM signoff complete. Pending Finance + Director.
+              - link " OMNIMOBILE retail platform — needs validation Needs Validation Pricing assumptions and compliance constraints not yet confirmed by client." [ref=e159] [cursor=pointer]:
+                - /url: /srs-generator
+                - generic [ref=e161]: 
+                - generic [ref=e162]:
+                  - generic [ref=e163]:
+                    - generic [ref=e164]: OMNIMOBILE retail platform — needs validation
+                    - generic [ref=e165]: Needs Validation
+                  - generic [ref=e166]: Pricing assumptions and compliance constraints not yet confirmed by client.
+          - generic [ref=e167]:
+            - generic [ref=e168]:
+              - generic [ref=e169]:
+                - generic [ref=e170]:
+                  - heading " Project Health" [level=2] [ref=e171]:
+                    - generic [ref=e172]: 
+                    - text: Project Health
+                  - link "View All " [ref=e173] [cursor=pointer]:
+                    - /url: /projects
+                    - text: View All
+                    - generic [ref=e174]: 
+                - generic [ref=e175]:
+                  - generic [ref=e176]:
+                    - generic [ref=e177]:
+                      - generic [ref=e178]: Clinic Booking Platform
+                      - generic [ref=e179]:
+                        - generic [ref=e180]: 
+                        - text: At Risk
+                    - generic [ref=e181]:
+                      - generic [ref=e182]:
+                        - generic [ref=e183]: Health
+                        - generic [ref=e184]: 78/100
+                      - generic [ref=e187]:
+                        - generic [ref=e188]: ROI
+                        - generic [ref=e189]: Medium
+                      - generic [ref=e190]:
+                        - generic [ref=e191]: Risk
+                        - generic [ref=e192]: Medium
+                  - generic [ref=e193]:
+                    - generic [ref=e194]:
+                      - generic [ref=e195]: Alpha Platform v2.0
+                      - generic [ref=e196]:
+                        - generic [ref=e197]: 
+                        - text: Delayed
+                    - generic [ref=e198]:
+                      - generic [ref=e199]:
+                        - generic [ref=e200]: Health
+                        - generic [ref=e201]: 65/100
+                      - generic [ref=e204]:
+                        - generic [ref=e205]: ROI
+                        - generic [ref=e206]: High
+                      - generic [ref=e207]:
+                        - generic [ref=e208]: Risk
+                        - generic [ref=e209]: High
+                  - generic [ref=e210]:
+                    - generic [ref=e211]:
+                      - generic [ref=e212]: OMNIMOBILE Retail
+                      - generic [ref=e213]:
+                        - generic [ref=e214]: 
+                        - text: On Track
+                    - generic [ref=e215]:
+                      - generic [ref=e216]:
+                        - generic [ref=e217]: Health
+                        - generic [ref=e218]: 88/100
+                      - generic [ref=e221]:
+                        - generic [ref=e222]: ROI
+                        - generic [ref=e223]: High
+                      - generic [ref=e224]:
+                        - generic [ref=e225]: Risk
+                        - generic [ref=e226]: Low
+              - generic [ref=e227]:
+                - generic [ref=e228]:
+                  - heading " Today's Priorities" [level=2] [ref=e229]:
+                    - generic [ref=e230]: 
+                    - text: Today's Priorities
+                  - link "View All " [ref=e231] [cursor=pointer]:
+                    - /url: /projects
+                    - text: View All
+                    - generic [ref=e232]: 
+                - generic [ref=e233]:
+                  - generic [ref=e234]:
+                    - generic [ref=e237]: 
+                    - generic [ref=e238]:
+                      - generic [ref=e239]: Invoice from DesignPro Studio needs approval
+                      - generic [ref=e240]:
+                        - text: "Due in 4 hours · Amount:"
+                        - strong [ref=e241]: $12,450.00
+                    - link "Review" [ref=e242] [cursor=pointer]:
+                      - /url: /approvals
+                  - generic [ref=e243]:
+                    - generic [ref=e246]: 
+                    - generic [ref=e247]:
+                      - generic [ref=e248]: Clinic Booking Platform has a high delay risk
+                      - generic [ref=e249]: "Dependency: External API integration pending client credentials"
+                    - link "Mitigate" [ref=e250] [cursor=pointer]:
+                      - /url: /risks
+                  - generic [ref=e251]:
+                    - generic [ref=e254]: 
+                    - generic [ref=e255]:
+                      - generic [ref=e256]: Mobile app request is out of scope — needs change request
+                      - generic [ref=e257]: Detected via Scope Guard AI analysis of SRS vs Email threads
+                    - link "Generate CR" [ref=e258] [cursor=pointer]:
+                      - /url: /scope-guard
+              - generic [ref=e259]:
+                - generic [ref=e260]:
+                  - heading " Financial Insight" [level=2] [ref=e261]:
+                    - generic [ref=e262]: 
+                    - text: Financial Insight
+                  - generic [ref=e263]: Medium cost
+                - generic [ref=e264]:
+                  - generic [ref=e265]:
+                    - generic [ref=e266]: Estimated Revenue Range
+                    - paragraph [ref=e267]: USD 30k–80k ARR within 12 months (assumes 100–250 paying clinics)
+                  - generic [ref=e268]:
+                    - generic [ref=e269]: Invoice Approvals
+                    - generic [ref=e270]:
+                      - generic [ref=e271]:
+                        - generic [ref=e272]: "8"
+                        - generic [ref=e273]: Pending
+                      - generic [ref=e274]:
+                        - generic [ref=e275]: "17"
+                        - generic [ref=e276]: Approved
+                - generic [ref=e277]: Payment Milestones
+                - generic [ref=e278]:
+                  - generic [ref=e279]:
+                    - generic [ref=e280]:
+                      - generic [ref=e281]: 
+                      - generic [ref=e282]: Kickoff (30%)
+                    - generic [ref=e283]:
+                      - generic [ref=e284]: $73,500
+                      - generic [ref=e285]: Paid
+                  - generic [ref=e286]:
+                    - generic [ref=e287]:
+                      - generic [ref=e288]: 
+                      - generic [ref=e289]: Mid-build (40%)
+                    - generic [ref=e290]:
+                      - generic [ref=e291]: $98,000
+                      - generic [ref=e292]: Due
+                  - generic [ref=e293]:
+                    - generic [ref=e294]:
+                      - generic [ref=e295]: 
+                      - generic [ref=e296]: Delivery (30%)
+                    - generic [ref=e297]:
+                      - generic [ref=e298]: $73,500
+                      - generic [ref=e299]: Upcoming
+              - generic [ref=e300]:
+                - heading " Recent Activity" [level=2] [ref=e302]:
+                  - generic [ref=e303]: 
+                  - text: Recent Activity
+                - generic [ref=e304]:
+                  - generic [ref=e305]:
+                    - generic [ref=e307]: 
+                    - generic [ref=e308]:
+                      - generic [ref=e309]:
+                        - strong [ref=e310]: AI
+                        - text: generated SRS from Arabic client request
+                      - generic [ref=e311]: "Project: Clinic Booking Platform · Confidence: 78% · 35 min ago"
+                  - generic [ref=e312]:
+                    - generic [ref=e314]: 
+                    - generic [ref=e315]:
+                      - generic [ref=e316]:
+                        - strong [ref=e317]: Scope Guard
+                        - text: flagged out-of-scope request
+                      - generic [ref=e318]: Mobile app request · Auto-generated CR-2026-014 · 2 hours ago
+                  - generic [ref=e319]:
+                    - generic [ref=e321]: 
+                    - generic [ref=e322]:
+                      - generic [ref=e323]:
+                        - strong [ref=e324]: "Contract #4492"
+                        - text: AI extraction completed
+                      - generic [ref=e325]: 3 risks flagged · Payment schedule mapped · 4 hours ago
+                - button "View Full Audit Log " [ref=e326] [cursor=pointer]:
+                  - text: View Full Audit Log
+                  - generic [ref=e327]: 
+            - generic [ref=e328]:
+              - generic [ref=e329]:
+                - generic [ref=e330]:
+                  - heading " Smart Alerts" [level=2] [ref=e331]:
+                    - generic [ref=e332]: 
+                    - text: Smart Alerts
+                  - generic [ref=e333]: Live
+                - generic [ref=e334]:
+                  - generic [ref=e335]:
+                    - generic [ref=e336]:
+                      - generic [ref=e337]: Scope Deviation Detected
+                      - generic [ref=e338]: 2m ago
+                    - paragraph [ref=e339]:
+                      - text: Client request for
+                      - strong [ref=e340]: mobile app (iOS & Android)
+                      - text: is out of scope. Change Request CR-2026-014 auto-generated.
+                    - link "Review in Scope Guard " [ref=e341] [cursor=pointer]:
+                      - /url: /scope-guard
+                      - text: Review in Scope Guard
+                      - generic [ref=e342]: 
+                  - generic [ref=e343]:
+                    - generic [ref=e344]:
+                      - generic [ref=e345]: SRS Generated
+                      - generic [ref=e346]: 35m ago
+                    - paragraph [ref=e347]:
+                      - text: AI generated SRS for
+                      - strong [ref=e348]: Clinic Booking Platform
+                      - text: "from Arabic client request. Confidence:"
+                      - strong [ref=e349]: 78%
+                      - text: — 4 clarification questions flagged.
+                    - link "View SRS " [ref=e350] [cursor=pointer]:
+                      - /url: /srs-generator
+                      - text: View SRS
+                      - generic [ref=e351]: 
+                - link " Launch AI Assistant" [ref=e352] [cursor=pointer]:
+                  - /url: /ask-docupilot
+                  - generic [ref=e353]: 
+                  - text: Launch AI Assistant
+              - generic [ref=e354]:
+                - generic [ref=e355]:
+                  - heading " Scope Changes Impact" [level=2] [ref=e356]:
+                    - generic [ref=e357]: 
+                    - text: Scope Changes Impact
+                  - link "Open Scope Guard " [ref=e358] [cursor=pointer]:
+                    - /url: /scope-guard
+                    - text: Open Scope Guard
+                    - generic [ref=e359]: 
+                - generic [ref=e360]:
+                  - generic [ref=e361]:
+                    - generic [ref=e362]: Out of Scope
+                    - generic [ref=e363]: "1"
+                  - generic [ref=e364]:
+                    - generic [ref=e365]: Needs Clarification
+                    - generic [ref=e366]: "0"
+                - generic [ref=e367]:
+                  - generic [ref=e368]:
+                    - generic [ref=e369]: Cost Impact
+                    - generic [ref=e370]: Low
+                  - generic [ref=e371]:
+                    - generic [ref=e372]: Timeline Impact
+                    - generic [ref=e373]: Low
+                - generic [ref=e374]:
+                  - generic [ref=e375]: Recommended Action
+                  - generic [ref=e376]: Convert mobile app request to formal Change Request. Estimate due Thursday.
+              - generic [ref=e377]:
+                - generic [ref=e378]:
+                  - heading "Upcoming Deadlines" [level=2] [ref=e379]: Upcoming Deadlines
+                  - generic [ref=e380]: 4 This Week
+                - generic [ref=e381]:
+                  - link " Invoice INV-2026-042 approval 4d" [ref=e382] [cursor=pointer]:
+                    - /url: /invoices
+                    - generic [ref=e384]: 
+                    - generic [ref=e385]: Invoice INV-2026-042 approval
+                    - generic [ref=e386]:
+                      - generic [ref=e387]: 
+                      - text: 4d
+                  - link " Clinic Booking Platform delivery 7d" [ref=e388] [cursor=pointer]:
+                    - /url: /contracts
+                    - generic [ref=e390]: 
+                    - generic [ref=e391]: Clinic Booking Platform delivery
+                    - generic [ref=e392]:
+                      - generic [ref=e393]: 
+                      - text: 7d
+                  - link " Mobile app CR signature 12d" [ref=e394] [cursor=pointer]:
+                    - /url: /scope-guard
+                    - generic [ref=e396]: 
+                    - generic [ref=e397]: Mobile app CR signature
+                    - generic [ref=e398]:
+                      - generic [ref=e399]: 
+                      - text: 12d
+                  - link " DesignPro risk escalation 18d" [ref=e400] [cursor=pointer]:
+                    - /url: /risks
+                    - generic [ref=e402]: 
+                    - generic [ref=e403]: DesignPro risk escalation
+                    - generic [ref=e404]:
+                      - generic [ref=e405]: 
+                      - text: 18d
+              - generic [ref=e406]:
+                - generic [ref=e407]:
+                  - heading " AI Recommended Next Actions" [level=2] [ref=e408]:
+                    - generic [ref=e409]: 
+                    - text: AI Recommended Next Actions
+                  - generic [ref=e410]: AI Ranked
+                - generic [ref=e411]:
+                  - link "1  Approve Invoice INV-2026-042 before deadline Saves $1,245 in late fees · Due in 4h Urgent" [ref=e412] [cursor=pointer]:
+                    - /url: /approvals
+                    - generic [ref=e413]: "1"
+                    - generic [ref=e414]:
+                      - generic [ref=e415]:
+                        - generic [ref=e416]: 
+                        - generic [ref=e417]: Approve Invoice INV-2026-042 before deadline
+                      - generic [ref=e418]: Saves $1,245 in late fees · Due in 4h
+                    - generic [ref=e419]: Urgent
+                  - link "2  Run paid pilot for Clinic Booking Platform Validates pricing + uptake before full build · Confidence 70% Decision" [ref=e420] [cursor=pointer]:
+                    - /url: /srs-generator
+                    - generic [ref=e421]: "2"
+                    - generic [ref=e422]:
+                      - generic [ref=e423]:
+                        - generic [ref=e424]: 
+                        - generic [ref=e425]: Run paid pilot for Clinic Booking Platform
+                      - generic [ref=e426]: Validates pricing + uptake before full build · Confidence 70%
+                    - generic [ref=e427]: Decision
+                  - link "3  Issue change request for mobile app scope Protects ~$18k in unbilled work · CR-2026-014 Revenue" [ref=e428] [cursor=pointer]:
+                    - /url: /scope-guard
+                    - generic [ref=e429]: "3"
+                    - generic [ref=e430]:
+                      - generic [ref=e431]:
+                        - generic [ref=e432]: 
+                        - generic [ref=e433]: Issue change request for mobile app scope
+                      - generic [ref=e434]: Protects ~$18k in unbilled work · CR-2026-014
+                    - generic [ref=e435]: Revenue
+                  - link "4  Assign owner for API integration risk on Clinic Booking Reduces probability 68% → 30% High Impact" [ref=e436] [cursor=pointer]:
+                    - /url: /risks
+                    - generic [ref=e437]: "4"
+                    - generic [ref=e438]:
+                      - generic [ref=e439]:
+                        - generic [ref=e440]: 
+                        - generic [ref=e441]: Assign owner for API integration risk on Clinic Booking
+                      - generic [ref=e442]: Reduces probability 68% → 30%
+                    - generic [ref=e443]: High Impact
+              - generic [ref=e444]:
+                - heading " Quick Actions" [level=2] [ref=e446]:
+                  - generic [ref=e447]: 
+                  - text: Quick Actions
+                - generic [ref=e448]:
+                  - link " Project Intelligence Run full pipeline " [ref=e449] [cursor=pointer]:
+                    - /url: /srs-generator
+                    - generic [ref=e451]: 
+                    - generic [ref=e452]:
+                      - generic [ref=e453]: Project Intelligence
+                      - generic [ref=e454]: Run full pipeline
+                    - generic [ref=e455]: 
+                  - link " Analyze Contract Extract obligations " [ref=e456] [cursor=pointer]:
+                    - /url: /contracts
+                    - generic [ref=e458]: 
+                    - generic [ref=e459]:
+                      - generic [ref=e460]: Analyze Contract
+                      - generic [ref=e461]: Extract obligations
+                    - generic [ref=e462]: 
+                  - link " Check Scope Detect scope creep " [ref=e463] [cursor=pointer]:
+                    - /url: /scope-guard
+                    - generic [ref=e465]: 
+                    - generic [ref=e466]:
+                      - generic [ref=e467]: Check Scope
+                      - generic [ref=e468]: Detect scope creep
+                    - generic [ref=e469]: 
+                  - link " Review Risks Open risk radar " [ref=e470] [cursor=pointer]:
+                    - /url: /risks
+                    - generic [ref=e472]: 
+                    - generic [ref=e473]:
+                      - generic [ref=e474]: Review Risks
+                      - generic [ref=e475]: Open risk radar
+                    - generic [ref=e476]: 
+  - button "Open Next.js Dev Tools" [ref=e482] [cursor=pointer]:
+    - img [ref=e483]
