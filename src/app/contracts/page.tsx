@@ -1,6 +1,5 @@
 'use client';
-import { useState, useCallback } from 'react';
-import Link from 'next/link';
+import { useState, useCallback, useRef } from 'react';
 import Header from '@/components/layout/Header';
 import type { ContractAnalysisOutput } from '@/lib/ai/schemas/contract';
 
@@ -79,11 +78,50 @@ export default function ContractsPage() {
   const [contractText, setContractText] = useState('');
   const [analysisResult, setAnalysisResult] = useState<ContractAnalysisOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<{ name: string; pages: number | null } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const showToast = useCallback((msg: string, type: ToastType = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 2800);
   }, []);
+
+  const handleFile = useCallback(async (file: File) => {
+    const name = file.name.toLowerCase();
+    const allowed = name.endsWith('.pdf') || name.endsWith('.txt') || name.endsWith('.md');
+    if (!allowed) {
+      showToast('Unsupported file type. Upload a PDF, TXT, or MD file.', 'error');
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      showToast('File exceeds 15 MB limit.', 'error');
+      return;
+    }
+
+    setIsUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/contracts/extract', { method: 'POST', body: fd });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || 'Failed to extract text.');
+      setContractText(json.text);
+      setUploadedFile({ name: json.fileName, pages: json.pages ?? null });
+      showToast(
+        `Extracted ${json.text.length.toLocaleString()} chars${json.pages ? ` from ${json.pages} pages` : ''}`,
+        'success',
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to read file.';
+      setError(msg);
+      showToast(msg, 'error');
+    } finally {
+      setIsUploading(false);
+    }
+  }, [showToast]);
 
   const handleAnalyze = async () => {
     const trimmed = contractText.trim();
@@ -283,11 +321,48 @@ export default function ContractsPage() {
               </div>
 
               <div className="grid-2col" style={{ gap: 'var(--spacing-lg)' }}>
-                <div className="upload-zone" onClick={() => showToast('PDF upload is not connected yet — paste contract text below to analyze.', 'info')}>
-                  <i className="fa-solid fa-cloud-arrow-up upload-icon"></i>
-                  <div className="font-semibold" style={{ marginBottom: '4px' }}>Upload Contract PDF</div>
-                  <p className="text-sm text-muted">Drag & drop or click to browse</p>
-                  <button type="button" className="btn btn-secondary btn-sm" style={{ marginTop: 'var(--spacing-sm)' }}>Browse Files</button>
+                <div
+                  className="upload-zone"
+                  style={isDragging ? { borderColor: 'var(--accent-primary)', background: 'rgba(79,70,229,0.06)' } : undefined}
+                  onClick={() => !isUploading && fileInputRef.current?.click()}
+                  onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={e => {
+                    e.preventDefault();
+                    setIsDragging(false);
+                    const f = e.dataTransfer.files?.[0];
+                    if (f) handleFile(f);
+                  }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+                    style={{ display: 'none' }}
+                    onChange={e => {
+                      const f = e.target.files?.[0];
+                      if (f) handleFile(f);
+                      e.target.value = '';
+                    }}
+                  />
+                  <i className={`fa-solid ${isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'} upload-icon`}></i>
+                  <div className="font-semibold" style={{ marginBottom: '4px' }}>
+                    {isUploading ? 'Extracting text…' : uploadedFile ? uploadedFile.name : 'Upload Contract PDF'}
+                  </div>
+                  <p className="text-sm text-muted">
+                    {uploadedFile && !isUploading
+                      ? `${uploadedFile.pages ? `${uploadedFile.pages} pages · ` : ''}Click or drop to replace`
+                      : 'Drag & drop PDF, TXT, or MD — or click to browse'}
+                  </p>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    style={{ marginTop: 'var(--spacing-sm)' }}
+                    onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                    disabled={isUploading}
+                  >
+                    {uploadedFile ? 'Replace File' : 'Browse Files'}
+                  </button>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
