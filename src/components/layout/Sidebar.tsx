@@ -148,8 +148,8 @@ export default function Sidebar() {
       </aside>
 
       {toast && (
-        <div className="toast toast-info" style={{ zIndex: 200 }}>
-          <i className="fa-solid fa-circle-info"></i>
+        <div className="toast toast-info" role="status" aria-live="polite" style={{ zIndex: 200 }}>
+          <i className="fa-solid fa-circle-info" aria-hidden="true"></i>
           {toast}
         </div>
       )}

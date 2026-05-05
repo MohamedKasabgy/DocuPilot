@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Sidebar from '@/components/layout/Sidebar';
+import RouteTransition from '@/components/common/RouteTransition';
 
 export const metadata: Metadata = {
   title: 'DocuPilot - Operational Hub',
@@ -24,7 +25,7 @@ export default function RootLayout({
         <div className="app-container">
           <Sidebar />
           <main className="main-content">
-            {children}
+            <RouteTransition>{children}</RouteTransition>
           </main>
         </div>
       </body>

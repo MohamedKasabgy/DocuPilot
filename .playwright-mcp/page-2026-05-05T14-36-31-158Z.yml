@@ -1,0 +1,197 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - text: 
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e7]: 
+          - generic [ref=e8]:
+            - text: DocuPilot
+            - generic [ref=e9]: AI-Powered Software Ops
+        - text: 
+      - generic [ref=e11]:
+        - generic [ref=e12]: Workspace
+        - list [ref=e13]:
+          - listitem [ref=e14] [cursor=pointer]:
+            - link " Dashboard" [ref=e15]:
+              - /url: /
+              - generic [ref=e16]: 
+              - text: Dashboard
+          - listitem [ref=e17] [cursor=pointer]:
+            - link " Projects" [ref=e18]:
+              - /url: /projects
+              - generic [ref=e19]: 
+              - text: Projects
+          - listitem [ref=e20] [cursor=pointer]:
+            - link " SRS Generator" [ref=e21]:
+              - /url: /srs-generator
+              - generic [ref=e22]: 
+              - text: SRS Generator
+          - listitem [ref=e23] [cursor=pointer]:
+            - link " Contracts" [ref=e24]:
+              - /url: /contracts
+              - generic [ref=e25]: 
+              - text: Contracts
+          - listitem [ref=e26] [cursor=pointer]:
+            - link " Invoices & Approvals" [ref=e27]:
+              - /url: /invoices
+              - generic [ref=e28]: 
+              - text: Invoices & Approvals
+          - listitem [ref=e29] [cursor=pointer]:
+            - link " Scope Guard" [ref=e30]:
+              - /url: /scope-guard
+              - generic [ref=e31]: 
+              - text: Scope Guard
+          - listitem [ref=e32] [cursor=pointer]:
+            - link " Risk Radar" [ref=e33]:
+              - /url: /risks
+              - generic [ref=e34]: 
+              - text: Risk Radar
+      - generic [ref=e36]:
+        - generic [ref=e37]: AI Intelligence
+        - list [ref=e38]:
+          - listitem [ref=e39] [cursor=pointer]:
+            - link " Ask DocuPilot" [ref=e40]:
+              - /url: /ask-docupilot
+              - generic [ref=e41]: 
+              - text: Ask DocuPilot
+      - generic [ref=e42]:
+        - button "+ New Project" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: +
+          - text: New Project
+        - list [ref=e45]:
+          - listitem [ref=e46] [cursor=pointer]:
+            - button " Support" [ref=e47]:
+              - generic [ref=e48]: 
+              - text: Support
+          - listitem [ref=e49] [cursor=pointer]:
+            - button " Sign Out" [ref=e50]:
+              - generic [ref=e51]: 
+              - text: Sign Out
+    - main [ref=e52]:
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: 
+            - textbox "Search" [ref=e59]:
+              - /placeholder: Search projects, contracts, tasks...
+          - generic [ref=e60]:
+            - button "Notifications" [ref=e62] [cursor=pointer]:
+              - generic [ref=e63]: 
+            - button "User menu" [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]:
+                - generic [ref=e68]: DP
+                - generic [ref=e69]:
+                  - generic [ref=e70]: DocuPilot Admin
+                  - generic [ref=e71]: Operations Manager
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - paragraph [ref=e76]: AI Laboratory
+                - generic [ref=e77]:
+                  - generic [ref=e78]: 
+                  - text: Gemini AI
+              - heading "Project Intelligence Engine" [level=1] [ref=e79]
+              - paragraph [ref=e80]: Turn client requests into business analysis, rules, technical scope, execution plan, and a build decision.
+            - generic [ref=e81]:
+              - button " Save Draft" [ref=e82] [cursor=pointer]:
+                - generic [ref=e83]: 
+                - text: Save Draft
+              - button " Export Blueprint PDF" [ref=e84] [cursor=pointer]:
+                - generic [ref=e85]: 
+                - text: Export Blueprint PDF
+          - generic [ref=e86]:
+            - generic [ref=e87]:
+              - generic [ref=e88]: Output Language
+              - generic [ref=e89]:
+                - button "English" [ref=e90] [cursor=pointer]
+                - button "Arabic" [ref=e91] [cursor=pointer]
+                - button "Bilingual" [ref=e92] [cursor=pointer]
+            - generic [ref=e93]:
+              - generic [ref=e94]: Analysis Depth
+              - generic [ref=e95]:
+                - button "Quick" [ref=e96] [cursor=pointer]
+                - button "Standard" [ref=e97] [cursor=pointer]
+                - button "Deep" [ref=e98] [cursor=pointer]
+            - generic [ref=e99]:
+              - generic [ref=e100]: Output Style
+              - generic [ref=e101]:
+                - button "Business" [ref=e102] [cursor=pointer]
+                - button "Technical" [ref=e103] [cursor=pointer]
+                - button "Client-Facing" [ref=e104] [cursor=pointer]
+            - generic [ref=e105]:
+              - generic [ref=e106]: Project Type
+              - combobox [ref=e107] [cursor=pointer]:
+                - option "Web App" [selected]
+                - option "Mobile App"
+                - option "SaaS Platform"
+                - option "API / Backend"
+                - option "Enterprise System"
+            - generic [ref=e108]:
+              - generic [ref=e109]: Blueprint Sections
+              - generic [ref=e110]: 6 / 10
+            - generic [ref=e111]:
+              - generic [ref=e112]: Client-Facing Mode
+              - button "Toggle client-facing mode" [ref=e113] [cursor=pointer]
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - heading " Client Request" [level=2] [ref=e116]:
+                - generic [ref=e117]: 
+                - text: Client Request
+              - generic [ref=e118]:
+                - generic [ref=e119]:
+                  - generic [ref=e120]: 
+                  - text: Arabic Detected
+                - button " Sample" [ref=e121] [cursor=pointer]:
+                  - generic [ref=e122]: 
+                  - text: Sample
+            - textbox "Paste your client request here..." [ref=e123]: نحتاج نظام حجوزات للعيادات يشمل موقع للحجز، لوحة تحكم للإدارة، إدارة المواعيد، إشعارات للمراجعين، وتقارير بسيطة للإدارة.
+            - generic [ref=e124]:
+              - generic [ref=e125]: 120 characters
+              - button " Analyze Project Request" [ref=e126] [cursor=pointer]:
+                - generic [ref=e127]: 
+                - text: Analyze Project Request
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - heading " Blueprint Sections" [level=2] [ref=e130]:
+                - generic [ref=e131]: 
+                - text: Blueprint Sections
+              - button "Enable All" [ref=e132] [cursor=pointer]
+            - generic [ref=e133]:
+              - generic [ref=e134]:
+                - generic [ref=e135]: Project Brief
+                - button "Toggle projectBrief" [ref=e136] [cursor=pointer]
+              - generic [ref=e137]:
+                - generic [ref=e138]: User Roles
+                - button "Toggle userRoles" [ref=e139] [cursor=pointer]
+              - generic [ref=e140]:
+                - generic [ref=e141]: Main Features
+                - button "Toggle mainFeatures" [ref=e142] [cursor=pointer]
+              - generic [ref=e143]:
+                - generic [ref=e144]: Functional Requirements
+                - button "Toggle functionalReqs" [ref=e145] [cursor=pointer]
+              - generic [ref=e146]:
+                - generic [ref=e147]: Non-Functional Requirements
+                - button "Toggle nonFunctionalReqs" [ref=e148] [cursor=pointer]
+              - generic [ref=e149]:
+                - generic [ref=e150]: AI Identified Gaps
+                - button "Toggle missingQuestions" [ref=e151] [cursor=pointer]
+              - generic [ref=e152]:
+                - generic [ref=e153]: MVP Scope Definition
+                - button "Toggle mvpScope" [ref=e154] [cursor=pointer]
+              - generic [ref=e155]:
+                - generic [ref=e156]: Assumptions & Constraints
+                - button "Toggle assumptions" [ref=e157] [cursor=pointer]
+              - generic [ref=e158]:
+                - generic [ref=e159]: Acceptance Criteria
+                - button "Toggle acceptanceCriteria" [ref=e160] [cursor=pointer]
+              - generic [ref=e161]:
+                - generic [ref=e162]: User Stories
+                - button "Toggle userStories" [ref=e163] [cursor=pointer]
+          - generic [ref=e164]:
+            - generic [ref=e165]: 
+            - paragraph [ref=e166]: Submit a client request above to run the full Project Intelligence pipeline.
+            - paragraph [ref=e167]: You will get business understanding, analysis, rules, technical blueprint, execution plan, and a final build decision.
+  - button "Open Next.js Dev Tools" [ref=e173] [cursor=pointer]:
+    - img [ref=e174]

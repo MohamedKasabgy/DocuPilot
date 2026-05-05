@@ -151,6 +151,15 @@
   color: #CBD5E1;
 }
 
+.nav-item:active {
+  background-color: rgba(255, 255, 255, 0.12);
+  transition-duration: 80ms;
+}
+
+.nav-item.active:active {
+  background-color: var(--accent-primary-hover);
+}
+
 /* ── Active nav item: vivid blue background, pure white text + icon ── */
 .nav-item.active {
   color: #FFFFFF;

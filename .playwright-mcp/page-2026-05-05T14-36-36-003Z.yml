@@ -1,0 +1,256 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - text: 
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e7]: 
+          - generic [ref=e8]:
+            - text: DocuPilot
+            - generic [ref=e9]: AI-Powered Software Ops
+        - text: 
+      - generic [ref=e11]:
+        - generic [ref=e12]: Workspace
+        - list [ref=e13]:
+          - listitem [ref=e14] [cursor=pointer]:
+            - link " Dashboard" [ref=e15]:
+              - /url: /
+              - generic [ref=e16]: 
+              - text: Dashboard
+          - listitem [ref=e17] [cursor=pointer]:
+            - link " Projects" [ref=e18]:
+              - /url: /projects
+              - generic [ref=e19]: 
+              - text: Projects
+          - listitem [ref=e20] [cursor=pointer]:
+            - link " SRS Generator" [ref=e21]:
+              - /url: /srs-generator
+              - generic [ref=e22]: 
+              - text: SRS Generator
+          - listitem [ref=e23] [cursor=pointer]:
+            - link " Contracts" [ref=e24]:
+              - /url: /contracts
+              - generic [ref=e25]: 
+              - text: Contracts
+          - listitem [ref=e26] [cursor=pointer]:
+            - link " Invoices & Approvals" [ref=e27]:
+              - /url: /invoices
+              - generic [ref=e28]: 
+              - text: Invoices & Approvals
+          - listitem [ref=e29] [cursor=pointer]:
+            - link " Scope Guard" [ref=e30]:
+              - /url: /scope-guard
+              - generic [ref=e31]: 
+              - text: Scope Guard
+          - listitem [ref=e32] [cursor=pointer]:
+            - link " Risk Radar" [ref=e33]:
+              - /url: /risks
+              - generic [ref=e34]: 
+              - text: Risk Radar
+      - generic [ref=e36]:
+        - generic [ref=e37]: AI Intelligence
+        - list [ref=e38]:
+          - listitem [ref=e39] [cursor=pointer]:
+            - link " Ask DocuPilot" [ref=e40]:
+              - /url: /ask-docupilot
+              - generic [ref=e41]: 
+              - text: Ask DocuPilot
+      - generic [ref=e42]:
+        - button "+ New Project" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: +
+          - text: New Project
+        - list [ref=e45]:
+          - listitem [ref=e46] [cursor=pointer]:
+            - button " Support" [ref=e47]:
+              - generic [ref=e48]: 
+              - text: Support
+          - listitem [ref=e49] [cursor=pointer]:
+            - button " Sign Out" [ref=e50]:
+              - generic [ref=e51]: 
+              - text: Sign Out
+    - main [ref=e52]:
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: 
+            - textbox "Search" [ref=e59]:
+              - /placeholder: Search projects, contracts, tasks...
+          - generic [ref=e60]:
+            - button "Notifications" [ref=e62] [cursor=pointer]:
+              - generic [ref=e63]: 
+            - button "User menu" [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]:
+                - generic [ref=e68]: DP
+                - generic [ref=e69]:
+                  - generic [ref=e70]: DocuPilot Admin
+                  - generic [ref=e71]: Operations Manager
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - navigation [ref=e75]:
+                - link "Projects" [ref=e76] [cursor=pointer]:
+                  - /url: /projects
+                - generic [ref=e77]: 
+                - generic [ref=e78]: Alpha Platform v2.0
+                - generic [ref=e79]: 
+                - generic [ref=e80]: Scope Guard
+              - generic [ref=e81]:
+                - paragraph [ref=e82]: Scope Intelligence
+                - generic [ref=e83]:
+                  - generic [ref=e84]: 
+                  - text: Gemini AI
+              - heading "Scope Impact Engine" [level=1] [ref=e85]
+              - paragraph [ref=e86]: Classify client requests and quantify their full operational, cost, business, and risk impact.
+            - button " Analyze Request" [ref=e87] [cursor=pointer]:
+              - generic [ref=e88]: 
+              - text: Analyze Request
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - generic [ref=e91]: Compare Against
+              - generic [ref=e92]:
+                - button "Contract" [ref=e93] [cursor=pointer]
+                - button "SRS" [ref=e94] [cursor=pointer]
+                - button "SOW" [ref=e95] [cursor=pointer]
+                - button "Proposal" [ref=e96] [cursor=pointer]
+            - generic [ref=e97]:
+              - generic [ref=e98]: Analysis Language
+              - generic [ref=e99]:
+                - button "Auto-Detect" [ref=e100] [cursor=pointer]
+                - button "English" [ref=e101] [cursor=pointer]
+                - button "Arabic" [ref=e102] [cursor=pointer]
+            - generic [ref=e103]:
+              - generic [ref=e104]: Strictness
+              - generic [ref=e105]:
+                - button "Strict" [ref=e106] [cursor=pointer]
+                - button "Balanced" [ref=e107] [cursor=pointer]
+                - button "Lenient" [ref=e108] [cursor=pointer]
+            - generic [ref=e109]:
+              - generic [ref=e110]: Auto-Generate Reply
+              - button "Toggle auto-generate reply" [ref=e111] [cursor=pointer]
+            - generic [ref=e112]:
+              - generic [ref=e113]: Verdict
+              - generic [ref=e116]: Out of Scope
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - heading " Incoming Request" [level=2] [ref=e120]:
+                  - generic [ref=e121]: 
+                  - text: Incoming Request
+                - generic [ref=e122]:
+                  - generic [ref=e123]: 
+                  - text: Email
+              - textbox "Paste the new client request here..." [ref=e124]: ممكن تضيفون تطبيق جوال iOS و Android للمنصة؟
+              - generic [ref=e125]:
+                - generic [ref=e126]: 44 characters
+                - button " Sample" [ref=e127] [cursor=pointer]:
+                  - generic [ref=e128]: 
+                  - text: Sample
+              - generic [ref=e129]:
+                - generic [ref=e130]: English Translation
+                - paragraph [ref=e131]: “Could you add iOS and Android mobile applications to the platform?”
+            - generic [ref=e132]:
+              - generic [ref=e133]:
+                - generic [ref=e134]:
+                  - generic [ref=e136]: 
+                  - generic [ref=e137]:
+                    - heading "Analysis Result" [level=3] [ref=e138]
+                    - generic [ref=e139]: "Compared against Contract #CON-2024-089 · Balanced mode"
+                - generic [ref=e140]: Out of Scope
+              - generic [ref=e141]:
+                - generic [ref=e142]:
+                  - generic [ref=e143]: Primary Reason
+                  - generic [ref=e144]:
+                    - generic [ref=e145]: 
+                    - paragraph [ref=e146]: The current contract covers web platform and admin dashboard only. Mobile development for native OS requires separate infrastructure not outlined in the agreement.
+                - generic [ref=e147]:
+                  - generic [ref=e148]:
+                    - generic [ref=e149]:
+                      - generic [ref=e150]: 
+                      - text: Timeline
+                    - generic [ref=e151]: High Impact
+                  - generic [ref=e154]:
+                    - generic [ref=e155]:
+                      - generic [ref=e156]: 
+                      - text: Cost
+                    - generic [ref=e157]: High Impact
+                  - generic [ref=e160]:
+                    - generic [ref=e161]:
+                      - generic [ref=e162]: 
+                      - text: Business
+                    - generic [ref=e163]: Medium Impact
+                  - generic [ref=e166]:
+                    - generic [ref=e167]:
+                      - generic [ref=e168]: 
+                      - text: Risk
+                    - generic [ref=e169]: High Impact
+                - generic [ref=e172]:
+                  - generic [ref=e173]:
+                    - generic [ref=e174]: AI Confidence Score
+                    - generic [ref=e175]:
+                      - generic [ref=e176]: 87%
+                      - generic [ref=e177]: certainty
+                  - generic [ref=e181]: Balanced mode
+                - generic [ref=e182]:
+                  - generic [ref=e183]: Recommendation
+                  - generic [ref=e184]:
+                    - button " Approve" [ref=e185] [cursor=pointer]:
+                      - generic [ref=e186]: 
+                      - text: Approve
+                    - button " Reject" [ref=e187] [cursor=pointer]:
+                      - generic [ref=e188]: 
+                      - text: Reject
+                    - button " Convert to Change Request AI" [ref=e189] [cursor=pointer]:
+                      - generic [ref=e190]: 
+                      - text: Convert to Change Request
+                      - generic [ref=e191]: AI
+          - generic [ref=e192]:
+            - generic [ref=e193]:
+              - heading " Suggested Client Reply" [level=2] [ref=e194]:
+                - generic [ref=e195]: 
+                - text: Suggested Client Reply
+              - generic [ref=e196]:
+                - button " Copy" [ref=e197] [cursor=pointer]:
+                  - generic [ref=e198]: 
+                  - text: Copy
+                - button " Send" [ref=e199] [cursor=pointer]:
+                  - generic [ref=e200]: 
+                  - text: Send
+            - generic [ref=e201]: "Dear Client, Thank you for reaching out about adding iOS and Android mobile applications to the NexaSoft platform. We appreciate the vision for cross-platform expansion. After reviewing the current project scope (Contract #CON-2024-089), we confirmed that the existing engagement covers the Web Platform and Administrative Dashboard only. Developing native mobile applications is currently considered out of scope. However, we would be happy to accommodate this — we have initiated a Change Request. Our team will provide a formal estimate for the additional timeline and cost by end of business Thursday. Best regards, Project Management Team"
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - heading " Contract Snapshot" [level=2] [ref=e205]:
+                - generic [ref=e206]: 
+                - text: Contract Snapshot
+              - generic [ref=e207]:
+                - generic [ref=e208]:
+                  - generic [ref=e209]: Total Budget
+                  - generic [ref=e210]: $245,000
+                - generic [ref=e212]:
+                  - generic [ref=e213]: Budget Used
+                  - generic [ref=e214]: 62%
+            - generic [ref=e217]:
+              - heading " Similar Requests" [level=2] [ref=e219]:
+                - generic [ref=e220]: 
+                - text: Similar Requests
+              - generic [ref=e221]:
+                - generic [ref=e222]:
+                  - generic [ref=e223]: Dark Mode Request
+                  - generic [ref=e224]: In-Scope
+                - generic [ref=e225]:
+                  - generic [ref=e226]: Export to PDF
+                  - generic [ref=e227]: In-Scope
+            - generic [ref=e228]:
+              - heading " Stakeholders" [level=2] [ref=e230]:
+                - generic [ref=e231]: 
+                - text: Stakeholders
+              - generic [ref=e232]:
+                - generic [ref=e233]:
+                  - generic [ref=e234]: AD
+                  - generic [ref=e235]: MK
+                  - generic [ref=e236]: "+4"
+                - generic [ref=e237]:
+                  - generic [ref=e238]: 6 Approvers
+                  - generic [ref=e239]: Notified automatically
+  - button "Open Next.js Dev Tools" [ref=e245] [cursor=pointer]:
+    - img [ref=e246]
+  - alert [ref=e249]
