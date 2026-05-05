@@ -246,6 +246,22 @@ DocuPilot/
 
 ---
 
+## Connected DocuPilot Workflow
+
+DocuPilot is designed as a unified intelligence platform, not just a collection of tools. All documents and decisions are interconnected to provide a complete picture of project health:
+
+1. **Project Evaluator Output**: Establishes the baseline business case and requirements.
+2. **Service Agreement**: Defines the contractual obligations and boundaries.
+3. **Supplier Invoice**: Ties financial execution to project milestones and budgets.
+4. **Change Request (Scope Guard)**: Protects against scope creep by cross-referencing new requests against the Evaluator Output and Service Agreement.
+5. **Meeting Notes**: Extracts action items and tracks them against project velocity.
+
+**How it ties together:**
+- **Risk Radar** aggregates risks from all sources (Scope Guard, Contract Analysis, Invoice Analysis, Evaluator, and Meetings) into a single, actionable dashboard.
+- **Project Memory (Ask DocuPilot)** allows users to query this interconnected data, seamlessly blending insights from the initial contract with the latest scope changes and financial data.
+
+---
+
 ## Demo Scenario
 
 **NexaSoft** is building a **Clinic Booking Platform** for **Al Waha Clinics** (Project NEX-2024-082).
