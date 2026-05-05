@@ -6,6 +6,7 @@ import {
   risks,
   approvals,
 } from "./demo-store";
+
 import type {
   Project,
   DocumentRecord,
@@ -15,6 +16,7 @@ import type {
   ApprovalItem,
   ProjectOverview,
   ProjectStats,
+  ProjectCounts,
   LatestActivityEntry,
 } from "./types";
 
@@ -23,102 +25,133 @@ export function getProjects(): Project[] {
 }
 
 export function getProjectById(projectId: string): Project | undefined {
-  return projects.find((p) => p.id === projectId);
+  return projects.find((project) => project.id === projectId);
 }
 
 export function getProjectDocuments(projectId: string): DocumentRecord[] {
-  return documents.filter((d) => d.projectId === projectId);
+  return documents.filter((document) => document.projectId === projectId);
 }
 
+export function getProjectAnalysisOutputs(projectId: string): AnalysisOutput[] {
+  return analysisOutputs.filter((analysisOutput) => analysisOutput.projectId === projectId);
+}
+
+// Backward compatibility alias.
+export const getAnalysisOutputs = getProjectAnalysisOutputs;
+
 export function getProjectRisks(projectId: string): RiskItem[] {
-  return risks.filter((r) => r.projectId === projectId);
+  return risks.filter((risk) => risk.projectId === projectId);
 }
 
 export function getProjectApprovals(projectId: string): ApprovalItem[] {
-  return approvals.filter((a) => a.projectId === projectId);
+  return approvals.filter((approval) => approval.projectId === projectId);
 }
 
 export function getProjectActions(projectId: string): ActionItem[] {
-  return actions.filter((a) => a.projectId === projectId);
-}
-
-export function getAnalysisOutputs(projectId: string): AnalysisOutput[] {
-  return analysisOutputs.filter((a) => a.projectId === projectId);
+  return actions.filter((action) => action.projectId === projectId);
 }
 
 export function getDocumentById(documentId: string): DocumentRecord | undefined {
-  return documents.find((d) => d.id === documentId);
+  return documents.find((document) => document.id === documentId);
 }
 
 export function getActionsByDocument(documentId: string): ActionItem[] {
-  return actions.filter((a) => a.documentId === documentId);
+  return actions.filter(
+    (action) => action.documentId === documentId || action.linkedDocumentId === documentId,
+  );
 }
 
 export function getRisksByDocument(documentId: string): RiskItem[] {
-  return risks.filter((r) => r.documentId === documentId);
+  return risks.filter(
+    (risk) => risk.documentId === documentId || risk.linkedDocumentId === documentId,
+  );
 }
 
 export function getApprovalsByDocument(documentId: string): ApprovalItem[] {
-  return approvals.filter((a) => a.documentId === documentId);
+  return approvals.filter(
+    (approval) => approval.documentId === documentId || approval.linkedDocumentId === documentId,
+  );
 }
 
 function computeStats(
   docs: DocumentRecord[],
-  rks: RiskItem[],
-  apps: ApprovalItem[],
-  acts: ActionItem[]
+  projectRisks: RiskItem[],
+  projectApprovals: ApprovalItem[],
+  projectActions: ActionItem[],
 ): ProjectStats {
   return {
     totalDocuments: docs.length,
-    openRisks: rks.filter((r) => r.status !== "resolved").length,
-    highRisks: rks.filter(
-      (r) => (r.severity === "high" || r.severity === "critical") && r.status !== "resolved"
+    openRisks: projectRisks.filter((risk) => risk.status !== "resolved").length,
+    highRisks: projectRisks.filter(
+      (risk) =>
+        (risk.severity === "high" || risk.severity === "critical") &&
+        risk.status !== "resolved",
     ).length,
-    pendingApprovals: apps.filter((a) => a.status === "pending").length,
-    openActions: acts.filter((a) => a.status !== "done").length,
-    completedActions: acts.filter((a) => a.status === "done").length,
+    pendingApprovals: projectApprovals.filter((approval) => approval.status === "pending").length,
+    openActions: projectActions.filter((action) => action.status !== "done").length,
+    completedActions: projectActions.filter((action) => action.status === "done").length,
+  };
+}
+
+function computeCounts(
+  docs: DocumentRecord[],
+  projectRisks: RiskItem[],
+  projectApprovals: ApprovalItem[],
+  projectActions: ActionItem[],
+): ProjectCounts {
+  return {
+    documents: docs.length,
+    risks: projectRisks.length,
+    approvals: projectApprovals.length,
+    actions: projectActions.length,
+    pendingApprovals: projectApprovals.filter((approval) => approval.status === "pending").length,
+    highRisks: projectRisks.filter(
+      (risk) => risk.severity === "high" || risk.severity === "critical",
+    ).length,
+    outOfScopeRequests: docs.filter((document) => document.status === "out_of_scope").length,
   };
 }
 
 function buildLatestActivity(
   docs: DocumentRecord[],
-  ans: AnalysisOutput[],
-  acts: ActionItem[],
-  rks: RiskItem[],
-  apps: ApprovalItem[]
+  projectAnalysisOutputs: AnalysisOutput[],
+  projectActions: ActionItem[],
+  projectRisks: RiskItem[],
+  projectApprovals: ApprovalItem[],
 ): LatestActivityEntry[] {
   const entries: LatestActivityEntry[] = [
-    ...docs.map<LatestActivityEntry>((d) => ({
+    ...docs.map<LatestActivityEntry>((document) => ({
       kind: "document",
-      id: d.id,
-      title: d.title,
-      createdAt: d.createdAt,
+      id: document.id,
+      title: document.title,
+      createdAt: document.createdAt,
     })),
-    ...ans.map<LatestActivityEntry>((a) => ({
+    ...projectAnalysisOutputs.map<LatestActivityEntry>((analysisOutput) => ({
       kind: "analysis",
-      id: a.id,
-      title: a.summary.slice(0, 80),
-      createdAt: a.createdAt,
+      id: analysisOutput.id,
+      title: analysisOutput.summary.slice(0, 80),
+      createdAt: analysisOutput.createdAt,
     })),
-    ...acts.map<LatestActivityEntry>((a) => ({
+    ...projectActions.map<LatestActivityEntry>((action) => ({
       kind: "action",
-      id: a.id,
-      title: a.title,
-      createdAt: a.createdAt,
+      id: action.id,
+      title: action.title,
+      createdAt: action.createdAt,
     })),
-    ...rks.map<LatestActivityEntry>((r) => ({
+    ...projectRisks.map<LatestActivityEntry>((risk) => ({
       kind: "risk",
-      id: r.id,
-      title: r.title,
-      createdAt: r.createdAt,
+      id: risk.id,
+      title: risk.title,
+      createdAt: risk.createdAt,
     })),
-    ...apps.map<LatestActivityEntry>((a) => ({
+    ...projectApprovals.map<LatestActivityEntry>((approval) => ({
       kind: "approval",
-      id: a.id,
-      title: a.title,
-      createdAt: a.createdAt,
+      id: approval.id,
+      title: approval.title,
+      createdAt: approval.createdAt,
     })),
   ];
+
   return entries
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
     .slice(0, 10);
@@ -126,20 +159,32 @@ function buildLatestActivity(
 
 export function getProjectOverview(projectId: string): ProjectOverview | undefined {
   const project = getProjectById(projectId);
-  if (!project) return undefined;
-  const docs = getProjectDocuments(projectId);
-  const rks = getProjectRisks(projectId);
-  const apps = getProjectApprovals(projectId);
-  const acts = getProjectActions(projectId);
-  const ans = getAnalysisOutputs(projectId);
+
+  if (!project) {
+    return undefined;
+  }
+
+  const projectDocuments = getProjectDocuments(projectId);
+  const projectAnalysisOutputs = getProjectAnalysisOutputs(projectId);
+  const projectRisks = getProjectRisks(projectId);
+  const projectApprovals = getProjectApprovals(projectId);
+  const projectActions = getProjectActions(projectId);
 
   return {
     project,
-    documents: docs,
-    risks: rks,
-    approvals: apps,
-    actions: acts,
-    stats: computeStats(docs, rks, apps, acts),
-    latestActivity: buildLatestActivity(docs, ans, acts, rks, apps),
+    documents: projectDocuments,
+    analysisOutputs: projectAnalysisOutputs,
+    risks: projectRisks,
+    approvals: projectApprovals,
+    actions: projectActions,
+    counts: computeCounts(projectDocuments, projectRisks, projectApprovals, projectActions),
+    stats: computeStats(projectDocuments, projectRisks, projectApprovals, projectActions),
+    latestActivity: buildLatestActivity(
+      projectDocuments,
+      projectAnalysisOutputs,
+      projectActions,
+      projectRisks,
+      projectApprovals,
+    ),
   };
 }
