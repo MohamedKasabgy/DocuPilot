@@ -408,50 +408,114 @@ export default function ProjectsPage() {
             {/* Right Column */}
             <div className="section-gap">
 
-              {/* Project Vault */}
+              {/* Project Documents */}
               <div className="card">
                 <div className="card-header">
                   <h2 className="card-title">
-                    <i className="fa-solid fa-vault text-accent"></i>
-                    Project Vault
+                    <i className="fa-solid fa-folder-open text-accent"></i>
+                    Project Documents
                   </h2>
                   <button type="button" className="btn btn-secondary btn-icon-sm" data-tooltip="Upload file" onClick={() => showToast('File upload is not connected yet — coming soon', 'info')} aria-label="Upload file">
                     <i className="fa-solid fa-cloud-arrow-up"></i>
                   </button>
                 </div>
 
-                <div>
-                  <div className="vault-item">
-                    <div className="vault-item-icon" style={{ background: 'rgba(220, 38, 38, 0.08)', color: '#DC2626' }}>
-                      <i className="fa-solid fa-file-pdf"></i>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+                  
+                  {/* Item 1 */}
+                  <div className="vault-item" style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
+                    <div className="vault-item-icon" style={{ background: 'rgba(79, 70, 229, 0.08)', color: 'var(--accent-primary)', width: '36px', height: '36px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <i className="fa-solid fa-clipboard-list"></i>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div className="text-sm font-medium">Final_SRS_v2.4.pdf</div>
-                      <div className="text-xs text-muted" style={{ marginBottom: '8px' }}>2 days ago &middot; 4.2 MB</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div className="text-sm font-bold">Project Evaluator Output</div>
+                        <span className="badge badge-success" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>Analyzed</span>
+                      </div>
+                      <div className="text-xs text-muted" style={{ marginBottom: '8px' }}>Type: Business Case / Requirements</div>
                       <div style={{ background: 'var(--bg-main)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', borderLeft: '2px solid var(--accent-primary)', fontSize: '0.75rem' }}>
-                        <span className="font-bold text-accent">AI:</span>
-                        <span className="text-secondary"> 12 core modules including HIPAA-compliant storage and Stripe checkout.</span>
+                        <span className="font-bold text-accent">Linked Output:</span>
+                        <span className="text-secondary"> Revenue, cost, ROI, risks, market maturity, recommendation</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="vault-item">
-                    <div className="vault-item-icon" style={{ background: 'rgba(2, 132, 199, 0.08)', color: 'var(--status-info)' }}>
-                      <i className="fa-solid fa-file-word"></i>
+                  {/* Item 2 */}
+                  <div className="vault-item" style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
+                    <div className="vault-item-icon" style={{ background: 'rgba(2, 132, 199, 0.08)', color: 'var(--status-info)', width: '36px', height: '36px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <i className="fa-solid fa-file-signature"></i>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div className="text-sm font-medium">Service_Agreement.docx</div>
-                      <div className="text-xs text-muted" style={{ marginBottom: '8px' }}>Oct 15 &middot; 1.1 MB</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div className="text-sm font-bold">Service Agreement</div>
+                        <span className="badge badge-success" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>Analyzed</span>
+                      </div>
+                      <div className="text-xs text-muted" style={{ marginBottom: '8px' }}>Type: Contract</div>
                       <div style={{ background: 'var(--bg-main)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', borderLeft: '2px solid var(--accent-primary)', fontSize: '0.75rem' }}>
-                        <span className="font-bold text-accent">AI:</span>
-                        <span className="text-secondary"> Standard maintenance terms apply post-launch. 6 months premium support.</span>
+                        <span className="font-bold text-accent">Linked Output:</span>
+                        <span className="text-secondary"> Obligations, payment milestones, risk clauses, contract scope</span>
                       </div>
                     </div>
                   </div>
+
+                  {/* Item 3 */}
+                  <div className="vault-item" style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
+                    <div className="vault-item-icon" style={{ background: 'rgba(217, 119, 6, 0.08)', color: 'var(--status-warning)', width: '36px', height: '36px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <i className="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div className="text-sm font-bold">Supplier Invoice</div>
+                        <span className="badge badge-warning" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>Needs Approval</span>
+                      </div>
+                      <div className="text-xs text-muted" style={{ marginBottom: '8px' }}>Type: Invoice</div>
+                      <div style={{ background: 'var(--bg-main)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', borderLeft: '2px solid var(--accent-primary)', fontSize: '0.75rem' }}>
+                        <span className="font-bold text-accent">Linked Output:</span>
+                        <span className="text-secondary"> Approval request, payment reminder, duplicate risk check</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Item 4 */}
+                  <div className="vault-item" style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
+                    <div className="vault-item-icon" style={{ background: 'rgba(220, 38, 38, 0.08)', color: 'var(--status-danger)', width: '36px', height: '36px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <i className="fa-solid fa-code-branch"></i>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div className="text-sm font-bold">Client Change Request</div>
+                        <span className="badge badge-danger" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>Out of Scope</span>
+                      </div>
+                      <div className="text-xs text-muted" style={{ marginBottom: '8px' }}>Type: Scope Change</div>
+                      <div style={{ background: 'var(--bg-main)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', borderLeft: '2px solid var(--accent-primary)', fontSize: '0.75rem' }}>
+                        <span className="font-bold text-accent">Linked Output:</span>
+                        <span className="text-secondary"> Scope Guard, timeline impact, cost impact, suggested reply</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Item 5 */}
+                  <div className="vault-item" style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start' }}>
+                    <div className="vault-item-icon" style={{ background: 'rgba(16, 185, 129, 0.08)', color: 'var(--status-success)', width: '36px', height: '36px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <i className="fa-solid fa-users"></i>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div className="text-sm font-bold">Meeting Notes</div>
+                        <span className="badge badge-neutral" style={{ fontSize: '0.65rem', padding: '2px 6px', background: 'var(--bg-surface-elevated)' }}>Action Items Extracted</span>
+                      </div>
+                      <div className="text-xs text-muted" style={{ marginBottom: '8px' }}>Type: Meeting</div>
+                      <div style={{ background: 'var(--bg-main)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', borderLeft: '2px solid var(--accent-primary)', fontSize: '0.75rem' }}>
+                        <span className="font-bold text-accent">Linked Output:</span>
+                        <span className="text-secondary"> Tasks, decisions, owner follow-ups</span>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
 
                 <button type="button" className="btn btn-secondary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Asset library — coming soon', 'info')}>
-                  View All Assets
+                  View All Documents
                 </button>
               </div>
 

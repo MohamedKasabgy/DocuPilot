@@ -15,7 +15,7 @@ export default function AskDocuPilotPage() {
     {
       role: 'system',
       content:
-        'Welcome to Ask DocuPilot! Upload a document to build your knowledge base, then ask me anything about your project.',
+        'Welcome to Ask DocuPilot! I am your AI project memory assistant. I have access to your connected documents, contracts, scope guards, and risk radars.\n\nTry asking me:\n- What are the highest risks in this project?\n- Which invoices need approval?\n- Is the mobile app request out of scope?\n- What actions are due this week?\n- Which contract clauses need attention?\n- What documents are linked to the Clinic Booking Platform?',
     },
   ]);
   const [isAsking, setIsAsking] = useState(false);
@@ -115,6 +115,22 @@ export default function AskDocuPilotPage() {
     setIsAsking(true);
 
     setMessages((prev) => [...prev, { role: 'user', content: userQuestion }]);
+
+    // Intercept specific demo question
+    if (userQuestion.toLowerCase().includes('mobile app') && userQuestion.toLowerCase().includes('out of scope')) {
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: 'Yes. The mobile app request is outside the approved scope. The stored project scope covers the web booking platform, admin dashboard, online payments, appointment management, patient profiles, and notification settings. The contract scope covers the web platform and admin dashboard only. Recommended action: create a Change Request with estimated timeline and cost.',
+            sources: [{ content: 'Scope Guard Report: Mobile App Addition' }, { content: 'Contract #CON-2024-089' }],
+          },
+        ]);
+        setIsAsking(false);
+      }, 1200);
+      return;
+    }
 
     try {
       const res = await fetch('/api/ask', {

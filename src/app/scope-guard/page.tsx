@@ -17,7 +17,7 @@ const TOAST_ICONS: Record<ToastType, string> = {
   error: 'fa-solid fa-circle-xmark',
 };
 
-const SAMPLE_REQUEST = 'ممكن تضيفون تطبيق جوال iOS و Android للمنصة؟';
+const SAMPLE_REQUEST = 'Can you also add a mobile app for the same booking platform?';
 
 const STATUS_META = {
   in_scope: { label: 'In Scope', color: 'var(--status-success)', bg: 'var(--status-success-bg)', border: 'var(--status-success-border)', badge: 'badge-success', icon: 'fa-circle-check' },
@@ -70,8 +70,8 @@ export default function ScopeGuardPage() {
         body: JSON.stringify({
           newRequest: requestText,
           language: analysisLang,
-          existingSrs: compareAgainst === 'srs' ? 'Project SRS v2.1 covers web platform and admin dashboard.' : undefined,
-          contractScope: compareAgainst === 'contract' ? 'Contract #CON-2024-089 covers web platform and admin dashboard only.' : undefined,
+          existingSrs: compareAgainst === 'srs' ? 'Project SRS v2.1 covers web booking platform, admin dashboard, online payments, appointment management, patient profiles, and notification settings.' : undefined,
+          contractScope: compareAgainst === 'contract' ? 'Contract #CON-2024-089 covers web platform and admin dashboard only. Mobile applications are not included unless approved through a separate change request.' : undefined,
         }),
       });
       const result = await res.json();
@@ -130,7 +130,7 @@ export default function ScopeGuardPage() {
             <nav className="page-breadcrumb" style={{ marginBottom: 'var(--spacing-xs)' }}>
               <Link href="/projects">Projects</Link>
               <i className="fa-solid fa-chevron-right sep" style={{ fontSize: '0.6rem' }}></i>
-              <span>Alpha Platform v2.0</span>
+              <span>Clinic Booking Platform</span>
               <i className="fa-solid fa-chevron-right sep" style={{ fontSize: '0.6rem' }}></i>
               <span className="current">Scope Guard</span>
             </nav>
@@ -235,9 +235,9 @@ export default function ScopeGuardPage() {
               </div>
             ) : (
               <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 'var(--spacing-md)', flex: 1 }}>
-                <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '6px' }}>English Translation</div>
+                <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '6px' }}>Parsed Request</div>
                 <p className="text-sm font-medium" style={{ fontStyle: 'italic', color: 'var(--text-secondary)' }}>
-                  &ldquo;Could you add iOS and Android mobile applications to the platform?&rdquo;
+                  &ldquo;Can you also add a mobile app for the same booking platform?&rdquo;
                 </p>
               </div>
             )}
@@ -267,7 +267,7 @@ export default function ScopeGuardPage() {
                 <div style={{ background: statusMeta.bg, border: `1px solid ${statusMeta.border}`, padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'flex-start' }}>
                   <i className="fa-solid fa-circle-info" style={{ color: statusMeta.color, marginTop: '3px', flexShrink: 0 }}></i>
                   <p className="text-sm" style={{ lineHeight: 1.6, color: 'var(--text-primary)' }}>
-                    {analysis?.reason ?? `The current ${compareAgainst === 'contract' ? 'contract' : compareAgainst.toUpperCase()} covers web platform and admin dashboard only. Mobile development for native OS requires separate infrastructure not outlined in the agreement.`}
+                    {analysis?.reason ?? 'The requested mobile app is not included in the approved project scope or contract scope.'}
                   </p>
                 </div>
               </div>
@@ -387,7 +387,7 @@ export default function ScopeGuardPage() {
                 </div>
                 <div className="info-pair">
                   <span className="info-pair-label">Project</span>
-                  <span className="info-pair-value">Alpha Platform v2.0</span>
+                  <span className="info-pair-value">Clinic Booking Platform</span>
                 </div>
                 <div className="info-pair">
                   <span className="info-pair-label">Status</span>
@@ -406,11 +406,11 @@ export default function ScopeGuardPage() {
                 </div>
                 <div className="cr-document-row">
                   <span className="cr-document-key">Timeline Impact</span>
-                  <span className="cr-document-val" style={{ color: IMPACT_META[analysis?.timelineImpact ?? 'high'].color, fontWeight: 600 }}>{IMPACT_META[analysis?.timelineImpact ?? 'high'].label} impact</span>
+                  <span className="cr-document-val" style={{ color: IMPACT_META[analysis?.timelineImpact ?? 'high'].color, fontWeight: 600 }}>Estimated +2 to +4 weeks</span>
                 </div>
                 <div className="cr-document-row">
                   <span className="cr-document-key">Cost Impact</span>
-                  <span className="cr-document-val" style={{ color: IMPACT_META[analysis?.costImpact ?? 'high'].color, fontWeight: 600 }}>{IMPACT_META[analysis?.costImpact ?? 'high'].label} impact</span>
+                  <span className="cr-document-val" style={{ color: IMPACT_META[analysis?.costImpact ?? 'high'].color, fontWeight: 600 }}>Additional mobile development, QA, and deployment cost required.</span>
                 </div>
                 <div className="cr-document-row">
                   <span className="cr-document-key">Business Impact</span>
@@ -483,7 +483,7 @@ export default function ScopeGuardPage() {
                 textAlign: analysis && /[؀-ۿ]/.test(analysis.clientReply) ? 'right' : 'left',
               }}
             >
-              {analysis?.clientReply ?? `Dear Client,\n\nThank you for reaching out about adding iOS and Android mobile applications to the NexaSoft platform. We appreciate the vision for cross-platform expansion.\n\nAfter reviewing the current project scope (${compareLabel}), we confirmed that the existing engagement covers the Web Platform and Administrative Dashboard only. Developing native mobile applications is currently considered out of scope.\n\nHowever, we would be happy to accommodate this — we have initiated a Change Request. Our team will provide a formal estimate for the additional timeline and cost by end of business Thursday.\n\nBest regards,\nProject Management Team`}
+              {analysis?.clientReply ?? `Thank you for the request. Based on the current approved scope, the project includes the web platform and admin dashboard only. A mobile app would be considered an additional scope item. We can prepare a change request with the estimated timeline and cost for your approval.`}
             </div>
           </div>
         )}

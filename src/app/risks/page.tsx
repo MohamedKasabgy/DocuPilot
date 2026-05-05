@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 type ToastType = 'success' | 'info' | 'warning' | 'error';
 type Severity = 'all' | 'high' | 'medium' | 'low';
-type Source = 'all' | 'contract' | 'finance' | 'scope';
+type Source = 'all' | 'contract' | 'finance' | 'scope' | 'evaluator' | 'meeting';
 type Status = 'all' | 'active' | 'mitigated';
 
 const TOAST_ICONS: Record<ToastType, string> = {
@@ -15,18 +15,67 @@ const TOAST_ICONS: Record<ToastType, string> = {
   error:   'fa-solid fa-circle-xmark',
 };
 
-const RISKS = [
-  { id: 1, severity: 'high'   as const, source: 'contract' as const },
-  { id: 2, severity: 'high'   as const, source: 'scope'    as const },
-  { id: 3, severity: 'medium' as const, source: 'finance'  as const },
-  { id: 4, severity: 'medium' as const, source: 'contract' as const },
+const RISK_DATA = [
+  {
+    id: 1, severity: 'high' as const, source: 'scope' as const,
+    title: 'Mobile app request outside approved scope',
+    sourceLabel: 'Scope Guard',
+    impact: 'Timeline +2 to +4 weeks and additional cost',
+    actionText: 'Create Change Request',
+    icon: 'fa-solid fa-circle-exclamation',
+    cardClass: 'risk-card-high',
+    colorClass: 'danger',
+  },
+  {
+    id: 2, severity: 'medium' as const, source: 'contract' as const,
+    title: 'Medium-risk delivery clause',
+    sourceLabel: 'Contract Analysis',
+    impact: 'Possible penalty if beta delivery is delayed',
+    actionText: 'Add delivery reminder and owner',
+    icon: 'fa-solid fa-file-signature',
+    cardClass: 'risk-card-medium',
+    colorClass: 'warning',
+  },
+  {
+    id: 3, severity: 'medium' as const, source: 'finance' as const,
+    title: 'Invoice requires finance approval',
+    sourceLabel: 'Invoice Analysis',
+    impact: 'Payment may be delayed without approval',
+    actionText: 'Send to Approval Center',
+    icon: 'fa-solid fa-file-invoice-dollar',
+    cardClass: 'risk-card-medium',
+    colorClass: 'warning',
+  },
+  {
+    id: 4, severity: 'medium' as const, source: 'evaluator' as const,
+    title: 'Project feasibility depends on integrations',
+    sourceLabel: 'Project Evaluator',
+    impact: 'Cost and timeline may increase',
+    actionText: 'Validate integration requirements early',
+    icon: 'fa-solid fa-clipboard-question',
+    cardClass: 'risk-card-medium',
+    colorClass: 'warning',
+  },
+  {
+    id: 5, severity: 'low' as const, source: 'meeting' as const,
+    title: 'Meeting action has no owner',
+    sourceLabel: 'Meeting Notes',
+    impact: 'Follow-up may be missed',
+    actionText: 'Assign owner',
+    icon: 'fa-solid fa-users',
+    cardClass: 'risk-card-low',
+    colorClass: 'info',
+  }
 ];
 
+const RISKS = RISK_DATA.map(r => ({ id: r.id, severity: r.severity, source: r.source }));
+
 const RISK_DETAILS: Record<number, { dueDate: string; daysLeft: number }> = {
-  1: { dueDate: 'May 15, 2026', daysLeft: 12 },
-  2: { dueDate: 'May 10, 2026', daysLeft: 7  },
+  1: { dueDate: 'May 10, 2026', daysLeft: 7  },
+  2: { dueDate: 'May 15, 2026', daysLeft: 12 },
   3: { dueDate: 'May 12, 2026', daysLeft: 9  },
   4: { dueDate: 'May 20, 2026', daysLeft: 17 },
+  5: { dueDate: 'May 05, 2026', daysLeft: 2  },
 };
 
 const OWNER_OPTIONS = ['Ahmad K.', 'Sara M.', 'James W.', 'Lin C.', 'Unassigned'];
@@ -102,7 +151,7 @@ export default function RisksPage() {
           <div>
             <span className="opts-label">Source</span>
             <div className="filter-group">
-              {([['all', 'All'], ['contract', 'Contract'], ['finance', 'Finance'], ['scope', 'Scope']] as [Source, string][]).map(([val, label]) => (
+              {([['all', 'All'], ['scope', 'Scope Guard'], ['contract', 'Contract Analysis'], ['finance', 'Invoice Analysis'], ['evaluator', 'Project Evaluator'], ['meeting', 'Meeting Notes']] as [Source, string][]).map(([val, label]) => (
                 <button type="button" key={val} className={`filter-btn${source === val ? ' active' : ''}`} onClick={() => setSource(val)}>{label}</button>
               ))}
             </div>
@@ -130,59 +179,62 @@ export default function RisksPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 section-mb">
-
-            {show(1) && (
-              <div className="card risk-card-high content-gap">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start', flex: 1 }}>
-                    <div className="list-item-icon" style={{ background: 'var(--status-danger-bg)', color: 'var(--status-danger)', width: '44px', height: '44px', fontSize: '1.125rem', flexShrink: 0 }}>
-                      <i className="fa-solid fa-circle-exclamation"></i>
-                    </div>
-                    <div>
-                      <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                        <span className="badge badge-danger">High Severity</span>
-                        <span className={`deadline-badge ${deadlineBadgeClass(RISK_DETAILS[1].daysLeft)}`}>
-                          <i className="fa-regular fa-clock"></i> {RISK_DETAILS[1].daysLeft}d — {RISK_DETAILS[1].dueDate}
-                        </span>
+            {RISK_DATA.map(r => {
+              if (!show(r.id)) return null;
+              const details = RISK_DETAILS[r.id];
+              return (
+                <div key={r.id} className={`card ${r.cardClass} content-gap`}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'flex-start', flex: 1 }}>
+                      <div className="list-item-icon" style={{ background: `var(--status-${r.colorClass}-bg)`, color: `var(--status-${r.colorClass})`, width: '44px', height: '44px', fontSize: '1.125rem', flexShrink: 0 }}>
+                        <i className={r.icon}></i>
                       </div>
-                      <h2 className="font-bold" style={{ fontSize: '1.0625rem', lineHeight: 1.3 }}>Late delivery penalty — Clinic Booking Platform</h2>
+                      <div>
+                        <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                          <span className={`badge badge-${r.colorClass}`}>{r.severity.charAt(0).toUpperCase() + r.severity.slice(1)} Severity</span>
+                          <span className={`deadline-badge ${deadlineBadgeClass(details.daysLeft)}`}>
+                            <i className="fa-regular fa-clock"></i> {details.daysLeft}d — {details.dueDate}
+                          </span>
+                        </div>
+                        <h2 className="font-bold" style={{ fontSize: '1.0625rem', lineHeight: 1.3 }}>{r.title}</h2>
+                      </div>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div className="text-xs text-muted font-semibold uppercase tracking-wider">Exposure</div>
-                    <div className="font-bold" style={{ color: 'var(--status-danger)', fontSize: '1.125rem', marginTop: '2px' }}>Penalty 10%</div>
-                  </div>
-                </div>
 
-                <div className="grid-3col" style={{ paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-subtle)' }}>
-                  <div className="info-pair">
-                    <span className="info-pair-label">Source</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-primary)', marginTop: '2px' }}>
-                      <i className="fa-solid fa-clock-rotate-left" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}></i>
-                      Contract Milestone
+                  <div className="grid-2col" style={{ paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-subtle)' }}>
+                    <div className="info-pair">
+                      <span className="info-pair-label">Source</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-primary)', marginTop: '2px' }}>
+                        <i className="fa-solid fa-link" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}></i>
+                        {r.sourceLabel}
+                      </div>
+                    </div>
+                    <div className="info-pair">
+                      <span className="info-pair-label">Impact</span>
+                      <span className="info-pair-value" style={{ fontSize: '0.875rem' }}>{r.impact}</span>
                     </div>
                   </div>
-                  <div className="info-pair">
-                    <span className="info-pair-label">Impact</span>
-                    <span className="info-pair-value" style={{ fontSize: '0.875rem' }}>Immediate Q4 revenue reduction</span>
-                  </div>
-                  <div className="info-pair">
-                    <span className="info-pair-label">Owner</span>
+
+                  <div style={{ background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--spacing-md)' }}>
+                    <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center', flex: 1 }}>
+                      <i className="fa-regular fa-lightbulb text-accent"></i>
+                      <p className="text-sm" style={{ lineHeight: 1.5 }}>
+                        <strong>Action:</strong> {r.actionText}
+                      </p>
+                    </div>
                     <div style={{ position: 'relative' }}>
                       <button
                         type="button"
                         className="text-sm font-semibold text-accent"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px', touchAction: 'manipulation' }}
-                        onClick={() => setOwnerDropdown(ownerDropdown === 1 ? null : 1)}
+                        style={{ background: 'var(--bg-main)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-sm)', padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        onClick={() => setOwnerDropdown(ownerDropdown === r.id ? null : r.id)}
                       >
-                        <i className="fa-solid fa-user-circle" style={{ fontSize: '0.75rem' }}></i>
-                        {owners[1]}
-                        <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
+                        {owners[r.id] || 'Assign Owner'} <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
                       </button>
-                      {ownerDropdown === 1 && (
-                        <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginTop: '4px' }}>
+                      {ownerDropdown === r.id && (
+                        <div style={{ position: 'absolute', bottom: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginBottom: '4px' }}>
                           {OWNER_OPTIONS.map(o => (
-                            <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(1, o)}>
+                            <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(r.id, o)}>
                               {o}
                             </button>
                           ))}
@@ -190,272 +242,26 @@ export default function RisksPage() {
                       )}
                     </div>
                   </div>
-                </div>
 
-                <div style={{ background: 'rgba(124, 58, 237, 0.05)', border: '1px solid rgba(124, 58, 237, 0.18)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--spacing-md)' }}>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center', flex: 1 }}>
-                    <i className="fa-regular fa-lightbulb text-accent"></i>
-                    <p className="text-sm" style={{ lineHeight: 1.5 }}>
-                      <strong>Suggested:</strong> Trigger Force Majeure clause review or initiate stakeholder re-negotiation.
-                    </p>
-                  </div>
-                  <button type="button" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }} onClick={() => showToast('Risk resolution initiated', 'success')}>
-                    Resolve <i className="fa-solid fa-arrow-right text-xs"></i>
-                  </button>
-                </div>
-
-                {mitigationFor !== 1 ? (
-                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(1)}>
-                    <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
-                  </button>
-                ) : (
-                  <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                    <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
-                    <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
-                    <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(1)} disabled={!mitigationText.trim()}>
-                        <i className="fa-solid fa-check"></i> Save Task
-                      </button>
-                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {show(2) && (
-              <div className="card risk-card-high content-gap">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                      <span className="badge badge-danger">High Severity</span>
-                      <span className={`deadline-badge ${deadlineBadgeClass(RISK_DETAILS[2].daysLeft)}`}>
-                        <i className="fa-regular fa-clock"></i> {RISK_DETAILS[2].daysLeft}d — {RISK_DETAILS[2].dueDate}
-                      </span>
-                    </div>
-                    <h2 className="font-bold" style={{ fontSize: '1.0625rem', lineHeight: 1.3 }}>Out-of-scope mobile app request</h2>
-                  </div>
-                  <i className="fa-solid fa-triangle-exclamation" style={{ color: 'var(--status-danger)', fontSize: '1.5rem', flexShrink: 0 }}></i>
-                </div>
-
-                <p className="text-sm text-muted" style={{ lineHeight: 1.6 }}>
-                  Potential scope creep identified in recent client communication regarding cross-platform push notifications.
-                </p>
-
-                <div style={{ background: 'var(--bg-surface-elevated)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-                  <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>Impact</div>
-                  <div className="text-sm font-medium">Estimated 80 extra dev hours not currently in SOW</div>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'var(--spacing-sm)', borderTop: '1px solid var(--border-subtle)' }}>
-                  <div style={{ position: 'relative' }}>
-                    <span className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginRight: '6px' }}>Owner:</span>
-                    <button
-                      type="button"
-                      className="text-sm font-semibold text-accent"
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, touchAction: 'manipulation' }}
-                      onClick={() => setOwnerDropdown(ownerDropdown === 2 ? null : 2)}
-                    >
-                      {owners[2]} <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
+                  {mitigationFor !== r.id ? (
+                    <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(r.id)}>
+                      <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
                     </button>
-                    {ownerDropdown === 2 && (
-                      <div style={{ position: 'absolute', bottom: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginBottom: '4px' }}>
-                        {OWNER_OPTIONS.map(o => (
-                          <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(2, o)}>
-                            {o}
-                          </button>
-                        ))}
+                  ) : (
+                    <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                      <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
+                      <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
+                      <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+                        <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(r.id)} disabled={!mitigationText.trim()}>
+                          <i className="fa-solid fa-check"></i> Save Task
+                        </button>
+                        <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
                       </div>
-                    )}
-                  </div>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-                    <Link href="/scope-guard" className="text-sm font-semibold text-accent">View SOW</Link>
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => showToast('Risk flagged for billing', 'warning')}>Flag for Billing</button>
-                  </div>
-                </div>
-
-                {mitigationFor !== 2 ? (
-                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(2)}>
-                    <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
-                  </button>
-                ) : (
-                  <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                    <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
-                    <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
-                    <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(2)} disabled={!mitigationText.trim()}>
-                        <i className="fa-solid fa-check"></i> Save Task
-                      </button>
-                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {show(3) && (
-              <div className="card risk-card-medium content-gap">
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-md)' }}>
-                  <div className="list-item-icon" style={{ background: 'var(--status-warning-bg)', color: 'var(--status-warning)', width: '44px', height: '44px', fontSize: '1.125rem', flexShrink: 0 }}>
-                    <i className="fa-solid fa-file-invoice-dollar"></i>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                      <span className="badge badge-warning">Medium Severity</span>
-                      <span className={`deadline-badge ${deadlineBadgeClass(RISK_DETAILS[3].daysLeft)}`}>
-                        <i className="fa-regular fa-clock"></i> {RISK_DETAILS[3].daysLeft}d — {RISK_DETAILS[3].dueDate}
-                      </span>
-                    </div>
-                    <h2 className="font-bold" style={{ fontSize: '1.0625rem', lineHeight: 1.3 }}>Invoice pending approval</h2>
-                  </div>
+                  )}
                 </div>
-
-                <div className="grid-2col">
-                  <div className="info-pair">
-                    <span className="info-pair-label">Related Project</span>
-                    <span className="info-pair-value text-sm">DesignPro Studio Rebrand</span>
-                  </div>
-                  <div className="info-pair">
-                    <span className="info-pair-label">Source</span>
-                    <span className="info-pair-value text-sm">Finance Portal</span>
-                  </div>
-                </div>
-
-                <div style={{ background: 'var(--status-warning-bg)', border: '1px solid var(--status-warning-border)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', fontStyle: 'italic' }}>
-                  <p className="text-sm" style={{ color: 'var(--text-primary)', lineHeight: 1.6 }}>
-                    &ldquo;Approval delayed due to missing tax ID on the primary vendor profile. Payment cycle at risk.&rdquo;
-                  </p>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'var(--spacing-sm)', borderTop: '1px solid var(--border-subtle)' }}>
-                  <div style={{ position: 'relative' }}>
-                    <span className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginRight: '6px' }}>Owner:</span>
-                    <button
-                      type="button"
-                      className="text-sm font-semibold text-accent"
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, touchAction: 'manipulation' }}
-                      onClick={() => setOwnerDropdown(ownerDropdown === 3 ? null : 3)}
-                    >
-                      {owners[3]} <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
-                    </button>
-                    {ownerDropdown === 3 && (
-                      <div style={{ position: 'absolute', bottom: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginBottom: '4px' }}>
-                        {OWNER_OPTIONS.map(o => (
-                          <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(3, o)}>
-                            {o}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                    <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => showToast('Reminder sent to client', 'success')}>
-                      <i className="fa-solid fa-bell"></i> Remind Client
-                    </button>
-                    <button type="button" className="btn" style={{ flex: 1, background: 'var(--status-warning-bg)', color: 'var(--status-warning)', border: '1px solid var(--status-warning-border)' }} onClick={() => showToast('Invoice info updated', 'success')}>
-                      <i className="fa-solid fa-pen"></i> Update Info
-                    </button>
-                  </div>
-                </div>
-
-                {mitigationFor !== 3 ? (
-                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(3)}>
-                    <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
-                  </button>
-                ) : (
-                  <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                    <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
-                    <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
-                    <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(3)} disabled={!mitigationText.trim()}>
-                        <i className="fa-solid fa-check"></i> Save Task
-                      </button>
-                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {show(4) && (
-              <div className="card risk-card-medium content-gap">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                      <span className="badge badge-warning">Medium Severity</span>
-                      <span className={`deadline-badge ${deadlineBadgeClass(RISK_DETAILS[4].daysLeft)}`}>
-                        <i className="fa-regular fa-clock"></i> {RISK_DETAILS[4].daysLeft}d — {RISK_DETAILS[4].dueDate}
-                      </span>
-                    </div>
-                    <h2 className="font-bold" style={{ fontSize: '1.0625rem', lineHeight: 1.3 }}>Missing client confirmation on API docs</h2>
-                  </div>
-                  <i className="fa-solid fa-clipboard-question" style={{ color: 'var(--status-warning)', fontSize: '1.5rem', flexShrink: 0 }}></i>
-                </div>
-
-                <div className="grid-2col">
-                  <div style={{ background: 'var(--status-success-bg)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', border: '1px solid var(--status-success-border)' }}>
-                    <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>Suggested Action</div>
-                    <div className="text-sm font-medium">Hold sprint kickoff until sign-off is secured.</div>
-                  </div>
-                  <div style={{ background: 'var(--bg-surface-elevated)', padding: 'var(--spacing-md)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-                    <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>Project</div>
-                    <div className="text-sm font-medium">Legacy Integration v2</div>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'var(--spacing-sm)', borderTop: '1px solid var(--border-subtle)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-                    <div style={{ display: 'flex' }}>
-                      {[{ initials: 'JS', bg: 'var(--accent-primary)' }, { initials: 'MK', bg: 'var(--status-info)' }, { initials: '+3', bg: 'var(--bg-surface-elevated)' }].map((a, i) => (
-                        <div key={i} className="avatar" style={{ width: '28px', height: '28px', fontSize: '0.6875rem', zIndex: 3 - i, marginLeft: i > 0 ? '-8px' : '0', background: a.bg, border: '2px solid white', color: i === 2 ? 'var(--text-muted)' : 'white' }}>
-                          {a.initials}
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ position: 'relative' }}>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-accent"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, touchAction: 'manipulation' }}
-                        onClick={() => setOwnerDropdown(ownerDropdown === 4 ? null : 4)}
-                      >
-                        {owners[4]} <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
-                      </button>
-                      {ownerDropdown === 4 && (
-                        <div style={{ position: 'absolute', bottom: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginBottom: '4px' }}>
-                          {OWNER_OPTIONS.map(o => (
-                            <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(4, o)}>
-                              {o}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <button type="button" className="text-sm font-semibold text-accent" style={{ background: 'none', border: 'none', cursor: 'pointer', touchAction: 'manipulation' }} onClick={() => showToast('Reminder sent', 'success')}>
-                    Send Reminder <i className="fa-solid fa-paper-plane text-xs"></i>
-                  </button>
-                </div>
-
-                {mitigationFor !== 4 ? (
-                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(4)}>
-                    <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
-                  </button>
-                ) : (
-                  <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-                    <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
-                    <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
-                    <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(4)} disabled={!mitigationText.trim()}>
-                        <i className="fa-solid fa-check"></i> Save Task
-                      </button>
-                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
+              );
+            })}
           </div>
         )}
 
