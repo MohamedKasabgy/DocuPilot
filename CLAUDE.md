@@ -4,7 +4,7 @@
 
 DocuPilot is a portfolio-grade SaaS dashboard for software companies to manage projects, contracts, invoices, and requirements. It uses AI (Google Gemini) to transform client requests (including Arabic) into structured SRS documents, detect scope creep, and generate smart alerts. Data is persisted to Supabase.
 
-**Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Google Gemini AI (`@google/genai`) · Supabase · Zod 4 · Font Awesome 6 · Google Fonts (Inter + Outfit)
+**Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Google Gemini AI (`@google/genai`) · Qwen (OpenAI-compatible fallback) · Supabase (`@supabase/supabase-js`) · Zod 4 · pgvector + Gemini embeddings for RAG · `unpdf` for server-side PDF text extraction · Font Awesome 6 · Inter + Outfit
 
 **Target audience:** Software house operations teams (project managers, admins).
 
@@ -14,11 +14,20 @@ DocuPilot is a portfolio-grade SaaS dashboard for software companies to manage p
 src/
 ├── app/                        # Next.js App Router pages
 │   ├── api/ai/
-│   │   ├── srs/route.ts       # ✅ LIVE — Gemini SRS generation + refinement
-│   │   ├── contract/route.ts  # Mock — planned Gemini integration
-│   │   ├── invoice/route.ts   # Mock — planned Gemini integration
-│   │   ├── scope/route.ts     # Mock — planned Gemini integration
-│   │   └── template.ts        # Shared route template
+│   │   ├── srs/route.ts                  # ✅ LIVE — Gemini SRS generation + refinement (with Qwen + local fallback)
+│   │   ├── invoice/route.ts              # ✅ LIVE — Gemini invoice analysis (contract-context aware)
+│   │   ├── scope/route.ts                # ✅ LIVE — Gemini scope guard (writes high-risk alerts)
+│   │   ├── project-intelligence/route.ts # ✅ LIVE — Gemini project intelligence
+│   │   ├── contract/route.ts             # ⚠ Legacy stub — superseded by /api/contracts/analyze
+│   │   └── template.ts                   # Shared route template
+│   ├── api/contracts/
+│   │   ├── analyze/route.ts              # ✅ LIVE — Gemini contract extraction → contract_analyses, alerts, ai_outputs
+│   │   ├── extract/route.ts              # ✅ LIVE — server-side PDF/TXT/MD text extraction via unpdf
+│   │   └── list/route.ts                 # Contract listing
+│   ├── api/ask/route.ts                  # ✅ LIVE — RAG via pgvector + Gemini chat (mock auth)
+│   ├── api/rag/ingest/route.ts           # ✅ LIVE — chunk + embed + write document_chunks (mock auth)
+│   ├── api/projects/[id]/route.ts        # Project read endpoint
+│   ├── api/documents/analyze/route.ts    # Document analysis endpoint
 │   ├── page.tsx               # Dashboard (operational overview)
 │   ├── srs-generator/
 │   │   ├── page.tsx           # SRS page (Client Component, calls /api/ai/srs)
@@ -32,11 +41,22 @@ src/
 │   └── risks/                 # Risk register
 ├── lib/
 │   ├── ai/
-│   │   ├── gemini.ts          # Gemini client singleton + model config
-│   │   ├── schemas/srs.ts     # Zod schema + JSON schema for structured output
-│   │   └── prompts/srs.ts     # System context + prompt builders (generation & refinement)
+│   │   ├── gemini.ts                  # Gemini client + model constants (FAST, FALLBACK, EMBEDDING)
+│   │   ├── qwen.ts                    # Qwen OpenAI-compatible client (tertiary fallback)
+│   │   ├── geminiReliability.ts       # Wrapper: Gemini primary → Gemini fallback → Qwen
+│   │   ├── jsonUtils.ts               # extractJsonObject helper
+│   │   ├── normalized-output.ts       # Defensive output normalizers
+│   │   ├── schemas/                   # Zod + JSON schemas (srs, contract, invoice, scope, projectIntelligence)
+│   │   ├── prompts/                   # SYSTEM_CONTEXT + buildPrompt() per module
+│   │   └── fallbacks/                 # Local fallback objects (scope, projectIntelligence)
+│   ├── dashboard/load.ts              # Server-side dashboard loader (live | fallback | mixed)
+│   ├── data/                          # Demo store, queries, types
+│   ├── rag/
+│   │   ├── chunkText.ts               # Text chunker (~900 chars, 150 overlap)
+│   │   └── embeddings.ts              # Gemini text-embedding-004 wrapper
 │   └── db/
-│       └── supabaseAdmin.ts   # Supabase server client
+│       ├── supabaseAdmin.ts           # Lazy server-side client + isSupabaseConfigured() guard
+│       └── supabaseClient.ts          # Browser client
 ├── components/
 │   ├── common/                # Reusable UI (Card, MetricCard)
 │   └── layout/                # Sidebar, Header
@@ -46,16 +66,19 @@ src/
     └── components.css         # Card, button, badge, form styles
 ```
 
-## AI Integration (Gemini)
+## AI Integration (Gemini → Qwen → local fallback)
 
-The SRS Generator is fully wired to Google Gemini with structured JSON output:
+SRS, Contracts, Invoices, Scope Guard, and Project Intelligence are all wired live to Gemini with structured JSON output. Ask DocuPilot uses RAG (pgvector + embeddings).
 
-- **Model:** Configured via `GEMINI_FAST_MODEL` env var (default: `gemini-2.5-flash`)
-- **Structured output:** Uses `responseMimeType: "application/json"` + `responseSchema` for reliable parsing
-- **Validation:** Zod 4 schema validates every response before rendering
-- **Prompt system:** Rich system context in `src/lib/ai/prompts/srs.ts` — includes DocuPilot platform knowledge, downstream dependencies, technical stack context, and Middle Eastern client patterns
-- **Refinement flow:** Same API route handles both initial generation (`clientRequest`) and iterative refinement (`currentSrs` + `refinementMessage`)
-- **Persistence:** Non-blocking Supabase writes to `srs_documents` and `ai_outputs` tables — DB failures don't break the AI response
+- **Primary model:** `GEMINI_FAST_MODEL` (default `gemini-2.5-flash-lite`)
+- **Reliability fallback:** `GEMINI_FALLBACK_MODEL` (default `gemini-2.0-flash`)
+- **Tertiary fallback:** Qwen via `QWEN_API_KEY` (OpenAI-compatible)
+- **Final safety net:** Hand-crafted fallback objects in `src/lib/ai/fallbacks/` and per-route constants
+- **Structured output:** `responseMimeType: "application/json"` + `responseSchema` (using `@google/genai` `Type` enums or plain JSON schema)
+- **Validation:** Zod 4 parse before persist/return
+- **Prompts:** Each module exports a `SYSTEM_CONTEXT` plus a `buildPrompt()` builder under `src/lib/ai/prompts/`
+- **Persistence:** All Supabase writes are non-blocking and wrapped in `isSupabaseConfigured()` guards
+- **Telemetry:** Every response carries `providerUsed`, `source`, `usedFallback`, `fallbackReason`, `errorCode`, `modelUsed`, `attempts`, `retried`
 
 ### Adding new AI modules
 
@@ -67,9 +90,11 @@ Follow the SRS pattern:
 
 ## Database (Supabase)
 
-- **Client:** `src/lib/db/supabaseAdmin.ts` — uses `SUPABASE_SERVICE_ROLE_KEY` with fallback to `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-- **Tables in use:** `srs_documents`, `ai_outputs`
-- **Pattern:** Non-blocking persistence — wrap DB calls in try/catch, log errors, never fail the API response because of a DB issue
+- **Client:** `src/lib/db/supabaseAdmin.ts` — lazy proxy, uses `SUPABASE_SERVICE_ROLE_KEY` (with fallback to publishable/anon keys for read-only flows). Always guard with `isSupabaseConfigured()`.
+- **Tables in use:** `projects`, `srs_documents`, `contract_analyses`, `scope_analyses`, `ai_outputs`, `alerts`, `documents`, `document_chunks`.
+- **Migrations:** `supabase/migrations/0001_domain_tables.sql` … `20260503000000_rag_setup.sql` (run in order). pgvector RPC `match_document_chunks` powers Ask DocuPilot.
+- **Seed:** `npm run db:seed` (`scripts/seed.ts`).
+- **Pattern:** Non-blocking persistence — wrap DB calls in try/catch, log errors, never fail the API response because of a DB issue.
 
 ## Environment Variables
 
@@ -77,11 +102,15 @@ Stored in `.env.local` (gitignored). See `.env.local.example` for required vars:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `GEMINI_API_KEY` | Yes | Google AI Studio API key |
-| `GEMINI_FAST_MODEL` | No | Model ID (default: `gemini-2.5-flash`) |
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Yes | Supabase anon/publishable key |
-| `SUPABASE_SERVICE_ROLE_KEY` | No | Supabase service role key (recommended for server-side) |
+| `GEMINI_API_KEY` | Yes (live AI) | Google AI Studio API key |
+| `GEMINI_FAST_MODEL` | No | Primary model (default `gemini-2.5-flash-lite`) |
+| `GEMINI_FALLBACK_MODEL` | No | Reliability fallback model (default `gemini-2.0-flash`) |
+| `GEMINI_EMBEDDING_MODEL` | No | Embeddings model (default `text-embedding-004`) |
+| `QWEN_API_KEY` | No | Tertiary AI fallback (OpenAI-compatible Qwen) |
+| `QWEN_BASE_URL`, `QWEN_MODEL` | No | Override Qwen endpoint and model |
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes (persistence) | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes (persistence, server-only) | Service role key — never expose to client |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Optional | For future client-side Supabase use |
 
 ## Critical Rules
 
@@ -124,14 +153,19 @@ npm run build        # Production build
 npm run lint         # ESLint check
 ```
 
-## Planned Integrations (not yet implemented)
+## Live vs UI-Only vs Planned
 
-- **Scope Guard AI** — Contract deviation detection via Gemini (route stub exists)
-- **Contract Extraction** — AI-powered contract parsing (route stub exists)
-- **Invoice AI** — Smart invoice generation (route stub exists)
-- **PDF export** — SRS and invoice document generation
-- **Authentication** — User roles (Admin, PM, Viewer)
-- **Ask DocuPilot** — General AI assistant page (page exists, no AI backend yet)
+**Live (real AI + persistence):** SRS, Contract Analysis, Contract PDF Extract, Invoice Analysis, Scope Guard, Project Intelligence, Ask DocuPilot RAG, Dashboard data loader.
+
+**UI-only / mock today:** Approvals page, Risk Radar page, `/api/ai/contract` legacy stub, Contract Vault button, mock `verifyAuth` / `checkRateLimit` in Ask + Ingest.
+
+**Planned:**
+- Real authentication and role-based access (Admin / PM / Viewer)
+- Approvals + Risk Radar write paths
+- PDF export of generated SRS / analyses
+- Multi-project workspace selector across modules
+- Production OCR for scanned contract PDFs
+- Calendar / email / WhatsApp integrations
 
 ## Style Guide for Code
 

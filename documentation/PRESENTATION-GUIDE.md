@@ -1,198 +1,262 @@
-# DocuPilot — CEO & Startup Launcher Presentation Guide
+# DocuPilot — Presentation Guide
 
-## What Was Built
+A slide-by-slide deck plan for Canva, with speaker notes, demo flow, what to emphasize, what **not** to claim, a backup plan, and a Q&A appendix.
 
-DocuPilot is an AI-native operations platform for software companies, built with Next.js 16, React 19, TypeScript, Google Gemini AI, and Supabase.
-
-### Live AI Modules (Real Gemini Integration)
-
-1. **SRS Generator** (`/srs-generator`)
-   - Paste a raw client request in Arabic or English
-   - Gemini AI generates a structured Software Requirements Specification in seconds
-   - Output includes: project brief, user roles, features, functional/non-functional requirements, MVP phases, assumptions, confidence score
-   - Chat refinement: send follow-up messages to iteratively improve the SRS
-   - Persisted to Supabase for history
-
-2. **Ask DocuPilot** (`/ask-docupilot`)
-   - Upload documents (contracts, SRS, briefs)
-   - Documents are chunked and embedded using Gemini embedding-001
-   - Ask questions in Arabic or English — answers cite specific sources
-   - RAG (Retrieval Augmented Generation) ensures answers are grounded in your actual documents
-
-3. **Document Ingest** (`/api/rag/ingest`)
-   - Backend pipeline: text chunking (900 chars, 150 overlap) + vector embeddings
-   - Stored in Supabase with pgvector for semantic search
-
-### Mock Pages (Interactive UI, Hardcoded Data)
-
-4. **Dashboard** (`/`) — Operational overview with metrics, priorities, AI-powered smart alerts, deadlines, next best actions
-5. **Projects** (`/projects`) — Project detail view with health score, timeline, task stream, document vault
-6. **Contracts** (`/contracts`) — Contract extraction UI with depth/sensitivity controls, risk scoring, deadline tracking
-7. **Invoices** (`/invoices`) — Invoice review with currency conversion, approval chain, duplicate detection
-8. **Scope Guard** (`/scope-guard`) — Scope deviation analysis with Arabic input, change request generation, client reply suggestion
-9. **Risk Radar** (`/risks`) — Risk dashboard with severity/source/status filters, mitigation tracking
+> Tagline used throughout: **From Documents to Decisions.**
 
 ---
 
-## Code Changes Made in This Session
+## Deck Structure (20 slides)
 
-### 1. SRS Prompt Enhancement (`src/lib/ai/prompts/srs.ts`)
-- Added comprehensive `SYSTEM_CONTEXT` so Gemini understands:
-  - What DocuPilot is and how modules interconnect
-  - That SRS output feeds into Scope Guard, contracts, invoices, and project planning
-  - Typical tech stacks the software house builds with
-  - Middle Eastern client patterns (Arabic input, ZATCA compliance, mobile-first assumptions)
-- Enhanced generation rules: NFR categories, smarter missing questions, realistic MVP scoping (4-8 weeks), stricter confidence scoring
+Each slide block contains: **Goal · On-screen · Speaker notes · Avoid claiming**.
 
-### 2. CLAUDE.md Overhaul
-- Updated to reflect actual state: Next.js 16, live Gemini integration, Supabase persistence, Zod 4
-- Added env var reference table
-- Added AI module pattern guide for future development
-- Added rule: never add AI as contributor in commits
-- Added Zod 4 constraints documentation
+### Slide 1 — Title
 
-### 3. AGENTS.md Update
-- Updated to Next.js 16
-- Added git/attribution rules
-- Added AI integration guidelines for subagents
+- **Goal:** Set the tone in five seconds.
+- **On-screen:** "DocuPilot" wordmark · "From Documents to Decisions." · subtitle: "AI operations layer for software companies and service businesses." · presenter names.
+- **Speaker notes:** "DocuPilot is an AI operations layer. It turns the documents your team already produces — client requests, contracts, invoices, scope changes — into decisions, approvals, risks, and alerts."
+- **Avoid:** Calling it a chatbot, calling it a document chat tool, claiming it is production-ready.
 
-### 4. Build Fix (`src/lib/db/supabaseAdmin.ts`)
-- Production build was failing because it threw when `SUPABASE_SERVICE_ROLE_KEY` was missing
-- Added fallback to `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+### Slide 2 — The Problem
 
-### 5. Dashboard Polish (`src/app/page.tsx`)
-- Replaced "Demo Mode" badge with "AI-Powered" badge (purple, matches AI branding)
-- Dynamic date instead of hardcoded "May 3, 2026"
-- Smart Alerts now reference AI modules: "Scope Deviation Detected" with auto-generated CR, "SRS Generated" with confidence score
-- Recent Activity now shows AI operations: SRS generation, Scope Guard flags, contract extraction
-- Removed "NexaSoft Admin" references
+- **Goal:** Anchor the pain.
+- **On-screen:** Four bullets — "Requirements unclear at project start" · "Contracts signed, obligations untracked" · "Invoices approved without context" · "Silent scope creep."
+- **Speaker notes:** "Software houses don't lose control because they lack documents. They lose control because documents don't automatically become actions."
+- **Avoid:** Specific customer names you cannot back up.
 
-### 6. Header Update (`src/components/layout/Header.tsx`)
-- Changed "NexaSoft Admin" / "Project Manager" to "DocuPilot Admin" / "Operations Manager"
-- Updated avatar initials from "NX" to "DP"
+### Slide 3 — Target Users
 
-### 7. Sidebar Branding (`src/components/layout/Sidebar.tsx`)
-- Changed subtitle from "Operational Hub" to "AI-Powered Software Ops"
+- **Goal:** Who pays for this.
+- **On-screen:** Software houses, agencies, service businesses · Project managers, ops leads, founders.
+- **Speaker notes:** "Companies between 10 and 200 people running multiple client engagements at once."
+- **Avoid:** Saying "enterprises" — DocuPilot is not enterprise-ready.
 
-### 8. Environment Fix
-- Updated all references from `.env` to `.env.local` across documentation
+### Slide 4 — Product Today
 
----
+- **Goal:** Reposition the product correctly.
+- **On-screen:** "DocuPilot is an AI operations hub — not generic document chat." Side-by-side comparison: ChatGPT (one-off answers) vs DocuPilot (structured, persistent, connected).
+- **Speaker notes:** "ChatGPT can summarize one document in one chat. DocuPilot extracts obligations, payments, deadlines, and risks, validates them, persists them, and connects them to a project. The output is operational state, not prose."
+- **Avoid:** Claiming a Jira/Notion replacement.
 
-## Demo Script for Judges
+### Slide 5 — Main Workflow
 
-### Scene 1: The Problem (30 seconds)
-"Software houses in the Middle East waste 30-40% of project time on operational overhead — writing SRS docs manually, catching scope creep too late, and losing money to unclear contracts. Tools like Jira track tasks but don't think."
+- **Goal:** One-line mental model of the product.
+- **On-screen:** Single horizontal arrow: **Client Request → SRS → Contract → Invoice → Scope Guard → Risks → Dashboard → Ask DocuPilot.**
+- **Speaker notes:** "This is the loop. Every demo, every screen, every API route maps onto this loop."
+- **Avoid:** Adding modules that don't exist (no HR, no accounting, no payments).
 
-### Scene 2: SRS Generation — The Star (90 seconds)
-- Open `/srs-generator`
-- Paste Arabic clinic booking request (use the Sample button)
-- Hit "Generate SRS"
-- While waiting: "DocuPilot accepts Arabic or English. The AI understands the business context and generates a complete SRS."
-- Show output: project brief, user roles, features, requirements, MVP phases
-- Point out: "The confidence score tells you what's missing. The AI flagged 4 clarification questions."
+### Slide 6 — Demo Scenario: NexaSoft × Al Waha Clinics
 
-### Scene 3: Scope Guard (60 seconds)
-- Navigate to `/scope-guard`
-- "A week later, the client asks for a mobile app that wasn't in the contract"
-- Show: out-of-scope verdict, cost/timeline impact, auto-generated Change Request
-- "The PM sends this to the client in 30 seconds instead of spending an afternoon"
+- **Goal:** Pin the story.
+- **On-screen:** Software house: NexaSoft · Client: Al Waha Clinics · Project: Clinic Booking Platform · Goal: web booking + admin dashboard + appointments + payments + notifications.
+- **Speaker notes:** "Throughout the demo we'll watch NexaSoft run this project through DocuPilot end-to-end."
+- **Avoid:** Inventing extra clients in the same demo.
 
-### Scene 4: Ask DocuPilot (60 seconds)
-- Navigate to `/ask-docupilot`
-- Ask: "What are the payment milestones?" or ask in Arabic
-- Show: answer with source citations
-- "No more digging through emails and PDFs"
+### Slide 7 — Walkthrough: Dashboard
 
-### Scene 5: The Platform Vision (30 seconds)
-- Quick scroll: Dashboard (real-time alerts), Risk Radar, Contracts, Invoices
-- "Every module is AI-powered. Every document is connected. Every decision is tracked."
+- **Goal:** Show the operational hub.
+- **On-screen:** Dashboard screenshot (`qa-dashboard.png` if available).
+- **Speaker notes:** "This is the operations cockpit — decisions, project health, financials, scope impact, next actions. Data is loaded server-side and falls back gracefully when the database is empty, so the demo never goes blank."
+- **Demo line during click:** "We'll come back here at the end so you can see how the alerts and decisions update."
+- **Status to call out:** Live data loader (`source: "live" | "fallback" | "mixed"`).
 
----
+### Slide 8 — Walkthrough: Projects / Workspace
 
-## Key Talking Points
+- **Goal:** Show the connecting tissue.
+- **On-screen:** Projects page screenshot.
+- **Speaker notes:** "Every AI output across DocuPilot is tied to a project. The workspace is where contracts, SRS, invoices, scope analyses, and alerts live together."
+- **Status to call out:** Live UI; data is mostly seeded today (clearly label as "demo data").
 
-### One-Liner
-"DocuPilot turns a 3-day SRS process into 30 seconds — in Arabic or English."
+### Slide 9 — Walkthrough: SRS Generator (LIVE)
 
-### For CEOs
-- "Software houses lose 15-25% of revenue to scope creep and unclear contracts"
-- "DocuPilot catches scope deviations before they become disputes"
-- "Arabic-first — built for the MENA market, not translated from English"
+- **Goal:** First "wow" moment.
+- **On-screen:** SRS Generator screenshot (`qa-srs.png`).
+- **Speaker notes:** "Paste an Arabic or English client request, get a structured SRS — project brief, user roles, features, functional and non-functional requirements, missing questions, MVP scope, assumptions, confidence score. Then refine it via chat."
+- **What it really does:** Calls Gemini with a strict response schema, validates with Zod, persists to Supabase. Falls back to Qwen, then a hand-crafted local SRS if everything fails.
+- **Status to call out:** ✅ Live AI.
 
-### For Startup Launchers
-- **TAM:** 50,000+ software companies in MENA region
-- **Business model:** SaaS — $49/month (Starter), $149/month (Pro), Enterprise custom
-- **Moat:** Arabic NLP + domain-specific AI prompts for software house workflows
-- **Comparable exits:** Monday.com ($11B), Notion ($10B) — neither serves Arabic markets or software delivery
+### Slide 10 — Walkthrough: Contracts (LIVE)
 
-### Competitive Landscape & Differentiation
+- **Goal:** Show document → operations conversion.
+- **On-screen:** Contracts page screenshot with extraction results.
+- **Speaker notes:** "Drop a contract PDF, click *Run AI Extraction*, and DocuPilot pulls scope, deliverables, payment milestones, deadlines, obligations, risks, and suggested actions — each with the source quote from the contract. High-priority risks become alerts in the database."
+- **What it really does:** PDF text extracted server-side via `unpdf`, sent to Gemini with a structured response schema, validated with Zod, persisted to `contract_analyses` + `alerts` + `ai_outputs`.
+- **Status to call out:** ✅ Live AI; PDF upload now wired.
 
-DocuPilot sits at the intersection of three markets that no single competitor covers:
+### Slide 11 — Walkthrough: Invoices & Approvals
 
-#### Direct Feature Comparison
+- **Goal:** Show financial operations.
+- **On-screen:** Invoices page screenshot.
+- **Speaker notes:** "Invoice analysis checks alignment with the linked contract, flags duplicates, and recommends an approval action — approve, review, escalate, or reject. The Approvals page is the surface where humans act on those recommendations."
+- **Status to call out:** Invoices ✅ live AI. Approvals page is UI-only today — say so. "We persist invoice analyses; the approval click-through is the next thing we'll wire up."
 
-| Capability | Jira | Juro | Jama Connect | ScopeShield | Taskade | DocuPilot |
-|-----------|------|------|-------------|-------------|---------|-----------|
-| AI SRS Generation from client text | No | No | No | No | Basic template | Full structured output |
-| Arabic language understanding | No | No | No | No | UI only | Native NLP |
-| Scope Creep Detection | No | No | No | Email-only | No | SRS/contract comparison |
-| Auto Change Request Generation | No | No | No | No | No | Yes |
-| Contract AI Analysis | No | Yes | No | Partial | No | Yes |
-| Invoice AI Analysis | No | No | No | No | No | Yes |
-| RAG Document Q&A | No | No | No | No | Basic | With source citations |
-| Built for Software Houses | Partially | No | No | Yes (agencies) | No | Yes |
-| **Pricing** | $8-16/user/mo | $15K-120K/yr | Enterprise | $20/mo | $8-100/mo | $49-149/team/mo |
+### Slide 12 — Walkthrough: Scope Guard (LIVE)
 
-#### Why Each Competitor Falls Short
+- **Goal:** Best demo moment.
+- **On-screen:** Scope Guard screenshot (`qa-scope.png`) with the question "Can you also add a mobile app?"
+- **Speaker notes:** "A client asks for a mobile app. DocuPilot compares it against the stored SRS and contract scope, classifies it as in-scope, out-of-scope, or needs clarification, estimates timeline, cost, business, and risk impact, and writes a high-risk alert if the impact is severe."
+- **Status to call out:** ✅ Live AI; auto-creates alerts.
 
-**Jira** ($8-16/user/month) — Industry standard for task tracking, but it tracks tasks, it doesn't think. No AI document generation, no scope detection, no contract analysis. You still need a PM to manually write every SRS and catch every scope change.
+### Slide 13 — Walkthrough: Risk Radar
 
-**Juro** ($15K-120K+/year) — Powerful AI contract analysis, but built for legal teams. No SRS generation. No scope creep detection. No Arabic. Starts at $15K/year — designed for enterprises with legal departments, not 10-person software agencies.
+- **Goal:** Show the aggregation layer.
+- **On-screen:** Risks page screenshot.
+- **Speaker notes:** "Every risk extracted by SRS, contract analysis, invoice analysis, or scope guard lands here as an alert. Risk Radar is the page; the alerts table is the data."
+- **Status to call out:** Page is UI-driven today; alerts are populated by the live modules. Be honest: "The risk page is read-only in this build — the next iteration adds inline triage."
 
-**Jama Connect** (Enterprise pricing) — AI-native requirements management for aerospace, automotive, and medical devices. Overkill for software houses. No Arabic. No scope or contract analysis. Six-figure annual cost.
+### Slide 14 — Walkthrough: Ask DocuPilot
 
-**ScopeShield** ($20/month) — Closest competitor for scope detection, but email-only workflow. No dashboard, no SRS generation, no contract analysis, no Arabic. Launched Feb 2026 with ~500 users. Single feature vs. integrated platform.
+- **Goal:** Show the future of project memory — honestly.
+- **On-screen:** Ask DocuPilot screenshot.
+- **Speaker notes:** "Ask DocuPilot is a Retrieval-Augmented chat over the project's documents. We chunk and embed every uploaded contract or brief into pgvector, then ground answers in the actual sources, augmented with the project's latest SRS and contract analysis."
+- **Status to call out:** ✅ Backend live (RAG over pgvector + Gemini + `text-embedding-004`). Auth is mocked. The assistant only answers from documents that have been ingested — without ingestion it correctly responds *"not enough information"*. **Only demo this slide live if you have pre-ingested documents in your Supabase instance.**
 
-**Taskade** ($8-100/month) — Has a basic SRS template, but it's a generic productivity tool. Supports Arabic UI but no Arabic NLP. No scope detection, no contract/invoice analysis.
+### Slide 15 — Technical Architecture
 
-#### DocuPilot's Unique Position
+- **Goal:** Convince the technically literate judge.
+- **On-screen:** Stack diagram — Next.js 16 App Router + React 19 + TypeScript on top; Server Components and route handlers in the middle; Gemini + Qwen + Zod + Supabase + pgvector + `unpdf` underneath.
+- **Speaker notes:** "Server Components for read paths, route handlers for AI calls. Every AI response goes through a reliability wrapper, a JSON extractor, an output normalizer, and a Zod schema before it ever reaches the UI or the database."
 
-No existing tool combines SRS generation + scope creep detection + contract analysis + invoice AI + RAG Q&A in a single platform priced for software agencies. The closest alternative is Jira + Juro + ScopeShield + a separate AI tool — costing 10x more, with no integration, and no Arabic support.
+### Slide 16 — AI Architecture & Fallback
 
-### Numbers That Impress
-- SRS generation: 30 seconds vs 2-3 days manual
-- Scope deviation detection: instant vs discovered at invoice time
-- Supports Arabic and English natively — 400M+ Arabic speakers underserved
-- Structured AI output validated against schema — no hallucination formatting issues
-- RAG-powered Q&A with source attribution — traceable, not black-box
+- **Goal:** Show the demo-safety design.
+- **On-screen:** Pipeline — `prompt → Gemini primary → Gemini fallback model → Qwen → local fallback object → Zod validate → non-blocking persistence → response with provider telemetry`.
+- **Speaker notes:** "We assume providers fail. Every module has a hand-crafted fallback that matches the demo persona, so the UI never breaks. Every response carries `providerUsed`, `usedFallback`, `attempts`, and `errorCode` so we can debug live."
 
----
+### Slide 17 — Market Opportunity (Saudi → GCC)
 
-## Anticipated Q&A
+- **Goal:** Position the wedge.
+- **On-screen:** Saudi Arabia Vision 2030 IT spend · estimated count of SMB software houses in KSA · GCC expansion arrows.
+- **Speaker notes:** "Saudi software houses already operate bilingually. Our SRS generator and scope guard handle Arabic input natively. Once we win in KSA, the same product unlocks the wider GCC — UAE, Qatar, Bahrain, Oman, Kuwait — without rebuilding the AI layer."
+- **Avoid:** Quoting market sizes you cannot cite.
 
-**"How is this different from ChatGPT?"**
-ChatGPT gives generic text. DocuPilot produces structured, validated documents that feed into a connected platform — SRS links to Scope Guard links to Contracts links to Invoices.
+### Slide 18 — Business Model / SaaS Positioning
 
-**"How do you make money?"**
-SaaS model. $49/team/month for core AI. $149 for cross-module intelligence and PDF export.
+- **Goal:** Make it sound like a real B2B SaaS.
+- **On-screen:** Per-team monthly pricing tiers (e.g. Starter / Growth / Studio), per-workspace seat count, optional add-ons (storage, RAG ingestion volume).
+- **Speaker notes:** "Per-team SaaS, billed monthly. Onboarding is free for the demo period. The wedge is software houses; the expansion play is service businesses with similar contract + invoice + scope dynamics."
+- **Avoid:** Naming specific dollar figures unless the team agreed on them.
 
-**"What's your moat?"**
-Arabic-first AI with domain-specific prompts. We're not a wrapper — our prompts understand software house workflows, MENA regulations, and client communication patterns.
+### Slide 19 — Roadmap
 
-**"What's your tech stack?"**
-Next.js 16, React 19, TypeScript, Google Gemini AI (2.5-flash for generation, embedding-001 for RAG), Supabase (PostgreSQL + pgvector), Tailwind CSS 4.
+- **Goal:** Show direction without overpromising.
+- **On-screen:** Three columns — Now (demo) / Next (post-demo) / Later (12+ months).
+  - Now: SRS, Contracts (with PDF), Invoices, Scope Guard, Project Intelligence, Dashboard, Ask DocuPilot RAG.
+  - Next: Auth + workspaces, Approvals/Risk write paths, multi-project selectors, refresh-safe rehydration, production OCR.
+  - Later: Calendar/email/WhatsApp, accounting export, audit logs, broader GCC localization.
+
+### Slide 20 — Closing / Ask
+
+- **Goal:** End on a memorable line and a clear ask.
+- **On-screen:** "From Documents to Decisions." · the demo URL · contact info · the ask (pilot customers, mentor intros, follow-on funding — pick one).
+- **Closing line (memorize this):** *"Documents don't run companies. Decisions do. DocuPilot makes the jump."*
 
 ---
 
-## Pre-Presentation Checklist
+## Live Demo Flow (5–7 minutes)
 
-- [ ] Open the app — dashboard loads without errors
-- [ ] Navigate to SRS Generator — paste Arabic text — get structured output
-- [ ] Navigate to Scope Guard — scroll through the analysis
-- [ ] Navigate to Ask DocuPilot — ask a question — get sourced answer
-- [ ] Quick scroll through all pages — nothing crashes
-- [ ] Test on the exact laptop/browser/connection you'll present from
-- [ ] Have mobile hotspot as backup internet
-- [ ] Pre-load the demo page before presenting (avoid cold-start delay)
-- [ ] Have a screenshot of a successful SRS generation as backup if AI fails
+Hit these in order. Skip anything that breaks.
+
+1. **Dashboard** (15s) — point at decisions and project health.
+2. **SRS Generator** (60s) — paste a short client request, generate, then send one refinement message.
+3. **Contracts** (90s) — drop the sample PDF or click *Use sample*, run extraction, point at risks and suggested actions.
+4. **Invoices** (45s) — open the seeded invoice, run analysis, call out duplicate risk + approval recommendation.
+5. **Scope Guard** (60s) — submit *"Can you also add a mobile app for the booking platform?"*; point at the in/out classification and the auto-created alert.
+6. **Risk Radar** (15s) — show aggregated risks.
+7. **Dashboard** (15s) — return to show updated decisions and alerts.
+8. **Ask DocuPilot** (45s) — only if you have pre-ingested documents. Otherwise skip and point to the slide.
+
+---
+
+## What to Say During the Walkthrough
+
+- "Notice this is real AI output, not a hardcoded card." (When the SRS or contract analysis renders.)
+- "The badge in the corner tells us whether this came from Gemini, Qwen, or a local fallback. We'd rather show you a coherent fallback than a broken demo."
+- "Every output you see is also writing to Supabase — `contract_analyses`, `alerts`, `ai_outputs` — so the dashboard updates in the next refresh."
+- "This page is UI-only today. The data flow behind it is live, and writing the UI hooks is the next sprint."
+
+---
+
+## What Features to Emphasize
+
+- The **end-to-end loop** (Slide 5) over any single feature.
+- **Live, validated, structured AI output** — not chat.
+- **Reliability layer** (Gemini → Qwen → local) — judges love this.
+- **Arabic and bilingual handling** in SRS and Scope Guard.
+- **Source quotes** in contract extraction — show the panel.
+- **Auto-created high-risk alerts** in Scope Guard.
+
+---
+
+## What NOT to Claim
+
+- ❌ "Production-ready SaaS." (It is a demo-ready MVP.)
+- ❌ "Multi-tenant." (No real auth; `projectId` is mostly hardcoded.)
+- ❌ "Full RAG over your entire company." (RAG works; coverage depends on what's been ingested.)
+- ❌ "Replaces Jira/Notion/Juro." (It complements, with one connected workflow.)
+- ❌ "Enterprise audit logs / RBAC / SSO." (Not implemented.)
+- ❌ "Approvals are wired." (Page is UI-only today.)
+- ❌ "Risk Radar lets you triage inline." (Read-only today.)
+- ❌ Specific market-size or revenue numbers you can't cite live.
+
+---
+
+## Backup Plan If AI / API Fails
+
+1. **Don't apologize. Don't troubleshoot live.** Move on.
+2. The product is designed for this — every module has a local fallback. Refresh and the UI will render demo-quality fallback content.
+3. If even the fallback doesn't render, switch to the **screenshots** (`qa-dashboard.png`, `qa-srs.png`, `qa-scope.png`) and narrate over them. Tell the audience: "We've intentionally cached this view for the demo."
+4. If the dev server itself dies, present the **deck** straight through and walk through the architecture and AI fallback story instead. The reliability story actually lands harder when the network has just failed.
+
+Pre-demo checklist:
+
+- `.env.local` populated with at least `GEMINI_API_KEY`. Optional: `SUPABASE_*`, `QWEN_API_KEY`.
+- `npm run dev` warm and a tab already open at `localhost:3000`.
+- Sample contract PDF saved on the desktop.
+- Screenshots downloaded locally as a fallback.
+- Scope Guard prompt typed into a sticky note: *"Can you also add a mobile app for the booking platform?"*
+
+---
+
+## Judge Q&A Prep
+
+**Q: How is this different from ChatGPT?**
+A: ChatGPT is a chat surface. DocuPilot is an operations layer. Every AI output is structured, validated, persisted, and tied to a project — and it drives a dashboard, alerts, and approvals. Try generating an SRS in ChatGPT and watch the formatting drift between projects.
+
+**Q: What if Gemini goes down during a customer demo?**
+A: We assume providers fail. Each module falls back to Gemini's secondary model, then to Qwen, then to a hand-crafted local fallback that matches the demo persona. The reliability metadata is in every API response.
+
+**Q: Is this multi-tenant?**
+A: Not yet. Auth is the next item on the roadmap. Today the demo project is `clinic-booking-platform`. The data model already references projects everywhere, so the workspace cut is a small change.
+
+**Q: How accurate is the AI extraction?**
+A: We use Gemini's structured-output mode with a strict response schema, then validate every response with Zod before it touches the UI or DB. Confidence scores come back with each output. Anything that fails parsing falls back to a known-good shape rather than rendering garbage.
+
+**Q: How do you handle Arabic?**
+A: SRS and Scope Guard accept Arabic input natively, and prompts include bilingual instructions. The contract module handles Arabic input through Gemini directly. We surface results in English in this MVP and will add Arabic UI in the next iteration.
+
+**Q: What about scanned contracts?**
+A: Today we extract text from text-based PDFs via `unpdf`. Scanned PDFs return a clear "could not extract readable text" error. Production OCR is on the roadmap.
+
+**Q: Is the data persisted?**
+A: SRS, contract analyses, scope analyses, invoice analyses, and alerts are all persisted to Supabase when configured. Persistence is non-blocking — DB failures never break the AI response.
+
+**Q: What's the business model?**
+A: Per-team SaaS subscription with usage-based add-ons (RAG ingestion volume, storage). Pricing tiers tuned for SMB software houses in the GCC.
+
+**Q: Why the GCC first?**
+A: The Arabic-first AI handling, the contractual norms in the region, and the density of SMB software houses servicing public-sector and healthcare clients in Saudi Arabia. The product compounds across the GCC without rebuilding the AI layer.
+
+---
+
+## Saudi Market & GCC Expansion Angle
+
+- **Saudi Arabia first:** Vision 2030 driving an explosion of SMB software houses servicing healthcare, fintech, government, and retail. They run client engagements bilingually. Our SRS, Scope Guard, and contract handling are designed for that operating environment from day one.
+- **GCC next:** UAE, Qatar, Bahrain, Oman, Kuwait — same operating patterns, same bilingual contract reality, same scope-creep problem. Once the wedge is proven in KSA, the same product unlocks the rest of the GCC with localized templates rather than a re-architecture.
+- **Why now:** Generic AI tools cannot anchor accountability. Operations leaders in the region are actively looking for an AI layer that produces structured, auditable, *bilingual* operational state — not another English-first chatbot.
+
+---
+
+## Closing Line
+
+> Documents don't run companies. Decisions do. DocuPilot makes the jump.

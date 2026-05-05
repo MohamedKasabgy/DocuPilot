@@ -18,8 +18,9 @@ Key differences from older Next.js:
 
 ## AI Integration Guidelines
 
-- The SRS Generator (`/api/ai/srs`) is fully live with Gemini. Other AI routes are stubs.
-- When adding new AI modules, follow the SRS pattern: schema (`lib/ai/schemas/`) → prompts (`lib/ai/prompts/`) → route (`app/api/ai/`).
+- SRS (`/api/ai/srs`), Contracts (`/api/contracts/analyze`), Invoices (`/api/ai/invoice`), Scope Guard (`/api/ai/scope`), and Project Intelligence (`/api/ai/project-intelligence`) are wired live to Gemini through `generateWithGeminiReliability` (Gemini → Qwen → local fallback). Ask DocuPilot (`/api/ask`) + RAG ingest (`/api/rag/ingest`) are also live but use mock auth helpers.
+- `/api/ai/contract` is a legacy stub returning mock JSON — do not call it from new code; the real contract endpoint is `/api/contracts/analyze`.
+- When adding new AI modules, follow the SRS pattern: schema (`lib/ai/schemas/`) → prompts (`lib/ai/prompts/`) → route (`app/api/ai/`) → reliability wrapper → Zod validate → non-blocking persistence + local fallback.
 - Zod 4 is NOT compatible with `zod-to-json-schema`. Write JSON schemas manually.
 - All AI prompts must include the shared `SYSTEM_CONTEXT` from the relevant prompts file so Gemini understands the DocuPilot platform.
 - Database persistence is non-blocking — never let a Supabase error crash an AI route.
