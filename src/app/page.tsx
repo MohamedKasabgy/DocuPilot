@@ -8,29 +8,29 @@ type Period = 'today' | 'week' | 'month';
 type ToastType = 'success' | 'info' | 'warning' | 'error';
 
 const METRICS: Record<Period, { projects: number; invoices: number; approvals: number; risks: number }> = {
-  today: { projects: 12, invoices: 8,  approvals: 5,  risks: 3 },
-  week:  { projects: 12, invoices: 24, approvals: 17, risks: 6 },
+  today: { projects: 12, invoices: 8, approvals: 5, risks: 3 },
+  week: { projects: 12, invoices: 24, approvals: 17, risks: 6 },
   month: { projects: 12, invoices: 61, approvals: 43, risks: 9 },
 };
 
 const PERIOD_LABELS: Record<Period, string> = {
   today: 'Today',
-  week:  'This Week',
+  week: 'This Week',
   month: 'This Month',
 };
 
 const TOAST_ICONS: Record<ToastType, string> = {
   success: 'fa-solid fa-circle-check',
-  info:    'fa-solid fa-circle-info',
+  info: 'fa-solid fa-circle-info',
   warning: 'fa-solid fa-triangle-exclamation',
-  error:   'fa-solid fa-circle-xmark',
+  error: 'fa-solid fa-circle-xmark',
 };
 
 const UPCOMING_DEADLINES = [
-  { label: 'Invoice INV-2026-042 approval',   type: 'invoice',  daysLeft: 4,  icon: 'fa-solid fa-file-invoice',        color: 'var(--status-warning)',  bg: 'var(--status-warning-bg)',  href: '/invoices' },
-  { label: 'Clinic Booking Platform delivery', type: 'contract', daysLeft: 7,  icon: 'fa-solid fa-file-signature',      color: 'var(--status-danger)',   bg: 'var(--status-danger-bg)',   href: '/contracts' },
-  { label: 'Mobile app CR signature',          type: 'scope',   daysLeft: 12, icon: 'fa-solid fa-shield-halved',        color: 'var(--accent-primary)',  bg: 'rgba(37,99,235,0.08)',      href: '/scope-guard' },
-  { label: 'DesignPro risk escalation',        type: 'risk',    daysLeft: 18, icon: 'fa-solid fa-triangle-exclamation', color: 'var(--status-info)',     bg: 'var(--status-info-bg)',     href: '/risks' },
+  { label: 'Invoice INV-2026-042 approval', type: 'invoice', daysLeft: 4, icon: 'fa-solid fa-file-invoice', color: 'var(--status-warning)', bg: 'var(--status-warning-bg)', href: '/invoices' },
+  { label: 'Clinic Booking Platform delivery', type: 'contract', daysLeft: 7, icon: 'fa-solid fa-file-signature', color: 'var(--status-danger)', bg: 'var(--status-danger-bg)', href: '/contracts' },
+  { label: 'Mobile app CR signature', type: 'scope', daysLeft: 12, icon: 'fa-solid fa-shield-halved', color: 'var(--accent-primary)', bg: 'rgba(37,99,235,0.08)', href: '/scope-guard' },
+  { label: 'DesignPro risk escalation', type: 'risk', daysLeft: 18, icon: 'fa-solid fa-triangle-exclamation', color: 'var(--status-info)', bg: 'var(--status-info-bg)', href: '/risks' },
 ];
 
 export default function DashboardPage() {
@@ -62,16 +62,16 @@ export default function DashboardPage() {
           <div className="page-header-actions">
             <div className="seg-control">
               {(['today', 'week', 'month'] as Period[]).map(p => (
-                <button key={p} className={`seg-btn${period === p ? ' active' : ''}`} onClick={() => setPeriod(p)}>
+                <button type="button" key={p} className={`seg-btn${period === p ? ' active' : ''}`} onClick={() => setPeriod(p)}>
                   {PERIOD_LABELS[p]}
                 </button>
               ))}
             </div>
-            <button className="btn btn-secondary" onClick={() => showToast('Generating report...', 'info')}>
-              <i className="fa-solid fa-download"></i> Export
+            <button type="button" className="btn btn-secondary" onClick={() => showToast('Generating report...', 'info')}>
+              <i className="fa-solid fa-download"></i> <span>Export</span>
             </button>
-            <button className="btn btn-primary" onClick={() => showToast('Project created', 'success')}>
-              <i className="fa-solid fa-plus"></i> New Project
+            <button type="button" className="btn btn-primary" onClick={() => showToast('Project created', 'success')}>
+              <i className="fa-solid fa-plus"></i> <span>New Project</span>
             </button>
           </div>
         </div>
@@ -196,12 +196,12 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div style={{ height: '160px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '8px', padding: '0 4px', marginTop: 'var(--spacing-md)' }}>
+              <div style={{ height: '160px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '4px', padding: '0 4px', marginTop: 'var(--spacing-md)', overflow: 'hidden', minWidth: 0 }}>
                 {(period === 'today'
                   ? [{ day: '9am', p: 60, b: 45 }, { day: '11am', p: 75, b: 60 }, { day: '1pm', p: 55, b: 50 }, { day: '3pm', p: 90, b: 70 }, { day: '5pm', p: 85, b: 75 }, { day: '7pm', p: 40, b: 35 }]
                   : period === 'week'
-                  ? [{ day: 'Mon', p: 80, b: 60 }, { day: 'Tue', p: 75, b: 65 }, { day: 'Wed', p: 90, b: 85 }, { day: 'Thu', p: 80, b: 75 }, { day: 'Fri', p: 95, b: 90 }, { day: 'Sat', p: 50, b: 40 }, { day: 'Sun', p: 55, b: 45 }]
-                  : [{ day: 'W1', p: 70, b: 60 }, { day: 'W2', p: 80, b: 72 }, { day: 'W3', p: 75, b: 68 }, { day: 'W4', p: 88, b: 80 }]
+                    ? [{ day: 'Mon', p: 80, b: 60 }, { day: 'Tue', p: 75, b: 65 }, { day: 'Wed', p: 90, b: 85 }, { day: 'Thu', p: 80, b: 75 }, { day: 'Fri', p: 95, b: 90 }, { day: 'Sat', p: 50, b: 40 }, { day: 'Sun', p: 55, b: 45 }]
+                    : [{ day: 'W1', p: 70, b: 60 }, { day: 'W2', p: 80, b: 72 }, { day: 'W3', p: 75, b: 68 }, { day: 'W4', p: 88, b: 80 }]
                 ).map(item => (
                   <div key={item.day} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
                     <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'flex-end', gap: '2px' }}>
@@ -253,7 +253,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <button className="btn btn-ghost" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Audit log exported', 'info')}>
+              <button type="button" className="btn btn-ghost" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Audit log exported', 'info')}>
                 View Full Audit Log <i className="fa-solid fa-arrow-right text-xs"></i>
               </button>
             </div>

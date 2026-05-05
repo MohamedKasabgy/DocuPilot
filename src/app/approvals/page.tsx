@@ -73,6 +73,7 @@ export default function ApprovalsPage() {
                 </div>
               </div>
 
+              <div className="overflow-x-auto">
               <table className="invoice-table">
                 <thead>
                   <tr>
@@ -92,6 +93,7 @@ export default function ApprovalsPage() {
                   </tr>
                 </tbody>
               </table>
+              </div>
 
               <div className="invoice-total-row">
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>Payment Term: <strong>Net 15</strong></div>
@@ -165,15 +167,15 @@ export default function ApprovalsPage() {
             <div className="card" style={{ position: 'sticky', top: 'calc(var(--topbar-height) + 1rem)' }}>
               <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: 'var(--spacing-md)' }}>Required Action</div>
 
-              <button className="btn btn-approve" style={{ marginBottom: 'var(--spacing-md)' }} onClick={() => showToast('Invoice approved successfully', 'success')}>
+              <button type="button" className="btn btn-approve" style={{ marginBottom: 'var(--spacing-md)' }} onClick={() => showToast('Invoice approved successfully', 'success')}>
                 <i className="fa-solid fa-circle-check"></i> Approve Invoice
               </button>
 
               <div className="grid-2col" style={{ gap: 'var(--spacing-sm)' }}>
-                <button className="btn btn-secondary" onClick={() => showToast('Sent for additional review', 'info')}>
+                <button type="button" className="btn btn-secondary" onClick={() => showToast('Sent for additional review', 'info')}>
                   <i className="fa-solid fa-clock-rotate-left"></i> Needs Review
                 </button>
-                <button className="btn btn-danger" onClick={() => showToast('Invoice rejected', 'error')}>
+                <button type="button" className="btn btn-danger" onClick={() => showToast('Invoice rejected', 'error')}>
                   <i className="fa-solid fa-circle-xmark"></i> Reject
                 </button>
               </div>

@@ -154,18 +154,18 @@ export default function ContractsPage() {
             <h1 className="page-title">Contract-to-Actions</h1>
             <p className="page-subtitle">Upload legal documents to extract operational milestones and risk alerts.</p>
           </div>
-          <button className="btn btn-secondary" onClick={() => showToast('Contract Vault is coming soon — paste contract text to get started.', 'info')}>
-            <i className="fa-solid fa-folder-open"></i> Contract Vault
+          <button type="button" className="btn btn-secondary" onClick={() => showToast('Contract Vault is coming soon — paste contract text to get started.', 'info')}>
+            <i className="fa-solid fa-folder-open"></i> <span>Contract Vault</span>
           </button>
         </div>
 
         {/* Analysis Options */}
-        <div className="opts-panel" style={{ marginBottom: lang === 'arabic' ? 'var(--spacing-sm)' : 'var(--spacing-lg)', display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-lg)', alignItems: 'flex-end' }}>
+        <div className="opts-panel" style={lang === 'arabic' ? { marginBottom: 'var(--spacing-sm)' } : undefined}>
           <div>
             <span className="opts-label">Analysis Depth</span>
             <div className="seg-control">
               {([['quick', 'Quick'], ['standard', 'Standard'], ['deep', 'Deep']] as [AnalysisDepth, string][]).map(([val, label]) => (
-                <button key={val} className={`seg-btn${depth === val ? ' active' : ''}`} onClick={() => setDepth(val)}>{label}</button>
+                <button type="button" key={val} className={`seg-btn${depth === val ? ' active' : ''}`} onClick={() => setDepth(val)}>{label}</button>
               ))}
             </div>
             <span style={{ display: 'block', fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -177,7 +177,7 @@ export default function ContractsPage() {
             <span className="opts-label">Risk Sensitivity</span>
             <div className="seg-control">
               {([['low', 'Low'], ['medium', 'Medium'], ['high', 'High']] as [RiskSens, string][]).map(([val, label]) => (
-                <button key={val} className={`seg-btn${riskSens === val ? ' active' : ''}`} onClick={() => setRiskSens(val)}>{label}</button>
+                <button type="button" key={val} className={`seg-btn${riskSens === val ? ' active' : ''}`} onClick={() => setRiskSens(val)}>{label}</button>
               ))}
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function ContractsPage() {
             <span className="opts-label">Language</span>
             <div className="seg-control">
               {([['auto', 'Auto'], ['english', 'English'], ['arabic', 'Arabic']] as [AnalysisLang, string][]).map(([val, label]) => (
-                <button key={val} className={`seg-btn${lang === val ? ' active' : ''}`} onClick={() => setLang(val)}>{label}</button>
+                <button type="button" key={val} className={`seg-btn${lang === val ? ' active' : ''}`} onClick={() => setLang(val)}>{label}</button>
               ))}
             </div>
           </div>
@@ -194,8 +194,8 @@ export default function ContractsPage() {
             {(Object.keys(extracts) as (keyof typeof extracts)[]).map(key => (
               <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <button
+                  type="button"
                   className={`toggle-switch${extracts[key] ? ' on' : ''}`}
-                  style={{ width: '28px', height: '16px' }}
                   onClick={() => setExtracts(prev => ({ ...prev, [key]: !prev[key] }))}
                   aria-label={`Toggle ${key}`}
                 />
@@ -286,13 +286,14 @@ export default function ContractsPage() {
                   <i className="fa-solid fa-cloud-arrow-up upload-icon"></i>
                   <div className="font-semibold" style={{ marginBottom: '4px' }}>Upload Contract PDF</div>
                   <p className="text-sm text-muted">Drag & drop or click to browse</p>
-                  <button className="btn btn-secondary btn-sm" style={{ marginTop: 'var(--spacing-sm)' }}>Browse Files</button>
+                  <button type="button" className="btn btn-secondary btn-sm" style={{ marginTop: 'var(--spacing-sm)' }}>Browse Files</button>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div className="text-xs text-muted font-semibold uppercase tracking-wider">Or Paste Contract Text</div>
                     <button
+                      type="button"
                       className="btn btn-ghost btn-sm"
                       style={{ fontSize: '0.75rem', padding: '2px 10px', height: 'auto' }}
                       onClick={() => setContractText(SAMPLE_CONTRACT)}
@@ -309,7 +310,7 @@ export default function ContractsPage() {
                     onChange={e => setContractText(e.target.value)}
                     disabled={isAnalyzing}
                   />
-                  <button className="btn btn-primary" style={{ width: '100%' }} onClick={handleAnalyze} disabled={isAnalyzing}>
+                  <button type="button" className="btn btn-primary" style={{ width: '100%' }} onClick={handleAnalyze} disabled={isAnalyzing}>
                     {isAnalyzing
                       ? <><i className="fa-solid fa-spinner fa-spin"></i> Analyzing...</>
                       : analysisResult
@@ -619,7 +620,7 @@ export default function ContractsPage() {
                     ))
                 }
               </div>
-              <button className="btn btn-ghost btn-sm" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Calendar sync initiated', 'info')}>
+              <button type="button" className="btn btn-ghost btn-sm" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Calendar sync initiated', 'info')}>
                 <i className="fa-regular fa-calendar-plus"></i> Sync to Calendar
               </button>
             </div>}
@@ -645,6 +646,7 @@ export default function ContractsPage() {
                       const isDanger = action.type === 'create_risk';
                       return (
                         <button
+                          type="button"
                           key={i}
                           className="action-suggest"
                           style={{ width: '100%', textAlign: 'left', ...(isDanger ? { borderColor: 'var(--status-danger-border)', background: 'var(--status-danger-bg)' } : {}) }}
@@ -663,7 +665,7 @@ export default function ContractsPage() {
                     })
                   : (
                     <>
-                      <button className="action-suggest" style={{ width: '100%', textAlign: 'left' }} onClick={() => showToast('Tasks created from deliverables', 'success')}>
+                      <button type="button" className="action-suggest" style={{ width: '100%', textAlign: 'left' }} onClick={() => showToast('Tasks created from deliverables', 'success')}>
                         <div className="action-icon" style={{ background: 'rgba(37, 99, 235, 0.1)', color: 'var(--accent-primary)' }}>
                           <i className="fa-solid fa-list-check"></i>
                         </div>
@@ -674,7 +676,7 @@ export default function ContractsPage() {
                         <i className="fa-solid fa-chevron-right text-muted" style={{ fontSize: '0.6875rem' }}></i>
                       </button>
 
-                      <button className="action-suggest" style={{ width: '100%', textAlign: 'left' }} onClick={() => showToast('Payment milestones created', 'success')}>
+                      <button type="button" className="action-suggest" style={{ width: '100%', textAlign: 'left' }} onClick={() => showToast('Payment milestones created', 'success')}>
                         <div className="action-icon" style={{ background: 'var(--status-success-bg)', color: 'var(--status-success)' }}>
                           <i className="fa-solid fa-money-check-dollar"></i>
                         </div>
@@ -685,7 +687,7 @@ export default function ContractsPage() {
                         <i className="fa-solid fa-chevron-right text-muted" style={{ fontSize: '0.6875rem' }}></i>
                       </button>
 
-                      <button className="action-suggest" style={{ width: '100%', textAlign: 'left', borderColor: 'var(--status-danger-border)', background: 'var(--status-danger-bg)' }} onClick={() => showToast('Risk alert flagged to PM', 'warning')}>
+                      <button type="button" className="action-suggest" style={{ width: '100%', textAlign: 'left', borderColor: 'var(--status-danger-border)', background: 'var(--status-danger-bg)' }} onClick={() => showToast('Risk alert flagged to PM', 'warning')}>
                         <div className="action-icon" style={{ background: 'rgba(220, 38, 38, 0.12)', color: 'var(--status-danger)' }}>
                           <i className="fa-solid fa-bell"></i>
                         </div>

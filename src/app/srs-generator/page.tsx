@@ -346,22 +346,22 @@ export default function SRSGeneratorPage() {
             <p className="page-subtitle">Transform raw client requests into professional Software Requirements Specifications.</p>
           </div>
           <div className="page-header-actions">
-            <button className="btn btn-secondary" onClick={handleSaveDraft}>
-              <i className="fa-regular fa-floppy-disk"></i> Save Draft
+            <button type="button" className="btn btn-secondary" onClick={handleSaveDraft}>
+              <i className="fa-regular fa-floppy-disk"></i> <span>Save Draft</span>
             </button>
-            <button className="btn btn-primary" onClick={handleExportPdf}>
-              <i className="fa-solid fa-file-arrow-down"></i> Export PDF
+            <button type="button" className="btn btn-primary" onClick={handleExportPdf}>
+              <i className="fa-solid fa-file-arrow-down"></i> <span>Export PDF</span>
             </button>
           </div>
         </div>
 
         {/* SRS Options Panel */}
-        <div className="opts-panel" style={{ marginBottom: 'var(--spacing-lg)', display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-lg)', alignItems: 'flex-end' }}>
+        <div className="opts-panel" style={language === 'arabic' ? { marginBottom: 'var(--spacing-sm)' } : undefined}>
           <div>
             <span className="opts-label">Output Language</span>
             <div className="seg-control">
               {(['english', 'arabic', 'bilingual'] as Language[]).map(l => (
-                <button key={l} className={`seg-btn${language === l ? ' active' : ''}`} onClick={() => setLanguage(l)}>
+                <button type="button" key={l} className={`seg-btn${language === l ? ' active' : ''}`} onClick={() => setLanguage(l)}>
                   {l === 'english' ? 'English' : l === 'arabic' ? 'Arabic' : 'Bilingual'}
                 </button>
               ))}
@@ -371,7 +371,7 @@ export default function SRSGeneratorPage() {
             <span className="opts-label">Detail Level</span>
             <div className="seg-control">
               {(['concise', 'standard', 'detailed'] as DetailLevel[]).map(d => (
-                <button key={d} className={`seg-btn${detailLevel === d ? ' active' : ''}`} onClick={() => setDetailLevel(d)}>
+                <button type="button" key={d} className={`seg-btn${detailLevel === d ? ' active' : ''}`} onClick={() => setDetailLevel(d)}>
                   {d.charAt(0).toUpperCase() + d.slice(1)}
                 </button>
               ))}
@@ -381,7 +381,7 @@ export default function SRSGeneratorPage() {
             <span className="opts-label">Output Style</span>
             <div className="seg-control">
               {([['business', 'Business'], ['technical', 'Technical'], ['client', 'Client-Facing']] as [OutputStyle, string][]).map(([val, label]) => (
-                <button key={val} className={`seg-btn${outputStyle === val ? ' active' : ''}`} onClick={() => setOutputStyle(val)}>
+                <button type="button" key={val} className={`seg-btn${outputStyle === val ? ' active' : ''}`} onClick={() => setOutputStyle(val)}>
                   {label}
                 </button>
               ))}
@@ -392,7 +392,7 @@ export default function SRSGeneratorPage() {
             <select
               value={projectType}
               onChange={e => setProjectType(e.target.value)}
-              style={{ height: '30px', paddingLeft: '0.625rem', paddingRight: '1.5rem', fontFamily: 'var(--font-sans)', fontSize: '0.8125rem', color: 'var(--text-primary)', background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', outline: 'none', cursor: 'pointer', appearance: 'auto' }}
+              style={{ height: '44px', paddingLeft: '0.625rem', paddingRight: '1.5rem', fontFamily: 'var(--font-sans)', fontSize: '0.8125rem', color: 'var(--text-primary)', background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', outline: 'none', cursor: 'pointer', appearance: 'auto' }}
             >
               {PROJECT_TYPES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
@@ -401,9 +401,10 @@ export default function SRSGeneratorPage() {
             <span className="opts-label">Sections Enabled</span>
             <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent-primary)' }}>{enabledSectionCount} / {Object.keys(sections).length}</div>
           </div>
-          <div className="toggle-row" style={{ gap: 'var(--spacing-md)', padding: 0 }}>
+          <div className="toggle-row" style={{ gap: 'var(--spacing-md)' }}>
             <span className="opts-label" style={{ marginBottom: 0 }}>Client-Facing Mode</span>
             <button
+              type="button"
               className={`toggle-switch${clientFacingMode ? ' on' : ''}`}
               onClick={() => setClientFacingMode(v => !v)}
               aria-label="Toggle client-facing mode"
@@ -420,7 +421,7 @@ export default function SRSGeneratorPage() {
             </h2>
             <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
               <span className="badge badge-info"><i className="fa-solid fa-language"></i> Arabic Detected</span>
-              <button className="btn btn-ghost btn-sm" onClick={() => { setRequestText(SAMPLE_REQUEST); showToast('Sample request loaded', 'info'); }}>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setRequestText(SAMPLE_REQUEST); showToast('Sample request loaded', 'info'); }}>
                 <i className="fa-solid fa-wand-magic-sparkles"></i> Sample
               </button>
             </div>
@@ -435,9 +436,16 @@ export default function SRSGeneratorPage() {
             style={{ marginBottom: 'var(--spacing-sm)', textAlign: language === 'arabic' ? 'right' : 'left', fontFamily: language !== 'english' ? 'var(--font-display)' : 'var(--font-sans)', fontSize: language !== 'english' ? '1rem' : '0.9375rem', lineHeight: 1.8 }}
             placeholder="Paste your client request here..."
           />
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="text-xs text-muted">{requestText.length} characters</span>
-            <button className="btn btn-primary" onClick={handleGenerate} disabled={isGenerating || requestText.trim().length === 0}>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between sm:items-center">
+            <span className="text-xs text-muted self-start">
+              {requestText.length} characters
+            </span>
+            <button
+              type="button"
+              className="btn btn-primary w-full sm:w-auto"
+              onClick={handleGenerate}
+              disabled={isGenerating || requestText.trim().length === 0}
+            >
               {isGenerating
                 ? <><i className="fa-solid fa-spinner fa-spin"></i> Generating...</>
                 : <><i className="fa-solid fa-wand-magic-sparkles"></i> Generate SRS</>}
@@ -449,13 +457,14 @@ export default function SRSGeneratorPage() {
         <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
           <div className="card-header">
             <h2 className="card-title"><i className="fa-solid fa-sliders text-accent"></i> Include Sections</h2>
-            <button className="btn btn-ghost btn-sm text-muted" onClick={() => setSections(Object.fromEntries(Object.keys(sections).map(k => [k, true])) as typeof sections)}>Enable All</button>
+            <button type="button" className="btn btn-ghost btn-sm text-muted" onClick={() => setSections(Object.fromEntries(Object.keys(sections).map(k => [k, true])) as typeof sections)}>Enable All</button>
           </div>
           <div className="grid-2col" style={{ gap: '2px var(--spacing-md)' }}>
             {(Object.keys(sections) as (keyof typeof sections)[]).map(key => (
               <div key={key} className="toggle-row">
                 <span className="toggle-row-label text-sm">{t(key, language)}</span>
                 <button
+                  type="button"
                   className={`toggle-switch${sections[key] ? ' on' : ''}`}
                   onClick={() => toggleSection(key)}
                   aria-label={`Toggle ${key}`}
@@ -642,7 +651,7 @@ export default function SRSGeneratorPage() {
                         </div>
                       ))}
                     </div>
-                    <button className="btn btn-secondary" style={{ marginTop: 'auto', width: '100%' }} onClick={() => showToast('Clarification request sent to client', 'success')}>
+                    <button type="button" className="btn btn-secondary" style={{ marginTop: 'auto', width: '100%' }} onClick={() => showToast('Clarification request sent to client', 'success')}>
                       <i className="fa-solid fa-paper-plane"></i> Request Clarifications from Client
                     </button>
                   </div>
@@ -789,7 +798,7 @@ export default function SRSGeneratorPage() {
                   ))}
                 </div>
                 {!clientFacingMode && (
-                  <button className="btn btn-ghost btn-sm" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Tech stack locked in', 'success')}>
+                  <button type="button" className="btn btn-ghost btn-sm" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Tech stack locked in', 'success')}>
                     <i className="fa-solid fa-lock"></i> Lock Stack Selection
                   </button>
                 )}
@@ -806,10 +815,10 @@ export default function SRSGeneratorPage() {
                 </p>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)', flex: '0 0 auto', width: '100%', maxWidth: '260px' }}>
-                <button className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => showToast('SRS pushed to Contracts', 'success')}>
+                <button type="button" className="btn btn-primary btn-lg" style={{ width: '100%' }} onClick={() => showToast('SRS pushed to Contracts', 'success')}>
                   <i className="fa-solid fa-file-signature"></i> Push to Contracts
                 </button>
-                <button className="btn btn-secondary" style={{ width: '100%' }} onClick={() => showToast('Requirements saved for refinement', 'info')}>
+                <button type="button" className="btn btn-secondary" style={{ width: '100%' }} onClick={() => showToast('Requirements saved for refinement', 'info')}>
                   Refine Requirements
                 </button>
               </div>

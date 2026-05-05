@@ -167,6 +167,7 @@ export default function AskDocuPilotPage() {
           </div>
           <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
             <button
+              type="button"
               id="toggle-upload-panel"
               className={`btn ${showUploadPanel ? 'btn-primary' : 'btn-secondary'}`}
               onClick={() => setShowUploadPanel(!showUploadPanel)}
@@ -274,6 +275,7 @@ export default function AskDocuPilotPage() {
                 )}
               </div>
               <button
+                type="button"
                 id="ingest-document-btn"
                 className="btn btn-primary"
                 onClick={ingestDocument}
@@ -419,6 +421,7 @@ export default function AskDocuPilotPage() {
                 onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.boxShadow = 'none'; }}
               />
               <button
+                type="button"
                 id="send-question-btn"
                 className="btn btn-primary"
                 onClick={askDocuPilot}

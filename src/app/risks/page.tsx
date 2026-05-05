@@ -84,18 +84,18 @@ export default function RisksPage() {
             <h1 className="page-title">Risk Radar</h1>
             <p className="page-subtitle">Real-time exposure monitoring across active projects. Analyze potential slippage and scope threats before they impact delivery.</p>
           </div>
-          <button className="btn btn-secondary" onClick={() => showToast('Risk report exported', 'info')}>
+          <button type="button" className="btn btn-secondary" onClick={() => showToast('Risk report exported', 'info')}>
             <i className="fa-solid fa-download"></i> Export
           </button>
         </div>
 
         {/* Filter Bar */}
-        <div className="opts-panel" style={{ marginBottom: 'var(--spacing-lg)', display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-lg)', alignItems: 'flex-end' }}>
+        <div className="opts-panel">
           <div>
             <span className="opts-label">Severity</span>
             <div className="filter-group">
               {([['all', 'All'], ['high', 'High'], ['medium', 'Medium'], ['low', 'Low']] as [Severity, string][]).map(([val, label]) => (
-                <button key={val} className={`filter-btn${severity === val ? ' active' : ''}`} onClick={() => setSeverity(val)}>{label}</button>
+                <button type="button" key={val} className={`filter-btn${severity === val ? ' active' : ''}`} onClick={() => setSeverity(val)}>{label}</button>
               ))}
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function RisksPage() {
             <span className="opts-label">Source</span>
             <div className="filter-group">
               {([['all', 'All'], ['contract', 'Contract'], ['finance', 'Finance'], ['scope', 'Scope']] as [Source, string][]).map(([val, label]) => (
-                <button key={val} className={`filter-btn${source === val ? ' active' : ''}`} onClick={() => setSource(val)}>{label}</button>
+                <button type="button" key={val} className={`filter-btn${source === val ? ' active' : ''}`} onClick={() => setSource(val)}>{label}</button>
               ))}
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function RisksPage() {
             <span className="opts-label">Status</span>
             <div className="filter-group">
               {([['all', 'All'], ['active', 'Active'], ['mitigated', 'Mitigated']] as [Status, string][]).map(([val, label]) => (
-                <button key={val} className={`filter-btn${status === val ? ' active' : ''}`} onClick={() => setStatus(val)}>{label}</button>
+                <button type="button" key={val} className={`filter-btn${status === val ? ' active' : ''}`} onClick={() => setStatus(val)}>{label}</button>
               ))}
             </div>
           </div>
@@ -170,8 +170,9 @@ export default function RisksPage() {
                     <span className="info-pair-label">Owner</span>
                     <div style={{ position: 'relative' }}>
                       <button
+                        type="button"
                         className="text-sm font-semibold text-accent"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px', touchAction: 'manipulation' }}
                         onClick={() => setOwnerDropdown(ownerDropdown === 1 ? null : 1)}
                       >
                         <i className="fa-solid fa-user-circle" style={{ fontSize: '0.75rem' }}></i>
@@ -181,7 +182,7 @@ export default function RisksPage() {
                       {ownerDropdown === 1 && (
                         <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginTop: '4px' }}>
                           {OWNER_OPTIONS.map(o => (
-                            <button key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(1, o)}>
+                            <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(1, o)}>
                               {o}
                             </button>
                           ))}
@@ -198,13 +199,13 @@ export default function RisksPage() {
                       <strong>Suggested:</strong> Trigger Force Majeure clause review or initiate stakeholder re-negotiation.
                     </p>
                   </div>
-                  <button className="btn btn-primary btn-sm" style={{ flexShrink: 0 }} onClick={() => showToast('Risk resolution initiated', 'success')}>
+                  <button type="button" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }} onClick={() => showToast('Risk resolution initiated', 'success')}>
                     Resolve <i className="fa-solid fa-arrow-right text-xs"></i>
                   </button>
                 </div>
 
                 {mitigationFor !== 1 ? (
-                  <button className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(1)}>
+                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(1)}>
                     <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
                   </button>
                 ) : (
@@ -212,10 +213,10 @@ export default function RisksPage() {
                     <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
                     <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
                     <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button className="btn btn-primary btn-sm" onClick={() => handleMitigate(1)} disabled={!mitigationText.trim()}>
+                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(1)} disabled={!mitigationText.trim()}>
                         <i className="fa-solid fa-check"></i> Save Task
                       </button>
-                      <button className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
                     </div>
                   </div>
                 )}
@@ -250,8 +251,9 @@ export default function RisksPage() {
                   <div style={{ position: 'relative' }}>
                     <span className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginRight: '6px' }}>Owner:</span>
                     <button
+                      type="button"
                       className="text-sm font-semibold text-accent"
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, touchAction: 'manipulation' }}
                       onClick={() => setOwnerDropdown(ownerDropdown === 2 ? null : 2)}
                     >
                       {owners[2]} <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
@@ -259,7 +261,7 @@ export default function RisksPage() {
                     {ownerDropdown === 2 && (
                       <div style={{ position: 'absolute', bottom: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginBottom: '4px' }}>
                         {OWNER_OPTIONS.map(o => (
-                          <button key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(2, o)}>
+                          <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(2, o)}>
                             {o}
                           </button>
                         ))}
@@ -268,12 +270,12 @@ export default function RisksPage() {
                   </div>
                   <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
                     <Link href="/scope-guard" className="text-sm font-semibold text-accent">View SOW</Link>
-                    <button className="btn btn-secondary btn-sm" onClick={() => showToast('Risk flagged for billing', 'warning')}>Flag for Billing</button>
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => showToast('Risk flagged for billing', 'warning')}>Flag for Billing</button>
                   </div>
                 </div>
 
                 {mitigationFor !== 2 ? (
-                  <button className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(2)}>
+                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(2)}>
                     <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
                   </button>
                 ) : (
@@ -281,10 +283,10 @@ export default function RisksPage() {
                     <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
                     <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
                     <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button className="btn btn-primary btn-sm" onClick={() => handleMitigate(2)} disabled={!mitigationText.trim()}>
+                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(2)} disabled={!mitigationText.trim()}>
                         <i className="fa-solid fa-check"></i> Save Task
                       </button>
-                      <button className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
                     </div>
                   </div>
                 )}
@@ -329,8 +331,9 @@ export default function RisksPage() {
                   <div style={{ position: 'relative' }}>
                     <span className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginRight: '6px' }}>Owner:</span>
                     <button
+                      type="button"
                       className="text-sm font-semibold text-accent"
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, touchAction: 'manipulation' }}
                       onClick={() => setOwnerDropdown(ownerDropdown === 3 ? null : 3)}
                     >
                       {owners[3]} <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
@@ -338,7 +341,7 @@ export default function RisksPage() {
                     {ownerDropdown === 3 && (
                       <div style={{ position: 'absolute', bottom: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginBottom: '4px' }}>
                         {OWNER_OPTIONS.map(o => (
-                          <button key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(3, o)}>
+                          <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(3, o)}>
                             {o}
                           </button>
                         ))}
@@ -346,17 +349,17 @@ export default function RisksPage() {
                     )}
                   </div>
                   <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                    <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => showToast('Reminder sent to client', 'success')}>
+                    <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => showToast('Reminder sent to client', 'success')}>
                       <i className="fa-solid fa-bell"></i> Remind Client
                     </button>
-                    <button className="btn" style={{ flex: 1, background: 'var(--status-warning-bg)', color: 'var(--status-warning)', border: '1px solid var(--status-warning-border)' }} onClick={() => showToast('Invoice info updated', 'success')}>
+                    <button type="button" className="btn" style={{ flex: 1, background: 'var(--status-warning-bg)', color: 'var(--status-warning)', border: '1px solid var(--status-warning-border)' }} onClick={() => showToast('Invoice info updated', 'success')}>
                       <i className="fa-solid fa-pen"></i> Update Info
                     </button>
                   </div>
                 </div>
 
                 {mitigationFor !== 3 ? (
-                  <button className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(3)}>
+                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(3)}>
                     <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
                   </button>
                 ) : (
@@ -364,10 +367,10 @@ export default function RisksPage() {
                     <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
                     <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
                     <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button className="btn btn-primary btn-sm" onClick={() => handleMitigate(3)} disabled={!mitigationText.trim()}>
+                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(3)} disabled={!mitigationText.trim()}>
                         <i className="fa-solid fa-check"></i> Save Task
                       </button>
-                      <button className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
                     </div>
                   </div>
                 )}
@@ -411,8 +414,9 @@ export default function RisksPage() {
                     </div>
                     <div style={{ position: 'relative' }}>
                       <button
+                        type="button"
                         className="text-sm font-semibold text-accent"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, touchAction: 'manipulation' }}
                         onClick={() => setOwnerDropdown(ownerDropdown === 4 ? null : 4)}
                       >
                         {owners[4]} <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.5rem' }}></i>
@@ -420,7 +424,7 @@ export default function RisksPage() {
                       {ownerDropdown === 4 && (
                         <div style={{ position: 'absolute', bottom: '100%', left: 0, zIndex: 10, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', minWidth: '130px', overflow: 'hidden', marginBottom: '4px' }}>
                           {OWNER_OPTIONS.map(o => (
-                            <button key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(4, o)}>
+                            <button type="button" key={o} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 12px', fontSize: '0.8125rem', borderRadius: 0 }} onClick={() => handleOwnerSelect(4, o)}>
                               {o}
                             </button>
                           ))}
@@ -428,13 +432,13 @@ export default function RisksPage() {
                       )}
                     </div>
                   </div>
-                  <button className="text-sm font-semibold text-accent" style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => showToast('Reminder sent', 'success')}>
+                  <button type="button" className="text-sm font-semibold text-accent" style={{ background: 'none', border: 'none', cursor: 'pointer', touchAction: 'manipulation' }} onClick={() => showToast('Reminder sent', 'success')}>
                     Send Reminder <i className="fa-solid fa-paper-plane text-xs"></i>
                   </button>
                 </div>
 
                 {mitigationFor !== 4 ? (
-                  <button className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(4)}>
+                  <button type="button" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setMitigationFor(4)}>
                     <i className="fa-solid fa-shield-check"></i> Create Mitigation Task
                   </button>
                 ) : (
@@ -442,10 +446,10 @@ export default function RisksPage() {
                     <div className="text-xs font-bold text-accent uppercase tracking-wider">New Mitigation Task</div>
                     <textarea className="form-textarea" rows={2} value={mitigationText} onChange={e => setMitigationText(e.target.value)} placeholder="Describe the mitigation action..." style={{ minHeight: '60px' }} />
                     <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                      <button className="btn btn-primary btn-sm" onClick={() => handleMitigate(4)} disabled={!mitigationText.trim()}>
+                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleMitigate(4)} disabled={!mitigationText.trim()}>
                         <i className="fa-solid fa-check"></i> Save Task
                       </button>
-                      <button className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMitigationFor(null); setMitigationText(''); }}>Cancel</button>
                     </div>
                   </div>
                 )}
