@@ -7,6 +7,7 @@ import { extractJsonObject } from "@/lib/ai/jsonUtils";
 import { ContractAnalysisSchema } from "@/lib/ai/schemas/contract";
 import { buildContractPrompt } from "@/lib/ai/prompts/contract";
 import type { ContractAnalysisOutput } from "@/lib/ai/schemas/contract";
+import { normalizeContractAnalysisOutput } from "@/lib/ai/normalized-output";
 
 const CONTRACT_RESPONSE_SCHEMA = {
   type: Type.OBJECT,
@@ -440,6 +441,8 @@ export async function POST(req: Request) {
       console.warn("[Contract] Supabase not configured — skipping persistence.");
     }
 
+    const normalized = normalizeContractAnalysisOutput(validated, { projectId });
+
     return NextResponse.json({
       success: true,
       providerUsed,
@@ -451,6 +454,7 @@ export async function POST(req: Request) {
       attempts,
       retried,
       data: validated,
+      normalized,
     });
   } catch (error) {
     console.error("Contract analysis failed:", error);
