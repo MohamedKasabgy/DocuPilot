@@ -1,3 +1,35 @@
+You are a senior Next.js + TypeScript engineer and technical writer.
+
+You are working on DocuPilot.
+
+This is a very small final polish task only.
+
+DO NOT redesign the app.
+DO NOT refactor the code.
+DO NOT edit backend/API/AI/database files.
+DO NOT edit package.json.
+DO NOT edit unrelated pages.
+
+Allowed files only:
+- src/app/scope-guard/page.tsx
+- README.md
+
+Goal:
+1. Fix README.md formatting so it looks clean and readable on GitHub.
+2. Clean remaining old Scope Guard labels so the demo is fully unified around the Clinic Booking Platform scenario.
+
+IMPORTANT:
+Preserve all existing functionality.
+Preserve existing UI styling.
+Make minimal safe edits.
+Make sure npm run build passes.
+
+========================
+TASK 1 — Replace README.md completely
+========================
+
+Replace the entire README.md content with this exact Markdown:
+
 # DocuPilot
 
 **From Documents to Decisions**
@@ -317,5 +349,3 @@ Install dependencies:
 
 ```bash
 npm install
-npm run dev
-```
