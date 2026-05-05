@@ -70,8 +70,8 @@ export default function ScopeGuardPage() {
         body: JSON.stringify({
           newRequest: requestText,
           language: analysisLang,
-          existingSrs: compareAgainst === 'srs' ? 'Project SRS v2.1 covers web booking platform, admin dashboard, online payments, appointment management, patient profiles, and notification settings.' : undefined,
-          contractScope: compareAgainst === 'contract' ? 'Contract #CON-2024-089 covers web platform and admin dashboard only. Mobile applications are not included unless approved through a separate change request.' : undefined,
+          existingSrs: compareAgainst === 'srs' ? 'Stored Project Scope covers the web booking platform, admin dashboard, online payments, appointment management, patient profiles, and notification settings.' : undefined,
+          contractScope: compareAgainst === 'contract' ? 'Stored Contract Scope covers the web platform and admin dashboard only. Mobile applications are not included unless approved through a separate written change request.' : undefined,
         }),
       });
       const result = await res.json();
@@ -115,9 +115,9 @@ export default function ScopeGuardPage() {
   ];
 
   const recommended = analysis?.recommendation ?? 'convert_to_change_request';
-  const compareLabel = compareAgainst === 'contract' ? 'Contract #CON-2024-089'
-    : compareAgainst === 'srs' ? 'SRS v2.1'
-    : compareAgainst === 'sow' ? 'SOW-2024-001'
+  const compareLabel = compareAgainst === 'contract' ? 'Stored Contract Scope'
+    : compareAgainst === 'srs' ? 'Stored Project Scope'
+    : compareAgainst === 'sow' ? 'Stored Project SOW'
     : 'Initial Proposal';
 
   return (
@@ -144,7 +144,7 @@ export default function ScopeGuardPage() {
               )}
             </div>
             <h1 className="page-title">Scope Impact Engine</h1>
-            <p className="page-subtitle">Classify client requests and quantify their full operational, cost, business, and risk impact.</p>
+            <p className="page-subtitle">DocuPilot compares the new client request against stored project scope and stored contract scope, then produces a business decision with reason, timeline impact, cost impact, recommended action, and suggested client reply.</p>
           </div>
           <button className="btn btn-secondary" onClick={handleAnalyze} disabled={isAnalyzing}>
             {isAnalyzing
@@ -398,7 +398,7 @@ export default function ScopeGuardPage() {
               <div className="cr-document">
                 <div className="cr-document-row">
                   <span className="cr-document-key">Change Description</span>
-                  <span className="cr-document-val">{analysis?.changeRequestSummary ?? 'Addition of native iOS and Android mobile applications to the existing web platform project scope.'}</span>
+                  <span className="cr-document-val">{analysis?.changeRequestSummary ?? 'Addition of a mobile app to the Clinic Booking Platform scope.'}</span>
                 </div>
                 <div className="cr-document-row">
                   <span className="cr-document-key">Reason / Justification</span>
