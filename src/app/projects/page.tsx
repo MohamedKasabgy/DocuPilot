@@ -10,26 +10,26 @@ type StatusFilter = 'all' | 'In Progress' | 'Blocked' | 'Done';
 
 const TOAST_ICONS: Record<ToastType, string> = {
   success: 'fa-solid fa-circle-check',
-  info:    'fa-solid fa-circle-info',
+  info: 'fa-solid fa-circle-info',
   warning: 'fa-solid fa-triangle-exclamation',
-  error:   'fa-solid fa-circle-xmark',
+  error: 'fa-solid fa-circle-xmark',
 };
 
 const TABS: { name: Tab; href?: string }[] = [
   { name: 'Overview' },
-  { name: 'SRS',      href: '/srs-generator' },
-  { name: 'Contract', href: '/contracts'     },
-  { name: 'Invoices', href: '/invoices'      },
+  { name: 'SRS', href: '/srs-generator' },
+  { name: 'Contract', href: '/contracts' },
+  { name: 'Invoices', href: '/invoices' },
   { name: 'Tasks' },
-  { name: 'Risks',    href: '/risks'         },
+  { name: 'Risks', href: '/risks' },
 ];
 
 const ROADMAP = [
-  { date: 'Oct 12', label: 'Kickoff',        state: 'completed' },
-  { date: 'Oct 28', label: 'SRS Freeze',     state: 'completed' },
-  { date: 'Nov 15', label: 'UAT Phase',      state: 'active', now: true },
+  { date: 'Oct 12', label: 'Kickoff', state: 'completed' },
+  { date: 'Oct 28', label: 'SRS Freeze', state: 'completed' },
+  { date: 'Nov 15', label: 'UAT Phase', state: 'active', now: true },
   { date: 'Nov 22', label: 'Security Audit', state: '' },
-  { date: 'Nov 30', label: 'Deployment',     state: '' },
+  { date: 'Nov 30', label: 'Deployment', state: '' },
 ] as const;
 
 interface TaskRow {
@@ -45,36 +45,36 @@ interface TaskRow {
 }
 
 const TASKS: TaskRow[] = [
-  { title: 'Patient Dashboard UI Refinement', sub: 'Front-end Development · V2.1', owner: 'AM',                                                status: 'In Progress', statusClass: 'badge-accent',  due: 'Today',  dueStyle: { color: 'var(--status-warning)' }, done: false },
-  { title: 'Payment Gateway Integration',     sub: 'Back-end · API Services',      owner: 'SJ', ownerBg: 'var(--status-success)',              status: 'Blocked',     statusClass: 'badge-danger',  due: 'Nov 18', dueStyle: {},                                  done: false },
-  { title: 'Database Schema Finalization',    sub: 'DevOps · Architecture',        owner: 'RK', ownerBg: 'var(--status-warning)',              status: 'Done',        statusClass: 'badge-success', due: 'Nov 10', dueStyle: {},                                  done: true  },
+  { title: 'Patient Dashboard UI Refinement', sub: 'Front-end Development · V2.1', owner: 'AM', status: 'In Progress', statusClass: 'badge-accent', due: 'Today', dueStyle: { color: 'var(--status-warning)' }, done: false },
+  { title: 'Payment Gateway Integration', sub: 'Back-end · API Services', owner: 'SJ', ownerBg: 'var(--status-success)', status: 'Blocked', statusClass: 'badge-danger', due: 'Nov 18', dueStyle: {}, done: false },
+  { title: 'Database Schema Finalization', sub: 'DevOps · Architecture', owner: 'RK', ownerBg: 'var(--status-warning)', status: 'Done', statusClass: 'badge-success', due: 'Nov 10', dueStyle: {}, done: true },
 ];
 
 const SRS_SECTIONS = [
-  { title: 'Functional Requirements', count: 18, status: 'Approved'  },
-  { title: 'User Roles',               count: 5,  status: 'Approved'  },
-  { title: 'Non-Functional Reqs.',     count: 12, status: 'In Review' },
-  { title: 'Acceptance Criteria',      count: 9,  status: 'Draft'     },
+  { title: 'Functional Requirements', count: 18, status: 'Approved' },
+  { title: 'User Roles', count: 5, status: 'Approved' },
+  { title: 'Non-Functional Reqs.', count: 12, status: 'In Review' },
+  { title: 'Acceptance Criteria', count: 9, status: 'Draft' },
 ];
 
 const CONTRACT_DETAILS = [
-  { label: 'Contract ID',    value: 'CON-2024-089'              },
-  { label: 'Client',         value: 'Al Waha Healthcare Group'  },
-  { label: 'Total Value',    value: '$245,000'                  },
-  { label: 'Effective Date', value: 'Oct 12, 2025'              },
-  { label: 'End Date',       value: 'Nov 30, 2026'              },
-  { label: 'Status',         value: 'Active'                    },
+  { label: 'Contract ID', value: 'CON-2024-089' },
+  { label: 'Client', value: 'Al Waha Healthcare Group' },
+  { label: 'Total Value', value: '$245,000' },
+  { label: 'Effective Date', value: 'Oct 12, 2025' },
+  { label: 'End Date', value: 'Nov 30, 2026' },
+  { label: 'Status', value: 'Active' },
 ];
 
 const INVOICES_LIST = [
-  { id: 'INV-2026-040', desc: 'Phase 1 — Discovery',            amount: '$48,000', status: 'Paid',     statusClass: 'badge-success' },
-  { id: 'INV-2026-041', desc: 'Phase 2 — UI/UX Design',          amount: '$36,500', status: 'Paid',     statusClass: 'badge-success' },
-  { id: 'INV-2026-042', desc: 'Phase 3 — UI Milestone 2',        amount: '$6,500',  status: 'Pending',  statusClass: 'badge-warning' },
+  { id: 'INV-2026-040', desc: 'Phase 1 — Discovery', amount: '$48,000', status: 'Paid', statusClass: 'badge-success' },
+  { id: 'INV-2026-041', desc: 'Phase 2 — UI/UX Design', amount: '$36,500', status: 'Paid', statusClass: 'badge-success' },
+  { id: 'INV-2026-042', desc: 'Phase 3 — UI Milestone 2', amount: '$6,500', status: 'Pending', statusClass: 'badge-warning' },
 ];
 
 const RISK_LIST = [
-  { title: 'Late delivery penalty exposure',     severity: 'High',   class: 'badge-danger'  },
-  { title: 'Out-of-scope mobile app request',     severity: 'High',   class: 'badge-danger'  },
+  { title: 'Late delivery penalty exposure', severity: 'High', class: 'badge-danger' },
+  { title: 'Out-of-scope mobile app request', severity: 'High', class: 'badge-danger' },
   { title: 'Missing client confirmation on API', severity: 'Medium', class: 'badge-warning' },
 ];
 
@@ -124,11 +124,11 @@ export default function ProjectsPage() {
       <div className="page-container animate-fade-in">
 
         {/* Project Header */}
-        <div style={{ marginBottom: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)', borderBottom: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--spacing-md)' }}>
+        <div className="mb-4 pb-4 md:mb-8 md:pb-8" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+          <div className="flex flex-wrap justify-between items-start gap-4">
 
-            <div style={{ flex: '1 1 260px', minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-sm)', flexWrap: 'wrap' }}>
+            <div className="flex-1 min-w-0" style={{ flexBasis: '260px' }}>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className="badge badge-success">On Track</span>
                 <span className="badge badge-neutral">NEX-2024-082</span>
               </div>
@@ -138,26 +138,27 @@ export default function ProjectsPage() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: 'var(--spacing-md)', flexWrap: 'wrap' }}>
-              <div style={{ textAlign: 'center' }}>
-                <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>Health Score</div>
+            <div className="flex gap-3 md:gap-4 flex-wrap shrink-0">
+              <div className="text-center min-w-0">
+                <div className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Health Score</div>
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700, color: 'var(--accent-primary)', lineHeight: 1 }}>82%</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '4px' }}>Delivery</div>
+              <div className="text-center min-w-0">
+                <div className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Delivery</div>
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.125rem', fontWeight: 600, lineHeight: 1, marginTop: '4px' }}>Nov 30</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: '6px' }}>Risk Level</div>
+              <div className="text-center min-w-0">
+                <div className="text-xs text-muted font-semibold uppercase tracking-wider mb-2">Risk Level</div>
                 <span className="badge badge-warning badge-lg">Medium</span>
               </div>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="tab-nav" style={{ marginTop: 'var(--spacing-xl)', marginBottom: 0 }}>
+          {/* Tabs — overflow-x-auto contains horizontal scroll within this element */}
+          <div className="tab-nav overflow-x-auto max-w-full mt-4 md:mt-8" style={{ marginBottom: 0 }}>
             {TABS.map(tab => (
               <button
+                type="button"
                 key={tab.name}
                 className={`tab-item ${activeTab === tab.name ? 'active' : ''}`}
                 onClick={() => setActiveTab(tab.name)}
@@ -182,6 +183,7 @@ export default function ProjectsPage() {
                     Project Roadmap
                   </h2>
                   <button
+                    type="button"
                     onClick={() => showToast('Full Gantt view coming soon', 'info')}
                     className="card-link"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
@@ -190,8 +192,13 @@ export default function ProjectsPage() {
                   </button>
                 </div>
 
-                {/* Horizontal timeline (tablet/desktop) */}
-                <div className="timeline timeline-horizontal">
+                {/* Desktop horizontal timeline — hidden on mobile.
+                    NOTE: .timeline forces display:flex so we don't use that class here;
+                    instead we replicate its layout with Tailwind to let hidden/md:flex work. */}
+                <div
+                  className="hidden md:flex items-start overflow-x-auto"
+                  style={{ padding: 'var(--spacing-md) 0 var(--spacing-xl)', gap: 0 }}
+                >
                   {ROADMAP.map((node) => (
                     <div key={node.date} className={`timeline-node ${node.state}`}>
                       <div className="node-dot">
@@ -208,31 +215,62 @@ export default function ProjectsPage() {
                   ))}
                 </div>
 
-                {/* Vertical timeline (mobile) */}
-                <div className="timeline-vertical">
-                  {ROADMAP.map((node) => (
-                    <div key={node.date} className={`timeline-node-v ${node.state}`}>
-                      <div className="node-dot">
-                        {node.state === 'completed' && <i className="fa-solid fa-check" style={{ fontSize: '0.5rem', color: 'white' }}></i>}
-                        {node.state === 'active' && <i className="fa-solid fa-play" style={{ fontSize: '0.4rem', color: 'white', marginLeft: '1px' }}></i>}
+                {/* Mobile roadmap — pure Tailwind stacked list, shown only below md.
+                    Replaces the CSS-class-based timeline-vertical which had a
+                    node-dot margin:0 auto conflict in flex-row context. */}
+                <div className="flex flex-col md:hidden pt-2 pb-2">
+                  {ROADMAP.map((node, idx) => {
+                    const isCompleted = node.state === 'completed';
+                    const isActive = node.state === 'active';
+                    const isLast = idx === ROADMAP.length - 1;
+                    return (
+                      <div key={node.date} className="flex gap-3">
+                        {/* Left column: dot + vertical connector */}
+                        <div className="flex flex-col items-center" style={{ width: '22px', flexShrink: 0 }}>
+                          <div
+                            className="flex items-center justify-center rounded-full"
+                            style={{
+                              width: '22px', height: '22px', flexShrink: 0,
+                              background: isCompleted ? 'var(--status-success)' : isActive ? 'var(--accent-primary)' : 'white',
+                              border: `2px solid ${isCompleted ? 'var(--status-success)' : isActive ? 'var(--accent-primary)' : 'var(--border-strong)'}`,
+                              boxShadow: isActive ? '0 0 0 3px rgba(37,99,235,0.15)' : 'none',
+                              color: 'white',
+                            }}
+                          >
+                            {isCompleted && <i className="fa-solid fa-check" style={{ fontSize: '0.45rem' }}></i>}
+                            {isActive && <i className="fa-solid fa-play" style={{ fontSize: '0.35rem', marginLeft: '1px' }}></i>}
+                          </div>
+                          {!isLast && (
+                            <div
+                              className="flex-1 mt-1"
+                              style={{ width: '2px', minHeight: '16px', background: isCompleted ? 'var(--status-success)' : 'var(--border-strong)' }}
+                            />
+                          )}
+                        </div>
+                        {/* Right column: date + label */}
+                        <div className="min-w-0 flex-1 pb-4">
+                          <div className={`text-xs font-bold uppercase tracking-wider ${isActive ? 'text-accent' : 'text-muted'}`}>
+                            {'now' in node && node.now ? `${node.date} — NOW` : node.date}
+                          </div>
+                          <div className={`text-sm mt-0.5 ${isActive ? 'font-bold text-primary' : isCompleted ? 'font-medium text-secondary' : 'text-muted'}`}>
+                            {node.label}
+                          </div>
+                        </div>
                       </div>
-                      <div className="node-content">
-                        <div className="node-date">{'now' in node && node.now ? `${node.date} — NOW` : node.date}</div>
-                        <div className="node-label">{node.label}</div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Active Task Stream */}
               <div className="card">
-                <div className="card-header">
+                {/* Task stream header: stacks to two rows on mobile */}
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <h2 className="card-title">
                     <i className="fa-solid fa-list-check text-accent"></i>
                     Active Task Stream
                   </h2>
-                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <div className="flex gap-2 items-center flex-wrap min-w-0">
                     {showSearch && (
                       <input
                         type="text"
@@ -240,13 +278,14 @@ export default function ProjectsPage() {
                         value={taskSearch}
                         onChange={e => setTaskSearch(e.target.value)}
                         placeholder="Search tasks..."
+                        className="flex-1 min-w-0"
                         style={{ padding: '4px 10px', fontSize: '0.8125rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-strong)', outline: 'none', maxWidth: '160px' }}
                       />
                     )}
                     <select
                       value={taskFilter}
                       onChange={e => setTaskFilter(e.target.value as StatusFilter)}
-                      style={{ height: '28px', fontSize: '0.75rem', padding: '0 6px', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-sm)', background: 'white', cursor: 'pointer' }}
+                      style={{ height: '44px', fontSize: '0.75rem', padding: '0 6px', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-sm)', background: 'white', cursor: 'pointer', flexShrink: 0 }}
                       aria-label="Filter tasks by status"
                     >
                       <option value="all">All status</option>
@@ -254,7 +293,13 @@ export default function ProjectsPage() {
                       <option value="Blocked">Blocked</option>
                       <option value="Done">Done</option>
                     </select>
-                    <button className="btn btn-secondary btn-icon-sm" onClick={() => { setShowSearch(v => !v); if (showSearch) setTaskSearch(''); }} aria-label="Toggle task search">
+                    <button
+                      type="button"
+                      className="btn btn-secondary flex items-center justify-center"
+                      style={{ width: '44px', height: '44px', padding: 0, flexShrink: 0 }}
+                      onClick={() => { setShowSearch(v => !v); if (showSearch) setTaskSearch(''); }}
+                      aria-label="Toggle task search"
+                    >
                       <i className="fa-solid fa-magnifying-glass"></i>
                     </button>
                   </div>
@@ -290,20 +335,20 @@ export default function ProjectsPage() {
                               <td><span className={`badge ${task.statusClass}`}>{task.status}</span></td>
                               <td><span className={`text-sm${task.done ? ' text-muted' : ' font-medium'}`} style={task.dueStyle}>{task.due}</span></td>
                               <td style={{ position: 'relative' }}>
-                                <button className="action-btn" onClick={() => setOpenTaskMenu(openTaskMenu === task.index ? null : task.index)} aria-label="Task actions">
+                                <button type="button" className="action-btn" onClick={() => setOpenTaskMenu(openTaskMenu === task.index ? null : task.index)} aria-label="Task actions">
                                   <i className="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
                                 {openTaskMenu === task.index && (
                                   <div style={{ position: 'absolute', top: '100%', right: 0, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', zIndex: 10, minWidth: '160px' }}>
-                                    <button onClick={() => toggleTaskDone(task.index)} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
+                                    <button type="button" onClick={() => toggleTaskDone(task.index)} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
                                       <i className="fa-solid fa-check" style={{ width: '12px', color: 'var(--status-success)' }}></i>
                                       {task.done ? 'Mark as not done' : 'Mark as done'}
                                     </button>
-                                    <button onClick={() => { setOpenTaskMenu(null); showToast('Edit task — coming soon', 'info'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
+                                    <button type="button" onClick={() => { setOpenTaskMenu(null); showToast('Edit task — coming soon', 'info'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
                                       <i className="fa-solid fa-pen" style={{ width: '12px', color: 'var(--text-muted)' }}></i>
                                       Edit task
                                     </button>
-                                    <button onClick={() => { setOpenTaskMenu(null); showToast('Reassign — coming soon', 'info'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
+                                    <button type="button" onClick={() => { setOpenTaskMenu(null); showToast('Reassign — coming soon', 'info'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
                                       <i className="fa-solid fa-user-plus" style={{ width: '12px', color: 'var(--text-muted)' }}></i>
                                       Reassign
                                     </button>
@@ -319,20 +364,21 @@ export default function ProjectsPage() {
                     {/* Mobile task cards */}
                     <div className="task-cards-mobile">
                       {filteredTasks.map(task => (
-                        <div key={task.title} className="task-card">
+                        /* overflow-visible so the action dropdown isn't clipped by card's overflow:hidden */
+                        <div key={task.title} className="task-card" style={{ overflow: 'visible' }}>
                           <div className="task-card-header">
-                            <div className={`task-card-title${task.done ? ' done' : ''}`}>{task.title}</div>
-                            <div style={{ position: 'relative' }}>
-                              <button className="action-btn" style={{ width: '32px', height: '32px', flexShrink: 0 }} onClick={() => setOpenTaskMenu(openTaskMenu === task.index ? null : task.index)} aria-label="Task actions">
+                            <div className={`task-card-title min-w-0 break-words${task.done ? ' done' : ''}`}>{task.title}</div>
+                            <div style={{ position: 'relative', flexShrink: 0 }}>
+                              <button type="button" className="action-btn" style={{ flexShrink: 0 }} onClick={() => setOpenTaskMenu(openTaskMenu === task.index ? null : task.index)} aria-label="Task actions">
                                 <i className="fa-solid fa-ellipsis-vertical"></i>
                               </button>
                               {openTaskMenu === task.index && (
-                                <div style={{ position: 'absolute', top: '100%', right: 0, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', zIndex: 10, minWidth: '160px' }}>
-                                  <button onClick={() => toggleTaskDone(task.index)} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
+                                <div style={{ position: 'absolute', top: '100%', right: 0, background: 'white', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', zIndex: 20, minWidth: '160px' }}>
+                                  <button type="button" onClick={() => toggleTaskDone(task.index)} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
                                     <i className="fa-solid fa-check" style={{ width: '12px', color: 'var(--status-success)' }}></i>
                                     {task.done ? 'Mark as not done' : 'Mark as done'}
                                   </button>
-                                  <button onClick={() => { setOpenTaskMenu(null); showToast('Edit task — coming soon', 'info'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
+                                  <button type="button" onClick={() => { setOpenTaskMenu(null); showToast('Edit task — coming soon', 'info'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 12px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8125rem', textAlign: 'left' }}>
                                     <i className="fa-solid fa-pen" style={{ width: '12px', color: 'var(--text-muted)' }}></i>
                                     Edit task
                                   </button>
@@ -352,7 +398,7 @@ export default function ProjectsPage() {
                   </>
                 )}
 
-                <button className="btn btn-ghost" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => setActiveTab('Tasks')}>
+                <button type="button" className="btn btn-ghost" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => setActiveTab('Tasks')}>
                   View All Tasks <i className="fa-solid fa-arrow-right text-xs"></i>
                 </button>
               </div>
@@ -369,7 +415,7 @@ export default function ProjectsPage() {
                     <i className="fa-solid fa-vault text-accent"></i>
                     Project Vault
                   </h2>
-                  <button className="btn btn-secondary btn-icon-sm" data-tooltip="Upload file" onClick={() => showToast('File upload is not connected yet — coming soon', 'info')} aria-label="Upload file">
+                  <button type="button" className="btn btn-secondary btn-icon-sm" data-tooltip="Upload file" onClick={() => showToast('File upload is not connected yet — coming soon', 'info')} aria-label="Upload file">
                     <i className="fa-solid fa-cloud-arrow-up"></i>
                   </button>
                 </div>
@@ -404,7 +450,7 @@ export default function ProjectsPage() {
                   </div>
                 </div>
 
-                <button className="btn btn-secondary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Asset library — coming soon', 'info')}>
+                <button type="button" className="btn btn-secondary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Asset library — coming soon', 'info')}>
                   View All Assets
                 </button>
               </div>
@@ -420,7 +466,7 @@ export default function ProjectsPage() {
                   <strong style={{ color: 'var(--status-warning)' }}>2 days</strong>.
                   Suggesting reallocation of resources to &lsquo;Database Schema&rsquo; to avoid blockers.
                 </p>
-                <button className="btn btn-primary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Schedule optimization initiated — review changes in Tasks tab', 'success')}>
+                <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Schedule optimization initiated — review changes in Tasks tab', 'success')}>
                   Optimize Schedule
                 </button>
                 <div className="ai-insight-bg-icon"><i className="fa-solid fa-robot"></i></div>
@@ -521,7 +567,7 @@ export default function ProjectsPage() {
               <select
                 value={taskFilter}
                 onChange={e => setTaskFilter(e.target.value as StatusFilter)}
-                style={{ height: '28px', fontSize: '0.75rem', padding: '0 6px', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-sm)', background: 'white', cursor: 'pointer' }}
+                style={{ height: '44px', fontSize: '0.75rem', padding: '0 6px', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-sm)', background: 'white', cursor: 'pointer' }}
               >
                 <option value="all">All status</option>
                 <option value="In Progress">In Progress</option>
@@ -539,7 +585,7 @@ export default function ProjectsPage() {
                   <div key={task.title} className="task-card">
                     <div className="task-card-header">
                       <div className={`task-card-title${task.done ? ' done' : ''}`}>{task.title}</div>
-                      <button className="btn btn-ghost btn-sm" onClick={() => toggleTaskDone(task.index)}>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => toggleTaskDone(task.index)}>
                         {task.done ? 'Reopen' : 'Mark Done'}
                       </button>
                     </div>

@@ -5,13 +5,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const navItems = [
-  { href: '/',              icon: 'fa-solid fa-border-all',           label: 'Dashboard' },
-  { href: '/projects',      icon: 'fa-solid fa-folder-open',          label: 'Projects' },
-  { href: '/srs-generator', icon: 'fa-solid fa-wand-magic-sparkles',  label: 'SRS Generator' },
-  { href: '/contracts',     icon: 'fa-solid fa-file-signature',       label: 'Contracts' },
-  { href: '/invoices',      icon: 'fa-solid fa-file-invoice-dollar',  label: 'Invoices & Approvals' },
-  { href: '/scope-guard',   icon: 'fa-solid fa-shield-halved',        label: 'Scope Guard' },
-  { href: '/risks',         icon: 'fa-solid fa-triangle-exclamation', label: 'Risk Radar' },
+  { href: '/', icon: 'fa-solid fa-border-all', label: 'Dashboard' },
+  { href: '/projects', icon: 'fa-solid fa-folder-open', label: 'Projects' },
+  { href: '/srs-generator', icon: 'fa-solid fa-wand-magic-sparkles', label: 'SRS Generator' },
+  { href: '/contracts', icon: 'fa-solid fa-file-signature', label: 'Contracts' },
+  { href: '/invoices', icon: 'fa-solid fa-file-invoice-dollar', label: 'Invoices & Approvals' },
+  { href: '/scope-guard', icon: 'fa-solid fa-shield-halved', label: 'Scope Guard' },
+  { href: '/risks', icon: 'fa-solid fa-triangle-exclamation', label: 'Risk Radar' },
 ];
 
 export default function Sidebar() {
@@ -48,6 +48,7 @@ export default function Sidebar() {
     <>
       {/* Mobile hamburger button */}
       <button
+        type="button"
         className="mobile-menu-btn"
         onClick={() => setMobileOpen(true)}
         aria-label="Open menu"
@@ -73,6 +74,7 @@ export default function Sidebar() {
             </div>
           </div>
           <button
+            type="button"
             className="sidebar-close-btn"
             onClick={() => setMobileOpen(false)}
             aria-label="Close menu"
@@ -116,6 +118,7 @@ export default function Sidebar() {
         {/* Footer */}
         <div className="sidebar-footer">
           <button
+            type="button"
             className="btn-new-project"
             onClick={() => { setMobileOpen(false); router.push('/srs-generator'); flash('Start by generating an SRS for the new project'); }}
           >
@@ -125,9 +128,10 @@ export default function Sidebar() {
           <ul className="nav-list">
             <li className="nav-item" style={{ fontSize: '0.875rem' }}>
               <button
+                type="button"
                 onClick={() => { setMobileOpen(false); flash('Support center coming soon — reach us at support@docupilot.io'); }}
                 className="flex items-center gap-3 w-full"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'inherit', font: 'inherit', textAlign: 'left' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'inherit', font: 'inherit', textAlign: 'left', touchAction: 'manipulation' }}
               >
                 <i className="fa-regular fa-circle-question w-5 text-center"></i>
                 Support
@@ -135,9 +139,10 @@ export default function Sidebar() {
             </li>
             <li className="nav-item" style={{ fontSize: '0.875rem', color: 'var(--status-danger)', opacity: 0.8 }}>
               <button
+                type="button"
                 onClick={() => { setMobileOpen(false); flash('Sign-out is disabled in the demo'); }}
                 className="flex items-center gap-3 w-full"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'inherit', font: 'inherit', textAlign: 'left' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'inherit', font: 'inherit', textAlign: 'left', touchAction: 'manipulation' }}
               >
                 <i className="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
                 Sign Out

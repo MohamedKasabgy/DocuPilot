@@ -48,18 +48,18 @@ export default function ScopeGuardPage() {
             <h1 className="page-title">Scope Guard Analysis</h1>
             <p className="page-subtitle">Real-time contract deviation detection and decision support.</p>
           </div>
-          <button className="btn btn-secondary" onClick={() => showToast('Re-analyzing request...', 'info')}>
+          <button type="button" className="btn btn-secondary w-full sm:w-auto" onClick={() => showToast('Re-analyzing request...', 'info')}>
             <i className="fa-solid fa-rotate-right"></i> Re-analyze
           </button>
         </div>
 
         {/* Options Panel */}
-        <div className="opts-panel" style={{ marginBottom: 'var(--spacing-lg)', display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-lg)', alignItems: 'flex-end' }}>
+        <div className="opts-panel">
           <div>
             <span className="opts-label">Compare Against</span>
             <div className="seg-control">
               {([['contract', 'Contract'], ['srs', 'SRS'], ['sow', 'SOW'], ['proposal', 'Proposal']] as [CompareAgainst, string][]).map(([val, label]) => (
-                <button key={val} className={`seg-btn${compareAgainst === val ? ' active' : ''}`} onClick={() => setCompareAgainst(val)}>{label}</button>
+                <button type="button" key={val} className={`seg-btn${compareAgainst === val ? ' active' : ''}`} onClick={() => setCompareAgainst(val)}>{label}</button>
               ))}
             </div>
           </div>
@@ -67,7 +67,7 @@ export default function ScopeGuardPage() {
             <span className="opts-label">Analysis Language</span>
             <div className="seg-control">
               {([['auto', 'Auto-Detect'], ['english', 'English'], ['arabic', 'Arabic']] as [AnalysisLang, string][]).map(([val, label]) => (
-                <button key={val} className={`seg-btn${analysisLang === val ? ' active' : ''}`} onClick={() => setAnalysisLang(val)}>{label}</button>
+                <button type="button" key={val} className={`seg-btn${analysisLang === val ? ' active' : ''}`} onClick={() => setAnalysisLang(val)}>{label}</button>
               ))}
             </div>
           </div>
@@ -75,19 +75,20 @@ export default function ScopeGuardPage() {
             <span className="opts-label">Strictness</span>
             <div className="seg-control">
               {([['strict', 'Strict'], ['balanced', 'Balanced'], ['lenient', 'Lenient']] as [Strictness, string][]).map(([val, label]) => (
-                <button key={val} className={`seg-btn${strictness === val ? ' active' : ''}`} onClick={() => setStrictness(val)}>{label}</button>
+                <button type="button" key={val} className={`seg-btn${strictness === val ? ' active' : ''}`} onClick={() => setStrictness(val)}>{label}</button>
               ))}
             </div>
           </div>
           <div className="toggle-row" style={{ gap: 'var(--spacing-md)', padding: 0 }}>
             <span className="opts-label" style={{ marginBottom: 0 }}>Auto-Generate Reply</span>
             <button
+              type="button"
               className={`toggle-switch${generateReply ? ' on' : ''}`}
               onClick={() => setGenerateReply(v => !v)}
               aria-label="Toggle auto-generate reply"
             />
           </div>
-          <div style={{ marginLeft: 'auto' }}>
+          <div className="md:ml-auto">
             <span className="opts-label">Verdict</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--status-danger)', display: 'inline-block' }}></span>
@@ -111,8 +112,8 @@ export default function ScopeGuardPage() {
               </span>
             </div>
 
-            <div style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: 'var(--spacing-xl)', marginBottom: 'var(--spacing-lg)', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', textAlign: 'right', lineHeight: 1.8, color: 'var(--text-primary)', fontWeight: 500 }} dir="rtl">
+            <div className="p-4 md:p-8" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', marginBottom: 'var(--spacing-lg)', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <p className="text-base md:text-xl" style={{ fontFamily: 'var(--font-display)', textAlign: 'right', lineHeight: 1.8, color: 'var(--text-primary)', fontWeight: 500 }} dir="rtl">
                 &ldquo;ممكن تضيفون تطبيق جوال iOS و Android للمنصة؟&rdquo;
               </p>
             </div>
@@ -143,7 +144,7 @@ export default function ScopeGuardPage() {
               <span className="badge badge-danger badge-lg">Out of Scope</span>
             </div>
 
-            <div style={{ padding: 'var(--spacing-lg)', flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+            <div className="p-3 md:p-6 flex-1 flex flex-col gap-3 md:gap-5">
 
               <div>
                 <div className="text-xs text-muted font-semibold uppercase tracking-wider" style={{ marginBottom: 'var(--spacing-sm)' }}>Primary Reason</div>
@@ -198,7 +199,7 @@ export default function ScopeGuardPage() {
                     <div className="font-bold text-sm">Create Change Request</div>
                   </div>
                 </div>
-                <button className="btn btn-primary" style={{ flexShrink: 0 }} onClick={() => { setShowCRDoc(true); showToast('Change Request created', 'success'); }}>Execute</button>
+                <button type="button" className="btn btn-primary" style={{ flexShrink: 0 }} onClick={() => { setShowCRDoc(true); showToast('Change Request created', 'success'); }}>Execute</button>
               </div>
 
             </div>
@@ -215,7 +216,7 @@ export default function ScopeGuardPage() {
               </h2>
               <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
                 <span className="badge badge-success">Generated</span>
-                <button className="btn btn-ghost btn-sm" onClick={() => showToast('CR document exported', 'success')}>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => showToast('CR document exported', 'success')}>
                   <i className="fa-solid fa-file-arrow-down"></i> Export
                 </button>
               </div>
@@ -303,16 +304,16 @@ export default function ScopeGuardPage() {
                 Suggested Client Reply
               </h2>
               <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
-                <button className="btn btn-ghost btn-sm" onClick={() => showToast('Reply copied to clipboard', 'success')}>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => showToast('Reply copied to clipboard', 'success')}>
                   <i className="fa-regular fa-copy"></i> Copy
                 </button>
-                <button className="btn btn-secondary btn-sm" onClick={() => showToast('Reply sent to client', 'success')}>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => showToast('Reply sent to client', 'success')}>
                   <i className="fa-solid fa-paper-plane"></i> Send
                 </button>
               </div>
             </div>
 
-            <div style={{ padding: 'var(--spacing-lg) var(--spacing-xl)', lineHeight: 1.9, color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>
+            <div className="px-4 md:px-8 py-3 md:py-5" style={{ lineHeight: 1.9, color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>
               <p style={{ marginBottom: 'var(--spacing-md)' }}>Dear Client,</p>
               <p style={{ marginBottom: 'var(--spacing-md)' }}>
                 Thank you for reaching out about adding iOS and Android mobile applications to the NexaSoft platform. We appreciate the vision for cross-platform expansion.
