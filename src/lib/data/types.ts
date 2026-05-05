@@ -31,7 +31,11 @@ export type DocumentStatus =
   | "action_items_extracted"
   | "failed";
 
-export type DocumentSource = "upload" | "paste" | "demo" | "ai_generated";
+export type DocumentSource =
+  | "upload"
+  | "paste"
+  | "demo"
+  | "ai_generated";
 
 export type AnalysisType =
   | "project_intelligence"
@@ -45,12 +49,39 @@ export type AnalysisType =
   | "meeting_notes"
   | "general";
 
-export type Priority = "low" | "medium" | "high" | "critical";
-export type Severity = "low" | "medium" | "high" | "critical";
+// Alias kept for the Task 1 naming convention.
+export type AnalysisOutputType = AnalysisType;
 
-export type ActionStatus = "todo" | "in_progress" | "done" | "blocked";
-export type RiskStatus = "open" | "monitoring" | "resolved";
-export type ApprovalStatus = "pending" | "approved" | "rejected";
+export type Priority =
+  | "low"
+  | "medium"
+  | "high"
+  | "critical";
+
+export type Severity =
+  | "low"
+  | "medium"
+  | "high"
+  | "critical";
+
+// Alias kept for the Task 1 naming convention.
+export type RiskSeverity = Severity;
+
+export type ActionStatus =
+  | "todo"
+  | "in_progress"
+  | "done"
+  | "blocked";
+
+export type RiskStatus =
+  | "open"
+  | "monitoring"
+  | "resolved";
+
+export type ApprovalStatus =
+  | "pending"
+  | "approved"
+  | "rejected";
 
 export type ApprovalType =
   | "invoice"

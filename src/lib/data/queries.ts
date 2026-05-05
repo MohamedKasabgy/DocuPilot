@@ -33,10 +33,12 @@ export function getProjectDocuments(projectId: string): DocumentRecord[] {
 }
 
 export function getProjectAnalysisOutputs(projectId: string): AnalysisOutput[] {
-  return analysisOutputs.filter((analysisOutput) => analysisOutput.projectId === projectId);
+  return analysisOutputs.filter(
+    (analysisOutput) => analysisOutput.projectId === projectId,
+  );
 }
 
-// Backward compatibility alias.
+// Backward compatibility alias for older imports.
 export const getAnalysisOutputs = getProjectAnalysisOutputs;
 
 export function getProjectRisks(projectId: string): RiskItem[] {
@@ -57,19 +59,25 @@ export function getDocumentById(documentId: string): DocumentRecord | undefined 
 
 export function getActionsByDocument(documentId: string): ActionItem[] {
   return actions.filter(
-    (action) => action.documentId === documentId || action.linkedDocumentId === documentId,
+    (action) =>
+      action.documentId === documentId ||
+      action.linkedDocumentId === documentId,
   );
 }
 
 export function getRisksByDocument(documentId: string): RiskItem[] {
   return risks.filter(
-    (risk) => risk.documentId === documentId || risk.linkedDocumentId === documentId,
+    (risk) =>
+      risk.documentId === documentId ||
+      risk.linkedDocumentId === documentId,
   );
 }
 
 export function getApprovalsByDocument(documentId: string): ApprovalItem[] {
   return approvals.filter(
-    (approval) => approval.documentId === documentId || approval.linkedDocumentId === documentId,
+    (approval) =>
+      approval.documentId === documentId ||
+      approval.linkedDocumentId === documentId,
   );
 }
 
@@ -87,9 +95,13 @@ function computeStats(
         (risk.severity === "high" || risk.severity === "critical") &&
         risk.status !== "resolved",
     ).length,
-    pendingApprovals: projectApprovals.filter((approval) => approval.status === "pending").length,
-    openActions: projectActions.filter((action) => action.status !== "done").length,
-    completedActions: projectActions.filter((action) => action.status === "done").length,
+    pendingApprovals: projectApprovals.filter(
+      (approval) => approval.status === "pending",
+    ).length,
+    openActions: projectActions.filter((action) => action.status !== "done")
+      .length,
+    completedActions: projectActions.filter((action) => action.status === "done")
+      .length,
   };
 }
 
@@ -104,11 +116,18 @@ function computeCounts(
     risks: projectRisks.length,
     approvals: projectApprovals.length,
     actions: projectActions.length,
-    pendingApprovals: projectApprovals.filter((approval) => approval.status === "pending").length,
+    pendingApprovals: projectApprovals.filter(
+      (approval) => approval.status === "pending",
+    ).length,
     highRisks: projectRisks.filter(
       (risk) => risk.severity === "high" || risk.severity === "critical",
     ).length,
-    outOfScopeRequests: docs.filter((document) => document.status === "out_of_scope").length,
+    outOfScopeRequests: docs.filter(
+      (document) =>
+        document.status === "out_of_scope" ||
+        document.type === "scope_change" ||
+        document.type === "scope_request",
+    ).length,
   };
 }
 
@@ -126,24 +145,28 @@ function buildLatestActivity(
       title: document.title,
       createdAt: document.createdAt,
     })),
+
     ...projectAnalysisOutputs.map<LatestActivityEntry>((analysisOutput) => ({
       kind: "analysis",
       id: analysisOutput.id,
       title: analysisOutput.summary.slice(0, 80),
       createdAt: analysisOutput.createdAt,
     })),
+
     ...projectActions.map<LatestActivityEntry>((action) => ({
       kind: "action",
       id: action.id,
       title: action.title,
       createdAt: action.createdAt,
     })),
+
     ...projectRisks.map<LatestActivityEntry>((risk) => ({
       kind: "risk",
       id: risk.id,
       title: risk.title,
       createdAt: risk.createdAt,
     })),
+
     ...projectApprovals.map<LatestActivityEntry>((approval) => ({
       kind: "approval",
       id: approval.id,
@@ -157,7 +180,9 @@ function buildLatestActivity(
     .slice(0, 10);
 }
 
-export function getProjectOverview(projectId: string): ProjectOverview | undefined {
+export function getProjectOverview(
+  projectId: string,
+): ProjectOverview | undefined {
   const project = getProjectById(projectId);
 
   if (!project) {
@@ -177,8 +202,18 @@ export function getProjectOverview(projectId: string): ProjectOverview | undefin
     risks: projectRisks,
     approvals: projectApprovals,
     actions: projectActions,
-    counts: computeCounts(projectDocuments, projectRisks, projectApprovals, projectActions),
-    stats: computeStats(projectDocuments, projectRisks, projectApprovals, projectActions),
+    counts: computeCounts(
+      projectDocuments,
+      projectRisks,
+      projectApprovals,
+      projectActions,
+    ),
+    stats: computeStats(
+      projectDocuments,
+      projectRisks,
+      projectApprovals,
+      projectActions,
+    ),
     latestActivity: buildLatestActivity(
       projectDocuments,
       projectAnalysisOutputs,
