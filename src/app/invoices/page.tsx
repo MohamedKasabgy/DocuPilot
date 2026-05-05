@@ -102,6 +102,8 @@ export default function InvoicesPage() {
   const [threshold, setThreshold] = useState('5000');
   const [vendorCategory, setVendorCategory] = useState('design');
   const [showDuplicate, setShowDuplicate] = useState(true);
+  const [viewMode, setViewMode] = useState<'queue' | 'review'>('queue');
+  const [invoiceStatus, setInvoiceStatus] = useState<'Pending' | 'Approved' | 'Rejected' | 'Needs Review'>('Pending');
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
 
   const [contracts, setContracts] = useState<ContractListItem[]>([]);
@@ -242,11 +244,52 @@ export default function InvoicesPage() {
 
   const showSuggestion = suggestedContractId !== '' && suggestedContractId !== selectedContractId;
 
+  if (viewMode === 'queue') {
+    return (
+      <>
+        <Header>
+          <nav className="page-breadcrumb">
+            <span className="current">Invoices &amp; Approvals</span>
+          </nav>
+        </Header>
+        <div className="page-container animate-fade-in">
+          <div className="page-header">
+            <div>
+              <h1 className="page-title">Invoice Queue</h1>
+              <p className="page-subtitle">Pending invoices requiring your review.</p>
+            </div>
+          </div>
+          <div className="card">
+            <div className="list-group">
+              <div className="list-item" style={{ cursor: 'pointer' }} onClick={() => setViewMode('review')}>
+                <div className="list-item-icon" style={{ background: 'var(--status-warning-bg)', color: 'var(--status-warning)' }}>
+                  <i className="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <div className="list-item-content">
+                  <div className="list-item-title">DesignPro Studio — INV-2026-042</div>
+                  <div className="list-item-meta">Amount: 6,500 SAR · Due: May 15, 2026</div>
+                </div>
+                <span className={`badge ${invoiceStatus === 'Pending' ? 'badge-warning' : invoiceStatus === 'Approved' ? 'badge-success' : invoiceStatus === 'Rejected' ? 'badge-danger' : 'badge-info'}`}>{invoiceStatus}</span>
+                <i className="fa-solid fa-chevron-right text-muted" style={{ paddingLeft: 'var(--spacing-md)' }}></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        {toast && (
+          <div className={`toast toast-${toast.type}`}>
+            <i className={TOAST_ICONS[toast.type]}></i>
+            {toast.msg}
+          </div>
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       <Header>
         <nav className="page-breadcrumb">
-          <Link href="/invoices" className="text-muted">Invoices &amp; Approvals</Link>
+          <button onClick={() => setViewMode('queue')} className="text-muted" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}>Invoices &amp; Approvals</button>
           <i className="fa-solid fa-chevron-right sep" style={{ fontSize: '0.6rem' }}></i>
           <span className="current">Invoice Review</span>
         </nav>
@@ -685,15 +728,15 @@ export default function InvoicesPage() {
                 }
               </button>
 
-              <button type="button" className="btn btn-approve" style={{ marginBottom: 'var(--spacing-md)' }} onClick={() => showToast('Invoice approved successfully', 'success')}>
+              <button type="button" className="btn btn-approve" style={{ marginBottom: 'var(--spacing-md)' }} onClick={() => { setInvoiceStatus('Approved'); setViewMode('queue'); showToast('Invoice approved successfully', 'success'); }}>
                 <i className="fa-solid fa-circle-check"></i> Approve Invoice
               </button>
 
               <div className="grid-2col" style={{ gap: 'var(--spacing-sm)' }}>
-                <button type="button" className="btn btn-secondary" onClick={() => showToast('Sent for additional review', 'info')}>
+                <button type="button" className="btn btn-secondary" onClick={() => { setInvoiceStatus('Needs Review'); setViewMode('queue'); showToast('Sent for additional review', 'info'); }}>
                   <i className="fa-solid fa-clock-rotate-left"></i> Needs Review
                 </button>
-                <button type="button" className="btn btn-danger" onClick={() => showToast('Invoice rejected', 'error')}>
+                <button type="button" className="btn btn-danger" onClick={() => { setInvoiceStatus('Rejected'); setViewMode('queue'); showToast('Invoice rejected', 'error'); }}>
                   <i className="fa-solid fa-circle-xmark"></i> Reject
                 </button>
               </div>

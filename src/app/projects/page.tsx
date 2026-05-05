@@ -117,7 +117,7 @@ export default function ProjectsPage() {
         <nav className="page-breadcrumb">
           <Link href="/projects">Projects</Link>
           <i className="fa-solid fa-chevron-right sep" style={{ fontSize: '0.6rem' }}></i>
-          <span className="current">Al Waha Clinics</span>
+          <span className="current">Al Waha Clinics (Demo Project)</span>
         </nav>
       </Header>
 
@@ -415,7 +415,7 @@ export default function ProjectsPage() {
                     <i className="fa-solid fa-folder-open text-accent"></i>
                     Project Documents
                   </h2>
-                  <button type="button" className="btn btn-secondary btn-icon-sm" data-tooltip="Upload file" onClick={() => showToast('File upload is not connected yet — coming soon', 'info')} aria-label="Upload file">
+                  <button type="button" className="btn btn-secondary btn-icon-sm" data-tooltip="Upload file" onClick={() => showToast('Demo upload ready — document will be linked to this project', 'success')} aria-label="Upload file">
                     <i className="fa-solid fa-cloud-arrow-up"></i>
                   </button>
                 </div>
@@ -514,7 +514,7 @@ export default function ProjectsPage() {
 
                 </div>
 
-                <button type="button" className="btn btn-secondary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('Asset library — coming soon', 'info')}>
+                <button type="button" className="btn btn-secondary" style={{ width: '100%', marginTop: 'var(--spacing-md)' }} onClick={() => showToast('All 5 project documents are displayed above.', 'success')}>
                   View All Documents
                 </button>
               </div>

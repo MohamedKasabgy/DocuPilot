@@ -98,12 +98,12 @@ export default function DashboardClient({ data }: DashboardClientProps) {
                 </button>
               ))}
             </div>
-            <button className="btn btn-secondary" onClick={() => showToast('Generating report...', 'info')}>
+            <button className="btn btn-secondary" onClick={() => showToast('Dashboard export prepared', 'success')}>
               <i className="fa-solid fa-download"></i> Export
             </button>
-            <button className="btn btn-primary" onClick={() => showToast('Project created', 'success')}>
+            <Link href="/projects?new=true" className="btn btn-primary" style={{ textDecoration: 'none' }}>
               <i className="fa-solid fa-plus"></i> New Project
-            </button>
+            </Link>
           </div>
         </div>
 

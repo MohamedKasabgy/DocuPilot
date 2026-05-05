@@ -119,6 +119,27 @@ export default function RisksPage() {
     showToast('Mitigation task created', 'success');
   };
 
+  const handleExport = useCallback(() => {
+    const data = RISK_DATA.map(r => ({
+      title: r.title,
+      severity: r.severity,
+      source: r.sourceLabel,
+      status: mitigatedRisks.has(r.id) ? 'mitigated' : 'active',
+      impact: r.impact,
+      suggestedAction: r.actionText
+    }));
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'docupilot-risks-export.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Risk report exported', 'success');
+  }, [mitigatedRisks, showToast]);
+
   const deadlineBadgeClass = (daysLeft: number) =>
     daysLeft <= 3 ? 'deadline-badge-overdue' : daysLeft <= 10 ? 'deadline-badge-urgent' : 'deadline-badge-upcoming';
 
@@ -133,7 +154,7 @@ export default function RisksPage() {
             <h1 className="page-title">Risk Radar</h1>
             <p className="page-subtitle">Real-time exposure monitoring across active projects. Analyze potential slippage and scope threats before they impact delivery.</p>
           </div>
-          <button type="button" className="btn btn-secondary" onClick={() => showToast('Risk report exported', 'info')}>
+          <button type="button" className="btn btn-secondary" onClick={handleExport}>
             <i className="fa-solid fa-download"></i> Export
           </button>
         </div>

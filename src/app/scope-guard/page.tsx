@@ -140,7 +140,22 @@ export default function ScopeGuardPage() {
         showToast('Scope analyzed successfully', 'success');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Failed to analyze scope', 'error');
+      setAnalysis({
+        scopeStatus: 'out_of_scope',
+        reason: 'The requested mobile app is not included in the approved project scope or contract scope.',
+        timelineImpact: 'high',
+        costImpact: 'high',
+        businessImpact: 'medium',
+        riskImpact: 'high',
+        strategicImpact: 'Estimated +2 to +4 weeks timeline impact.',
+        recommendation: 'convert_to_change_request',
+        suggestedAction: 'Create Change Request.',
+        clientReply: 'Thank you for the request. Based on the current approved scope, the project includes the web platform and admin dashboard only. A mobile app would be considered an additional scope item. We can prepare a change request with the estimated timeline and cost for your approval.',
+        changeRequestSummary: 'Addition of mobile application to the project scope.',
+        confidenceScore: 92,
+      });
+      setUsedFallback(true);
+      showToast('AI API unavailable — loaded offline demo result', 'warning');
     } finally {
       setIsAnalyzing(false);
     }

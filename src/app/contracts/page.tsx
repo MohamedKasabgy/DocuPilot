@@ -1,5 +1,6 @@
 'use client';
 import { useState, useCallback } from 'react';
+import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import type { ContractAnalysisOutput } from '@/lib/ai/schemas/contract';
 
@@ -154,9 +155,9 @@ export default function ContractsPage() {
             <h1 className="page-title">Contract-to-Actions</h1>
             <p className="page-subtitle">Upload legal documents to extract operational milestones and risk alerts.</p>
           </div>
-          <button type="button" className="btn btn-secondary" onClick={() => showToast('Contract Vault is coming soon — paste contract text to get started.', 'info')}>
+          <Link href="/projects" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
             <i className="fa-solid fa-folder-open"></i> <span>Contract Vault</span>
-          </button>
+          </Link>
         </div>
 
         {/* Analysis Options */}
