@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 const navItems = [
   { href: '/', icon: 'fa-solid fa-border-all', label: 'Dashboard' },
   { href: '/projects', icon: 'fa-solid fa-folder-open', label: 'Projects' },
-  { href: '/srs-generator', icon: 'fa-solid fa-wand-magic-sparkles', label: 'SRS Generator' },
+  { href: '/srs-generator', icon: 'fa-solid fa-wand-magic-sparkles', label: 'Project Intelligence' },
   { href: '/contracts', icon: 'fa-solid fa-file-signature', label: 'Contracts' },
   { href: '/invoices', icon: 'fa-solid fa-file-invoice-dollar', label: 'Invoices & Approvals' },
   { href: '/scope-guard', icon: 'fa-solid fa-shield-halved', label: 'Scope Guard' },
