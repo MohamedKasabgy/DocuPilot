@@ -1,0 +1,280 @@
+import type {
+  Project,
+  DocumentRecord,
+  AnalysisOutput,
+  ActionItem,
+  RiskItem,
+  ApprovalItem,
+} from "./types";
+
+export const DEMO_PROJECT_ID = "proj-alwaha-clinic-booking";
+
+const NOW = "2026-04-15T09:00:00.000Z";
+const EARLIER = "2026-03-20T09:00:00.000Z";
+
+export const projects: Project[] = [
+  {
+    id: DEMO_PROJECT_ID,
+    name: "Clinic Booking Platform",
+    clientName: "Al Waha Clinics",
+    description:
+      "Patient self-service appointment booking, clinician schedule management, and SMS reminders for Al Waha Clinics' four Riyadh branches.",
+    status: "active",
+    healthScore: 72,
+    startDate: "2026-02-01",
+    dueDate: "2026-08-30",
+    createdAt: "2026-02-01T08:00:00.000Z",
+    updatedAt: NOW,
+  },
+];
+
+export const documents: DocumentRecord[] = [
+  {
+    id: "doc-srs-001",
+    projectId: DEMO_PROJECT_ID,
+    title: "Initial client request — Al Waha booking",
+    type: "client_request",
+    source: "demo",
+    contentPreview:
+      "نرغب في منصة لحجز المواعيد عبر الإنترنت تربط مرضانا بأطبائنا في الفروع الأربعة، مع إرسال تذكيرات SMS قبل الموعد بـ 24 ساعة.",
+    createdAt: EARLIER,
+    updatedAt: EARLIER,
+  },
+  {
+    id: "doc-contract-001",
+    projectId: DEMO_PROJECT_ID,
+    title: "Master Services Agreement — NexaSoft × Al Waha v1.2",
+    type: "contract",
+    source: "demo",
+    contentPreview:
+      "Fixed-fee engagement of SAR 480,000 covering web booking portal, admin console, and SMS integration. Mobile native apps explicitly excluded.",
+    fileName: "MSA-AlWaha-v1.2.pdf",
+    mimeType: "application/pdf",
+    createdAt: "2026-02-05T10:00:00.000Z",
+    updatedAt: "2026-02-05T10:00:00.000Z",
+  },
+  {
+    id: "doc-invoice-001",
+    projectId: DEMO_PROJECT_ID,
+    title: "Invoice INV-2026-0042 — Milestone 2",
+    type: "invoice",
+    source: "demo",
+    contentPreview:
+      "Milestone 2 (Admin console + clinician scheduling) — SAR 144,000 due 2026-05-01.",
+    fileName: "INV-2026-0042.pdf",
+    mimeType: "application/pdf",
+    createdAt: "2026-04-10T11:00:00.000Z",
+    updatedAt: "2026-04-10T11:00:00.000Z",
+  },
+  {
+    id: "doc-scope-001",
+    projectId: DEMO_PROJECT_ID,
+    title: "Scope request — native mobile app",
+    type: "scope_request",
+    source: "demo",
+    contentPreview:
+      "نريد إضافة تطبيق جوال أصلي لنظامي iOS و Android بنفس مزايا البوابة قبل إطلاق المرحلة الثانية.",
+    createdAt: "2026-04-12T08:30:00.000Z",
+    updatedAt: "2026-04-12T08:30:00.000Z",
+  },
+];
+
+export const analysisOutputs: AnalysisOutput[] = [
+  {
+    id: "ana-pi-001",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-srs-001",
+    type: "project_intelligence",
+    summary:
+      "Booking platform for 4-branch clinic network. High value (recurring patient touchpoints), medium technical risk (HL7/SMS integrations), tight 7-month delivery window.",
+    actions: ["act-001", "act-002"],
+    risks: ["risk-001"],
+    approvals: [],
+    createdAt: EARLIER,
+  },
+  {
+    id: "ana-contract-001",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-contract-001",
+    type: "contract",
+    summary:
+      "Fixed-fee MSA at SAR 480,000. Mobile apps excluded. Penalty clause: 2%/week late delivery beyond 2026-08-30.",
+    actions: ["act-003"],
+    risks: ["risk-002"],
+    approvals: ["app-001"],
+    createdAt: "2026-02-05T10:30:00.000Z",
+  },
+  {
+    id: "ana-invoice-001",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-invoice-001",
+    type: "invoice",
+    summary:
+      "Milestone 2 invoice aligned with contract payment schedule. No duplicate detected. Awaiting PM approval.",
+    actions: [],
+    risks: [],
+    approvals: ["app-002"],
+    createdAt: "2026-04-10T11:30:00.000Z",
+  },
+  {
+    id: "ana-scope-001",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-scope-001",
+    type: "scope",
+    summary:
+      "Native mobile apps fall outside contracted scope (web portal only). Estimated +SAR 220,000 and +10 weeks. Recommend formal change request.",
+    actions: ["act-004"],
+    risks: ["risk-003"],
+    approvals: ["app-003"],
+    createdAt: "2026-04-12T09:00:00.000Z",
+  },
+];
+
+export const actions: ActionItem[] = [
+  {
+    id: "act-001",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-srs-001",
+    analysisOutputId: "ana-pi-001",
+    title: "Confirm SMS provider (Unifonic vs MSG91)",
+    description:
+      "Pricing and Saudi number-portability differ between providers; lock in before integration sprint.",
+    status: "in_progress",
+    priority: "high",
+    owner: "Reem Al-Otaibi",
+    dueDate: "2026-04-25",
+    sourceType: "project_intelligence",
+    createdAt: EARLIER,
+  },
+  {
+    id: "act-002",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-srs-001",
+    analysisOutputId: "ana-pi-001",
+    title: "Schedule clarification call on HL7 export",
+    description: "Client mentioned HL7 only verbally; pin down required segments and version.",
+    status: "todo",
+    priority: "medium",
+    owner: "Khalid Naseer",
+    dueDate: "2026-04-22",
+    sourceType: "project_intelligence",
+    createdAt: EARLIER,
+  },
+  {
+    id: "act-003",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-contract-001",
+    analysisOutputId: "ana-contract-001",
+    title: "Add late-delivery penalty to risk register",
+    description: "2%/week penalty starting 2026-08-31 must be reflected in margin calculations.",
+    status: "done",
+    priority: "medium",
+    sourceType: "contract",
+    createdAt: "2026-02-06T08:00:00.000Z",
+  },
+  {
+    id: "act-004",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-scope-001",
+    analysisOutputId: "ana-scope-001",
+    title: "Draft formal Change Request for native mobile apps",
+    description:
+      "Quote +SAR 220,000 and +10 weeks. Reference contract clause 4.2 (out-of-scope items).",
+    status: "todo",
+    priority: "high",
+    owner: "Project Manager",
+    dueDate: "2026-04-20",
+    sourceType: "scope",
+    createdAt: "2026-04-12T09:30:00.000Z",
+  },
+];
+
+export const risks: RiskItem[] = [
+  {
+    id: "risk-001",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-srs-001",
+    analysisOutputId: "ana-pi-001",
+    title: "HL7 export requirement is under-specified",
+    description: "Client expects integration with hospital EMR but did not specify HL7 version or segments.",
+    severity: "high",
+    source: "project_intelligence",
+    impact: "Up to 3 weeks of rework if EMR vendor demands HL7 v2.5 ADT/SIU segments not yet scoped.",
+    suggestedAction: "Hold a 30-min discovery with Al Waha IT to lock the spec before sprint 4.",
+    status: "open",
+    createdAt: EARLIER,
+  },
+  {
+    id: "risk-002",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-contract-001",
+    analysisOutputId: "ana-contract-001",
+    title: "Late-delivery penalty exposure",
+    description: "Contract imposes 2%/week penalty on SAR 480,000 if delivery slips past 2026-08-30.",
+    severity: "medium",
+    source: "contract",
+    impact: "Each week of slippage costs SAR 9,600 against margin.",
+    suggestedAction: "Track milestone burn-down weekly; escalate any 2-day slip immediately.",
+    status: "monitoring",
+    createdAt: "2026-02-06T08:00:00.000Z",
+  },
+  {
+    id: "risk-003",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-scope-001",
+    analysisOutputId: "ana-scope-001",
+    title: "Out-of-scope mobile request threatens timeline",
+    description: "Client expects native iOS/Android before phase-2 launch — not in MSA.",
+    severity: "critical",
+    source: "scope",
+    impact: "If absorbed silently, will push delivery 10 weeks past contracted date and trigger penalty clause.",
+    suggestedAction: "Block work until signed Change Request lands.",
+    status: "open",
+    createdAt: "2026-04-12T09:00:00.000Z",
+  },
+];
+
+export const approvals: ApprovalItem[] = [
+  {
+    id: "app-001",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-contract-001",
+    analysisOutputId: "ana-contract-001",
+    title: "MSA v1.2 sign-off",
+    description: "Final sign-off on master services agreement with Al Waha Clinics.",
+    type: "contract",
+    status: "approved",
+    approver: "Faisal Al-Harthi",
+    amount: 480000,
+    currency: "SAR",
+    reason: "Standard fixed-fee engagement, terms reviewed by legal.",
+    createdAt: "2026-02-05T14:00:00.000Z",
+  },
+  {
+    id: "app-002",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-invoice-001",
+    analysisOutputId: "ana-invoice-001",
+    title: "Approve Milestone 2 invoice",
+    description: "INV-2026-0042 for SAR 144,000, milestone 2 deliverables verified.",
+    type: "invoice",
+    status: "pending",
+    amount: 144000,
+    currency: "SAR",
+    createdAt: "2026-04-10T11:30:00.000Z",
+  },
+  {
+    id: "app-003",
+    projectId: DEMO_PROJECT_ID,
+    documentId: "doc-scope-001",
+    analysisOutputId: "ana-scope-001",
+    title: "Approve native mobile Change Request",
+    description: "Adds iOS + Android apps. +SAR 220,000, +10 weeks. Awaiting client + PM joint approval.",
+    type: "scope_change",
+    status: "pending",
+    amount: 220000,
+    currency: "SAR",
+    reason: "Out-of-scope per MSA clause 4.2.",
+    createdAt: "2026-04-12T09:30:00.000Z",
+  },
+];
