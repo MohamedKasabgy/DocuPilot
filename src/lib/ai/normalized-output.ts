@@ -56,6 +56,12 @@ function asSeverity(value: unknown, fallback: Severity = "medium"): Severity {
     : fallback;
 }
 
+function asObject(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
 function applyLinks<T extends { projectId?: string; documentId?: string }>(
   item: T,
   ctx: LinkContext
@@ -90,47 +96,58 @@ export function normalizeProjectIntelligenceOutput(
   output: unknown,
   ctx: LinkContext = {}
 ): NormalizedAIOutput {
-  const o = (output ?? {}) as Record<string, unknown>;
-  const finalDecision = (o.finalDecision ?? {}) as Record<string, unknown>;
-  const executionPlan = (o.executionPlan ?? {}) as Record<string, unknown>;
-  const businessUnderstanding = (o.businessUnderstanding ?? {}) as Record<string, unknown>;
+  const o = asObject(output);
+  const finalDecision = asObject(o.finalDecision);
+  const executionPlan = asObject(o.executionPlan);
+  const businessUnderstanding = asObject(o.businessUnderstanding);
 
   const summary = asString(
-    finalDecision.summary ?? finalDecision.recommendation ?? businessUnderstanding.summary,
+    finalDecision.mainReason ??
+      finalDecision.suggestedNextStep ??
+      businessUnderstanding.summary,
     "Project intelligence pipeline completed."
   );
 
-  const planActions = Array.isArray(executionPlan.actions) ? executionPlan.actions : [];
-  const actions: ActionInput[] = planActions.map((raw): ActionInput => {
-    const a = (raw ?? {}) as Record<string, unknown>;
+  const keyTasks = Array.isArray(executionPlan.keyTasks) ? executionPlan.keyTasks : [];
+  const actions: ActionInput[] = keyTasks.map((raw): ActionInput => {
+    const a = asObject(raw);
     return {
-      title: asString(a.title ?? a.name, "Untitled action"),
-      description: asString(a.description ?? a.detail, ""),
+      title: asString(a.title, "Untitled task"),
+      description: [asString(a.description, ""), asString(a.effort, "")]
+        .filter(Boolean)
+        .join(" — "),
       status: "todo",
-      priority: asPriority(a.priority),
-      owner: typeof a.owner === "string" ? a.owner : undefined,
-      dueDate: typeof a.dueDate === "string" ? a.dueDate : undefined,
+      priority: "medium",
       sourceType: "project_intelligence",
     };
   });
 
-  const piRisks = Array.isArray(o.risks)
-    ? o.risks
-    : Array.isArray((finalDecision.risks as unknown[] | undefined))
-      ? (finalDecision.risks as unknown[])
-      : [];
-  const risks: RiskInput[] = piRisks.map((raw): RiskInput => {
-    const r = (raw ?? {}) as Record<string, unknown>;
-    return {
-      title: asString(r.title ?? r.name, "Identified risk"),
-      description: asString(r.description, ""),
-      severity: asSeverity(r.severity ?? r.level),
+  const execRisks = Array.isArray(executionPlan.risksInExecution)
+    ? executionPlan.risksInExecution
+    : [];
+  const risks: RiskInput[] = execRisks.map((raw): RiskInput => ({
+    title: asString(raw, "Execution risk"),
+    description: asString(raw, ""),
+    severity: "medium",
+    source: "project_intelligence",
+    impact: "",
+    suggestedAction: "",
+    status: "open",
+  }));
+
+  // finalDecision.keyRisk is a single high-signal risk surfaced by the pipeline.
+  const keyRisk = asString(finalDecision.keyRisk, "");
+  if (keyRisk) {
+    risks.unshift({
+      title: "Key project risk",
+      description: keyRisk,
+      severity: "high",
       source: "project_intelligence",
-      impact: asString(r.impact, ""),
-      suggestedAction: asString(r.suggestedAction ?? r.mitigation, ""),
+      impact: "",
+      suggestedAction: asString(finalDecision.suggestedNextStep, ""),
       status: "open",
-    };
-  });
+    });
+  }
 
   return finalize(summary, actions, risks, [], ctx, { rawType: "project_intelligence" });
 }
@@ -176,14 +193,12 @@ export function normalizeInvoiceAnalysisOutput(
   output: unknown,
   ctx: LinkContext = {}
 ): NormalizedAIOutput {
-  const o = (output ?? {}) as Record<string, unknown>;
-  const alignment = (o.contractAlignment ?? {}) as Record<string, unknown>;
-  const dup = (o.duplicateRisk ?? {}) as Record<string, unknown>;
+  const o = asObject(output);
+  const alignment = asObject(o.contractAlignment);
+  const dup = asObject(o.duplicateRisk);
+  const recommendation = asObject(o.approvalRecommendation);
 
-  const summary = asString(
-    alignment.summary ?? o.summary,
-    "Invoice analysis completed."
-  );
+  const summary = asString(alignment.summary ?? o.summary, "Invoice analysis completed.");
 
   const risks: RiskInput[] = [];
   if (typeof dup.level === "string" && dup.level !== "none") {
@@ -209,15 +224,37 @@ export function normalizeInvoiceAnalysisOutput(
       status: "open",
     });
   }
+  const flags = Array.isArray(o.flags) ? o.flags : [];
+  for (const raw of flags) {
+    const f = asObject(raw);
+    risks.push({
+      title: asString(f.type ?? "Invoice flag", "Invoice flag"),
+      description: asString(f.message, ""),
+      severity: asSeverity(f.severity),
+      source: "invoice",
+      impact: "",
+      suggestedAction: "Review flagged invoice before approval.",
+      status: "open",
+    });
+  }
 
   const amount = typeof o.amount === "number" ? o.amount : undefined;
   const currency = typeof o.currency === "string" ? o.currency : undefined;
+  const invoiceNumber = asString(o.invoiceNumber, "").trim();
+  const recommendationAction = asString(recommendation.action, "review");
+  const approvalStatus: ApprovalStatus =
+    recommendationAction === "approve"
+      ? "pending"
+      : recommendationAction === "reject"
+        ? "rejected"
+        : "pending";
+
   const approvals: ApprovalInput[] = [
     {
-      title: `Approve invoice ${asString(o.invoiceNumber, "")}`.trim(),
-      description: summary,
+      title: invoiceNumber ? `Approve invoice ${invoiceNumber}` : "Approve invoice",
+      description: asString(recommendation.reason, summary),
       type: "invoice" as ApprovalType,
-      status: "pending" as ApprovalStatus,
+      status: approvalStatus,
       amount,
       currency,
     },
@@ -230,18 +267,15 @@ export function normalizeScopeAnalysisOutput(
   output: unknown,
   ctx: LinkContext = {}
 ): NormalizedAIOutput {
-  const o = (output ?? {}) as Record<string, unknown>;
-  const summary = asString(
-    o.reason ?? o.recommendation,
-    "Scope analysis completed."
-  );
+  const o = asObject(output);
+  const summary = asString(o.reason ?? o.recommendation, "Scope analysis completed.");
 
   const risks: RiskInput[] = [];
-  if (o.riskImpact === "high" || o.riskImpact === "critical") {
+  if (o.riskImpact === "high") {
     risks.push({
       title: "High-impact scope change",
       description: asString(o.reason, ""),
-      severity: asSeverity(o.riskImpact),
+      severity: "high",
       source: "scope",
       impact: asString(o.businessImpact ?? o.timelineImpact, ""),
       suggestedAction: asString(o.suggestedAction, "Convert to formal change request."),
@@ -250,11 +284,12 @@ export function normalizeScopeAnalysisOutput(
   }
 
   const actions: ActionInput[] = [];
-  const cr = (o.changeRequestSummary ?? {}) as Record<string, unknown>;
-  if (cr && Object.keys(cr).length > 0) {
+  const crSummary =
+    typeof o.changeRequestSummary === "string" ? o.changeRequestSummary.trim() : "";
+  if (crSummary.length > 0) {
     actions.push({
       title: "Draft change request",
-      description: asString(cr.summary ?? cr.description, "Convert scope request into a formal CR."),
+      description: crSummary,
       status: "todo",
       priority: "high",
       sourceType: "scope",
@@ -262,7 +297,7 @@ export function normalizeScopeAnalysisOutput(
   }
 
   const approvals: ApprovalInput[] = [];
-  if (o.scopeStatus === "out_of_scope" || o.suggestedAction === "convert_to_cr") {
+  if (o.scopeStatus === "out_of_scope") {
     approvals.push({
       title: "Approve scope change request",
       description: summary,

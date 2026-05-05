@@ -1,7 +1,17 @@
 -- 0004_data_backbone_draft.sql
--- Future-state schema for the unified data backbone (Person 1 — Data Backbone + APIs).
--- Safe to apply alongside existing tables (all CREATE statements are IF NOT EXISTS).
+-- DRAFT future-state schema for the unified data backbone (Person 1 — Data Backbone + APIs).
 -- Mirrors src/lib/data/types.ts.
+--
+-- ⚠️  DO NOT APPLY ON TOP OF 0001_domain_tables.sql ⚠️
+-- Migration 0001 already creates `projects` and `risks` with INCOMPATIBLE columns
+-- (different PK type, missing client_name/start_date/due_date/description on projects;
+-- missing description/impact/suggested_action/analysis_output_id on risks).
+-- Because every CREATE below is `IF NOT EXISTS`, applying this migration on a database
+-- that already has 0001 will silently skip `projects` and `risks` and create only the
+-- new tables, leaving the schema permanently out of sync with TypeScript types.
+--
+-- Apply this draft only on a fresh database, OR replace it with a follow-up migration
+-- that ALTERs the existing 0001 tables to match the new shape before any FKs are added.
 
 create table if not exists projects (
   id text primary key,
