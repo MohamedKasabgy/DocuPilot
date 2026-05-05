@@ -8,6 +8,7 @@ import { InvoiceAnalysisSchema } from "@/lib/ai/schemas/invoice";
 import { buildInvoicePrompt } from "@/lib/ai/prompts/invoice";
 import type { InvoiceAnalysisOutput } from "@/lib/ai/schemas/invoice";
 import type { ContractContext, InvoiceHints } from "@/lib/ai/prompts/invoice";
+import { normalizeInvoiceAnalysisOutput } from "@/lib/ai/normalized-output";
 
 const INVOICE_RESPONSE_SCHEMA = {
   type: Type.OBJECT,
@@ -247,6 +248,8 @@ export async function POST(req: Request) {
       console.warn("[Invoice] Supabase not configured — skipping persistence.");
     }
 
+    const normalized = normalizeInvoiceAnalysisOutput(validated, { projectId });
+
     return NextResponse.json({
       success: true,
       providerUsed,
@@ -260,6 +263,7 @@ export async function POST(req: Request) {
       retried,
       contractId: contractId ?? null,
       data: validated,
+      normalized,
     });
   } catch (error) {
     console.error("[Invoice] Analysis failed:", error);
