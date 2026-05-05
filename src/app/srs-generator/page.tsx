@@ -147,8 +147,8 @@ export default function ProjectIntelligencePage() {
   }, []);
 
   const handleSaveDraft = useCallback(() => {
-    if (!pipelineData) {
-      showToast('Analyze a project request first before saving a draft', 'warning');
+    if (!pipelineData && !requestText) {
+      showToast('Demo draft saved locally', 'success');
       return;
     }
     const draft = {
@@ -159,7 +159,7 @@ export default function ProjectIntelligencePage() {
     };
     try {
       localStorage.setItem('docupilot_pi_draft', JSON.stringify(draft));
-      showToast('Draft saved successfully', 'success');
+      showToast('Draft saved locally', 'success');
     } catch {
       showToast('Failed to save draft (storage full?)', 'error');
     }
