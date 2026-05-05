@@ -129,7 +129,7 @@ export default function ProjectIntelligencePage() {
     acceptanceCriteria: false,
     userStories: false,
   });
-  const [requestText, setRequestText] = useState(SAMPLE_REQUEST);
+  const [requestText, setRequestText] = useState('');
   const [clientFacingMode, setClientFacingMode] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
@@ -458,7 +458,7 @@ export default function ProjectIntelligencePage() {
             rows={4}
             dir={language === 'arabic' ? 'rtl' : 'ltr'}
             style={{ marginBottom: 'var(--spacing-sm)', textAlign: language === 'arabic' ? 'right' : 'left', fontFamily: language !== 'english' ? 'var(--font-display)' : 'var(--font-sans)', fontSize: language !== 'english' ? '1rem' : '0.9375rem', lineHeight: 1.8 }}
-            placeholder="Paste your client request here..."
+            placeholder={SAMPLE_REQUEST}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="text-xs text-muted">{requestText.length} characters</span>
